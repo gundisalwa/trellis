@@ -1,0 +1,38 @@
+name: Claude Code Review
+
+# Runs Claude's code-review skill on every PR, by default.
+# Prerequisites (one-time, repo admin only — see decision 0007):
+#   1. Install the Claude GitHub App: https://github.com/apps/claude
+#   2. Add the auth secret the App's installer creates (CLAUDE_CODE_OAUTH_TOKEN for a
+#      Claude subscription, or swap to ANTHROPIC_API_KEY for direct API billing).
+# The easiest way to do both: run `/install-github-app` in Claude Code and choose
+# "Skip for now" at the workflow step (this file already provides the workflow).
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # full history so the review can diff against the base branch
+
+      - name: Claude code review
+        uses: anthropics/claude-code-action@v1
+        with:
+          # Subscription auth (no separate API bill). Swap to:
+          #   anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          # if you prefer direct Claude API billing instead.
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          plugin_marketplaces: "https://github.com/anthropics/claude-code.git"
+          plugins: "code-review@claude-code-plugins"
+          prompt: "/code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}"
