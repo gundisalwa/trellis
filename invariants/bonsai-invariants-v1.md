@@ -1,19 +1,21 @@
 ---
 id: invariants-v1
 type: invariant-set
-status: draft
+status: ratified
 depends_on: [invariants-v0, research-0002, decision-0008]
 owner: gundi
 supersedes: invariants-v0
+ratified: 2026-06-29
 ---
 
-# Bonsai's Invariants — our synthesis, v1 (draft)
+# Bonsai's Invariants — our synthesis, v1 (ratified 2026-06-29)
 
 > **Provenance & honesty (load-bearing).** Still **our synthesis** — *not* externally
 > attributed; do not name it authoritatively (the §4 "Keel's invariants" canary). v1 revises
 > v0 using **Step 1 evidence** (`research-0002` — gate-testing Spec Kit, Kiro, BMAD, OpenSpec,
-> SpecSwarm) and the **enforcement reframe** (`decision-0008`). It is **draft**, pending
-> ratification. v0 is kept (marked superseded) so the two can be diffed.
+> SpecSwarm) and the **enforcement reframe** (`decision-0008`). **Ratified 2026-06-29 by the
+> maintainer** — this is now the current-truth invariant set; the spine and all machinery
+> consume *this*. v0 is kept (marked superseded) only for diffing.
 
 > **What v1 changes, in one breath:** v0 was a flat list of 9. v1 splits it into a small
 > **structural gate** (what a methodology must *have the shape for*), a **configurable
