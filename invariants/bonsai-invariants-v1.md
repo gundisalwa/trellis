@@ -75,12 +75,20 @@ names stages.*
   A2 handover. *Real frameworks leave gates skippable (Kiro Quick Plan, Spec Kit lean path);
   Bonsai makes the gate real* — at the strictness of dial C1, and **any skip is surfaced**
   (floor D1).
-- **B3. Independent verification — "the builder does not grade itself"** — *durable.*
-  **Reclassified from a `methodology` gate (v0-5) to `bonsai-design`**, because Step 1 showed
-  the spec-driven tools *lack* it (it is not something to admit *for*; it is something Bonsai
-  *supplies*). When active, the verifier ≠ the producer and derives its own checklist from the
-  approved upstream. *Proven implementable in an AI-native framework — SpecSwarm's
-  fresh-context adversarial `spec-mentor` (`research-0002`).* Gatekeeper set by dial C2.
+- **B3. Independent judgment — the assessor is independent of what it assesses** — *durable.*
+  One principle, two faces:
+  - **Conformance face — "the builder does not grade itself":** whatever produces work is
+    never its sole judge; the verifier ≠ the producer and derives its own checklist from the
+    approved upstream. *Reclassified from a `methodology` gate (v0-5) to `bonsai-design`* —
+    Step 1 showed spec-driven tools *lack* it, so Bonsai *supplies* it. *Proven implementable:
+    SpecSwarm's fresh-context adversarial `spec-mentor` (`research-0002`).* Gatekeeper by C2.
+  - **Intent face — the agent does not flatter the human** *(merged from B11):* the agent's
+    assessments **track the evidence, not the human's preferences** — disagreement and risks
+    stated plainly when analysis warrants, affirmation only when the data supports it
+    (*withholding warranted positive signal distorts as much as manufacturing praise*), and
+    no performed disagreement to look rigorous. This is what makes the **intent gate (D2)
+    real** rather than decorative: a sycophantic gatekeeper cannot catch a wrong upstream.
+    *Weakly checkable — lives in sub-agent design + system prompts, not a mechanical gate.*
 - **B4. Auditable archive** — *durable.* Provenance + immutable decision history + consolidated
   current-truth (the v0 3+7 merge, retained). *OpenSpec's change/delta/archive model is the
   field's best instance.*
@@ -102,21 +110,9 @@ names stages.*
   *Near-universal: Spec Kit `/clarify`, Kiro ambiguity/gap analysis pre-code, SpecSwarm
   clarification + `/ss:decisions`.* Arguably the most central uncertainty-reduction act, and
   absent from v0.
-- **B10. Bounded correction, then loud escalation** — *provisional (new, agentic).* On
-  verification failure, attempt **bounded** auto-correction (retry/repair to a limit), then
-  **escalate visibly** — never infinite-loop, never silently abandon. *SpecSwarm `/ss:fix`
-  auto-retry + watchdog; Agent SDK verify-loop.* (Most operational of the set — candidate to
-  collapse into D1; see open questions.)
-- **B11. Epistemic integrity — calibrated, independent judgment** — *provisional (new;
-  agent-conduct, a different kind).* The agent's assessments **track the evidence, not the
-  human's preferences**: it states disagreement and risks plainly when analysis warrants, and
-  affirms only when the data genuinely supports it — *withholding warranted positive signal is
-  as much a distortion as manufacturing praise*, and **performed disagreement is sycophancy
-  inverted**. The **human-facing twin of B3** (the builder doesn't grade itself; the agent
-  doesn't flatter the human) and the **precondition that makes the intent gate D2 real** — a
-  sycophantic gatekeeper cannot catch a wrong upstream. *Weakly checkable: realized in
-  sub-agent design (adversarial, self-derived checklists) and system prompts, not a gate.
-  Candidate to merge into B3.*
+*(Former B10 bounded-correction and B11 epistemic-integrity removed this round — B11 merged
+into B3's intent face; B10's durable half absorbed into D1, its retry-bounding demoted to an
+operating practice. Minimal-first correcting a one-session overshoot.)*
 
 ---
 
@@ -142,8 +138,11 @@ strictness and gatekeeper are choices, surfaced and recorded) is the on-thesis c
 - **D1. Transparency over silent action** — *the candidate hard floor.* Every consequential
   choice is **surfaced**: a skipped gate, a missing capability, a degraded result, a relaxed
   setting. **Generalizes v0-7 (loud failure) to also cover the conscious skip** (`0008`):
-  Bonsai may *allow* skipping, but never *silently*. This is plausibly **the sharpest one-line
-  statement of Bonsai's value — "surface the choice," not "enforce the choice."**
+  Bonsai may *allow* skipping, but never *silently*. Likewise a failed verification is
+  **escalated visibly, never silently abandoned** (the durable half of the former B10;
+  bounded retry-before-escalation is an operating *practice*, not an invariant). This is
+  plausibly **the sharpest one-line statement of Bonsai's value — "surface the choice," not
+  "enforce the choice."**
 - **D2. The intent gate never fully opens** — *durable* (v0-4 core). At the intent locus (A3),
   C2 can never be `none`: a human (or, by ratchet, an independent check the human authorized)
   is mandatory. It is the only place an upstream that is itself *wrong* gets caught. The one
@@ -165,8 +164,8 @@ strictness and gatekeeper are choices, surfaced and recorded) is the on-thesis c
 | 8 | Named the **intent-gate floor (D2)** explicitly | the one non-configurable gate | v0-4 + `0008` |
 | 9 | **Split B7**: minimal-first kept; reference-not-adoption → **B8** (recorded reference relationship) | strict single-framework adopt is legitimate (conductor); v0 foreclosed it | `decision-0002` + Spec Kit case |
 | 10 | Added **B9 clarify-before-commit** | near-universal framework feature; central uncertainty-reduction act, absent from v0 | `research-0001/0002` |
-| 11 | Added **B10 bounded-correction-then-escalation** | agentic reliability; prevents infinite-loop / silent abandonment | SpecSwarm, Agent SDK |
-| 12 | Added **B11 epistemic integrity** (calibrated, anti-sycophancy) | human-facing twin of B3; precondition for D2 to function | maintainer + B3/D2 logic |
+| 11 | **B11 epistemic integrity merged into B3** as its *intent face* | same principle (independence of judgment) one layer up; minimal-first | maintainer + B3/D2 logic |
+| 12 | **B10 dropped**; "escalate-don't-abandon" absorbed into **D1**, retry-bounding demoted to a practice | most operational; not invariant-worthy on reflection | minimal-first + maintainer |
 | — | Kept: v0 3+7 merge (B4); bounded context (B5); self-improvement (B6); minimal-first (B7); directional flow (A1/B1); intent locus (A3) | — | — |
 
 ---
@@ -196,13 +195,12 @@ strictness and gatekeeper are choices, surfaced and recorded) is the on-thesis c
   Claude Agent SDK (passes A as pattern-with-guardrails).
 - **Does any operating invariant (B) collapse or graduate to a dial?** Minimal-first (B7)
   applied to v1 itself.
-- **Minimal-first tension:** this round grew the operating layer 7 → 11. Which of B8–B11 are
-  real invariants vs. practices? **B10** (candidate: collapse into D1) and **B11** (candidate:
-  merge into B3) are the likeliest to retire. *B10 was added on the maintainer's instruction
-  over my recorded reservation that it is more operational than invariant — noted here, not
-  buried (which is B11 in action).*
-- **Is B11 a new *class* (agent-conduct/epistemic) or part of B3?** If kept separate, the set
-  recognizes two faces of independence — conformance (B3) and intent (B11).
+- **Minimal-first, applied to v1 itself (resolved this round):** B11 merged into B3 (intent
+  face); B10 dropped (durable half into D1). Operating layer trimmed back **11 → 9**; the set
+  is now A1–A4 + B1–B9 + dials + floors.
 - **Adherence (`decision-0002`):** working stance is two coarse modes — *adopt* (one
   framework) vs *adapt* (synthesize from several); deliberately **not** formalized into the
   invariant model until instance #2 can test it. v1 encodes only the durable part (B8).
+- *(Data-dependent, parked for instance #2 — not resolvable by wording):* does A4
+  over-constrain pattern-level methods? is provenance (B4) a gate property? do the dials (C)
+  hold across a real second project?
