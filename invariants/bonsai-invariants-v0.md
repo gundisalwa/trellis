@@ -8,6 +8,11 @@ owner: gundi
 
 # Bonsai's Invariants — our synthesis, v0
 
+> **⚠ Superseded (draft) by [`bonsai-invariants-v1.md`](bonsai-invariants-v1.md).** v1 splits
+> this flat list into a structural admission gate + a configurable operating layer + dials +
+> floors, using Step 1 evidence (`research-0002`) and `decision-0008`. v0 is kept only for
+> diffing during ratification; **do not consume v0 as current truth.**
+
 > **Provenance & honesty (load-bearing).** This is **our synthesis**, version 0. It is
 > *not* an established or externally-attributed set. Do not name it authoritatively or
 > imply prior provenance (see the §4 guardrail in the brief — the "Keel's invariants"
