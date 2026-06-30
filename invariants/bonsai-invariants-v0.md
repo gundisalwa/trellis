@@ -1,9 +1,10 @@
 ---
 id: invariants-v0
 type: invariant-set
-status: draft
+status: superseded
 depends_on: [brief-§4]
 owner: gundi
+superseded_by: invariants-v1
 ---
 
 # Bonsai's Invariants — our synthesis, v0
