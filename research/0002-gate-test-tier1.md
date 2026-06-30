@@ -3,7 +3,7 @@ id: research-0002
 type: research-note
 status: ratified
 ratified: 2026-06-30
-depends_on: [research-0001, invariants-v0, decision-0006]
+depends_on: [research-0001, invariants-v1, decision-0006]
 owner: gundi
 date: 2026-06-29
 ---

@@ -14,6 +14,17 @@ ratified: 2026-06-29
 framed Bonsai's conformance check as a Python/Node *script*, treating Bonsai as a code tool.
 It isn't.
 
+## Context
+
+While scoping the spine, the conformance check was being designed as a runnable *script* —
+which presumes Bonsai is a program with a runtime. Bonsai is a supervisor **pack**
+(guardrails, rubrics, sub-agents) interpreted by whatever agentic surface a project uses, so a
+runtime requirement would contradict both its nature and its portability goal (`decision-0001`).
+
+*(`## Context` added as a mechanical conformance fix — the conformance check flagged its
+absence. Substance unchanged; permitted under the append-only rule, which protects a decision's
+*substance*, not its section scaffolding.)*
+
 ## Decision
 
 - Bonsai's **resources** — rules, sub-agents, skills, rubrics, conventions (including the

@@ -29,8 +29,11 @@ control against it.
 6. Required body sections per type (`spec-0001` §4): `decision` → Context/Decision/
    Consequences; `spec`/`invariant-set` → Acceptance criteria/Open questions; `research-note`
    → Open questions; `feedback` → exempt.
-7. Supersede integrity: a `superseded` artifact carries `superseded_by`; nothing consumes a
-   superseded artifact as current truth.
+7. Supersede integrity: a `superseded` artifact carries `superseded_by`; **revise-in-place**
+   docs (specs, invariants, research, rubrics) re-point to the successor. *Exemption (B4): an
+   **append-only** `decision` may keep a dependency on the version current at its ratification
+   (historical, not current-truth); a successor referencing its predecessor for diffing is also
+   exempt.*
 
 ## Output
 

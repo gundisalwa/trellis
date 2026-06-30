@@ -10,8 +10,9 @@ ratified: 2026-06-30
 
 # Spec 0001 — The spine: artifact contract + lifecycle + conformance check
 
-> **Gated (A2 / D2).** This is `draft`. **No build begins until it is ratified.** It is the
-> first artifact of the spec stage (`decision-0011`), and the first user of that stage.
+> **Ratified 2026-06-30 (A2 / D2)** — the gate is passed; the spine is being built against
+> this. It is the first artifact of the spec stage (`decision-0011`), and the first user of
+> that stage.
 
 ## Purpose
 
@@ -96,8 +97,11 @@ checklist from this spec, not from the producer (B3). Its checks:
 5. **Directional flow (load-bearing, A1/B1):** no `ratified` artifact `depends_on` a
    `draft` artifact.
 6. Required body sections present per type (§4).
-7. Supersede integrity: a `superseded` artifact has `superseded_by`; nothing consumes it as
-   current truth.
+7. **Supersede integrity:** a `superseded` artifact carries `superseded_by`; **revise-in-place**
+   docs (specs, invariants, research, rubrics — B4 consolidated truth) re-point to the
+   successor. *Exemption (B4): an **append-only** `decision` may keep a dependency on the
+   upstream version current at its ratification — a historical fact, not current-truth
+   consumption.* A successor referencing its own predecessor (for diffing) is also exempt.
 
 **Honesty clause (math-quest):** *accurately listing the violations is success.* A check that
 hides drift to report "pass" has failed this spec. The report is also the raw **friction

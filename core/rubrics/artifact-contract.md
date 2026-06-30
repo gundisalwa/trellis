@@ -32,8 +32,11 @@ scope: bonsai-product
    Acceptance criteria + Open questions; `decision` → Context/Decision/Consequences;
    `research-note` → Open questions (+ sources); `feedback` → exempt. *FAIL → name the
    missing section.*
-7. **Supersede integrity.** A `superseded` artifact carries `superseded_by`; nothing consumes
-   a superseded artifact as current truth. *FAIL → name the offender.*
+7. **Supersede integrity.** A `superseded` artifact carries `superseded_by`; **revise-in-place**
+   docs (specs, invariants, research, rubrics) re-point to the successor. *Exemption (B4): an
+   **append-only** `decision` may keep a dependency on the version current at its ratification
+   (historical, not current-truth); a successor referencing its predecessor for diffing is also
+   exempt.* *FAIL → name the offender.*
 
 ## Honesty clause (math-quest)
 
