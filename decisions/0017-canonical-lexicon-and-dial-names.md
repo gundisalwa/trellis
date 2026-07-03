@@ -27,8 +27,9 @@ problems:
    (`research-0006` §Convergence) but nowhere records them as a lookup.
 2. **The delivery-relationship dial is badly named.** Its two ends are "supervisor" (installed/live)
    and "consultant" (referenced/pulled). "supervisor" *also* names Trellis's DES control role
-   (`research-0006`); "consultant" is a different register the maintainer only uses to mean
-   *reference*.
+   (`research-0006`); "consultant" was never a chosen term — the maintainer used it only as a
+   rhetorical pointer to convey the pull idea. And the pair is **grammatically inconsistent** — an
+   agent-role noun paired with a gerund/object.
 
 The maintainer's steer: normalize around **Trellis's identity + the invariant/gene idea**, but
 **keep the lenses** — store the equivalence, do not flatten.
@@ -41,26 +42,46 @@ The maintainer's steer: normalize around **Trellis's identity + the invariant/ge
    (`research-0003`, as `decision-0016` did for catalog/profile). Required sections:
    `## Canonical terms`, `## Open questions`.
 
-2. **Canonical-vocabulary policy (store, don't flatten).** *Current-truth / product* artifacts
-   (invariants, catalog, profile, specs, `CLAUDE.md`) use the **canonical** term and point at the
-   lexicon. *Research notes* keep their lens vocabulary (genetics, DES) — that is their analytical
-   value — and the lexicon records the equivalence. Normalization ≠ monolingualism.
+2. **Three registers, not one (store, don't flatten).** Trellis speaks in three registers that
+   **nest**, not compete — *the plant on the trellis expresses its genes, and its genes are its
+   invariants*:
+   - **Identity / relationship — the garden register.** Trellis, host-as-plant, the delivery dial.
+     The product's face.
+   - **Mechanism / teaching — the gene register.** Expression profile, active vs. latent genes,
+     catalog = genome annotation. **Promoted here from "internal vocabulary" (`research-0008`) to the
+     official teaching register — external included** — because *gene expression conveys the machinery
+     more easily than "invariant."** Refines `research-0008`'s "genetics stays internal."
+   - **Substrate — the invariant register.** What a gene *is*, precisely, here. **`invariant` stays
+     canonical** for what is enforced.
+   **The load-bearing caveat (why gene does *not* go fully canonical):** the gene analogy **provably
+   breaks at D2**, the most load-bearing floor — `research-0005` §Limits: *"No intent locus in a
+   genome; A3/D2 has no genetic analogue."* Making genes canonical would seat the intent gate exactly
+   where the metaphor is weakest (the DES lens covers that gap). Plus the naming guardrail
+   (`brief-§4`): gene-talk *sounds* authoritative — keep it framed as *our synthesis / teaching
+   metaphor*, sharper externally, never a provenance claim. **Policy:** current-truth/product
+   artifacts use the **canonical** term + link the lexicon; research notes keep their lens vocabulary;
+   gene-expression is the sanctioned way to *convey* it. Normalization ≠ monolingualism.
 
-3. **Delivery-relationship dial ends (Axis A, `research-0007`):**
-   - **`supervisor`** — the installed/live/push end. **Kept.** It is not a harmful overload: when
-     Trellis is a live supervisor (delivery), it *is* performing the DES supervisor role
-     (`research-0006`) — one metaphor, two zoom levels.
-   - **`cutting`** ← *was* "consultant" — the referenced/pulled end. A **cutting** is a piece of a
-     plant taken and rooted elsewhere to grow into an independent plant: exactly consultant mode —
-     take Trellis's shape, root it in your own project, it grows on its own, no runtime tie. Chosen
-     over **"reference"** because `reference` **collides with `inv-reference-relationship` (B8)** —
-     fixing one overload by minting another; and it keeps the garden identity (`research-0008`).
+3. **Delivery-relationship dial ends (Axis A, `research-0007`) — a consistent role-noun pair.** The two
+   ends are genuinely **asymmetric**: the live end *is* an active agent (Trellis running); the pull end
+   is the *absence* of an ongoing agent (Trellis referenced, then just a source). So the pair is named
+   in **role register** (matched agent-nouns), not garden register — a garden agent-noun for the pull
+   end does not exist (a "cutting" is an object, not an actor; "trimmer" fits the grammar but means
+   pruning, not pull-delivery).
+   - **`supervisor`** — the installed/live/push end. **Kept.** Trellis with live authority, performing
+     the DES supervisor role (`research-0006`).
+   - **`advisor`** ← *was* "consultant"/"cutting" — the referenced/pulled end. Trellis **consulted**,
+     no executive authority; the host internalizes the guidance and acts on its own — exactly pull
+     mode. Grammatically twinned with `supervisor`; sidesteps the `reference`↔`inv-reference-
+     relationship` (B8) collision and the garden-agent-noun gap. *(Garden-consistent alternative if
+     the dial should carry garden flavor: `frame` / `cutting`, both garden-object nouns — retires
+     "supervisor.")*
 
 ## Consequences
 
-- **A rename sweep is owed** (`consultant → cutting`, ~38 hits / 6 files: research 0006–0009,
-  `spec-0002`, `profile-trellis-self`). **Deferred until this decision ratifies** — the name is the
-  seed; sweeping an unratified name risks full rework.
+- **A rename sweep is owed** (`consultant → advisor`, ~38 hits / 6 files: research 0006–0009,
+  `spec-0002`, `profile-trellis-self`). **Deferred until the maintainer confirms the term** — the name
+  is the seed; sweeping an unratified name risks full rework.
 - **The conformance check learns the `lexicon` type** (rubric + `conformance-reviewer` updated).
 - **`lexicon-v1` is the store** — built as `draft` alongside this decision; the maintainer ratifies
   both (D2). The agent authored them and does not self-ratify (B3).
@@ -69,9 +90,10 @@ The maintainer's steer: normalize around **Trellis's identity + the invariant/ge
 
 ## Open questions
 
-- **Pull-end name (D2):** `cutting` (proposed) · `reference` (clear, but collides with B8) ·
-  `resident`/`reference` (renames both ends, *fully* resolves the supervisor overload, more churn) ·
-  keep `consultant`. The maintainer's call.
+- **Pull-end name (D2 — awaiting confirm):** `advisor` (**recommended** — role-noun parallel with
+  `supervisor`, precise) · `frame`/`cutting` (garden-consistent object-noun pair, retires
+  "supervisor") · `cutting` alone (rejected — object vs. `supervisor`'s agent-noun) · `reference`
+  (collides with B8) · keep `consultant`. The maintainer's call; the sweep waits on it.
 - **Split `supervisor`?** Proposed: no — the delivery end and the DES role are the same metaphor.
   Revisit if the overload bites in practice.
 - **Axis B (payload depth) terms** — `expressed-only / +latent / +mechanism` — left as-is for now;
