@@ -1,7 +1,8 @@
 ---
 id: research-0008
 type: research-note
-status: draft
+status: ratified
+ratified: 2026-07-03
 depends_on: [invariants-v1, research-0005, research-0006, research-0007, decision-0012, brief-§4]
 owner: gundi
 ---
@@ -9,7 +10,7 @@ owner: gundi
 # Research 0008 — Design changes the research implies + the naming question (deliverable 2.3)
 
 > **Method & honesty.** Two parts: (1) what `research-0005/0006/0007` imply the product's design
-> should *become* (a proposal — these rest on `draft` notes, so nothing is ratified yet), and (2) the
+> should *become* (a proposal, ratified 2026-07-03 together with `research-0005/0006/0007`), and (2) the
 > name. **The naming call is intent-layer (D2) — the maintainer's, not mine;** I gave an evaluated
 > recommendation (stage), the maintainer chose to rename now (option B). The outcome is recorded in
 > `decision-0015`. This note preserves the analysis, including the path *not* taken.

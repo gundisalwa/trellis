@@ -1,7 +1,8 @@
 ---
 id: decision-0016
 type: decision
-status: draft
+status: ratified
+ratified: 2026-07-03
 depends_on: [research-0003, research-0005, research-0006, research-0007, research-0009, decision-0009]
 owner: gundi
 date: 2026-07-03
@@ -34,8 +35,9 @@ and relationship*):
   implicitly), its scope, and its **default C1/C2**. Consumed by Assess (#23) and tutoring (#27).
   `decision-0009` already anticipates "catalog" as core content.
 - **`expression-profile`** — *scope `core-methodology`* (one **per instance**). The per-instance
-  readout: for each invariant, `active?`, `C1` strength, `C2` gatekeeper, and delivery axes A/B
-  (`research-0007`). Produced by Assess, **ratified by the human (D2)**, consumed by Apply, diffed
+  readout: for each invariant, `active?`, `C1` strength, `C2` gatekeeper; **plus instance-level
+  delivery axes A/B** (`research-0007` — sharpened by `spec-0002`: the axes are per-instance, not
+  per-invariant). Produced by Assess, **ratified by the human (D2)**, consumed by Apply, diffed
   across instances (#28), and minimized into "Trellis-lite" (#22).
 
 Relationship: **catalog : profile :: reference-genome-annotation : single-cell-readout** — the
@@ -49,7 +51,9 @@ catalog is the dictionary; the profile is one instance's expression against it.
   slugs; how Assess populates + confidence-tags; the ratification flow). This decision is the gate
   `spec-0002` consumes.
 - The conformance check (`spec-0001`) must learn the two new types + their required sections.
-- `draft` until the underlying research (0005–0009) is ratified or `spec-0002` forces revision.
+- **Ratified 2026-07-03** — the underlying research (0005–0009) ratified in the same pass, and
+  `spec-0002` did force one revision (delivery axes A/B → *instance-level*, not per-invariant),
+  folded into the `expression-profile` description above before ratification.
 
 ## Supersedes / superseded by
 

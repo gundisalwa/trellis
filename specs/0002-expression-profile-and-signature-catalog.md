@@ -1,7 +1,8 @@
 ---
 id: spec-0002
 type: spec
-status: draft
+status: ratified
+ratified: 2026-07-03
 depends_on: [decision-0016, invariants-v1, spec-0001, decision-0008, decision-0009, research-0005, research-0007, research-0009]
 owner: gundi
 rubric: spec-quality
@@ -9,11 +10,11 @@ rubric: spec-quality
 
 # Spec 0002 — The expression profile & the invariant-signature catalog: schema + lifecycle
 
-> **Status is `draft`, and that is directional-flow, not laziness.** This spec consumes
-> `decision-0016` (draft) and `research-0005/0007/0009` (draft); a `ratified` artifact may not
-> depend on a `draft` one (`spec-0001` §3 check 5). It ratifies only when its gate
-> (`decision-0016`) and the underlying research do — exactly the condition `decision-0016`
-> already states for itself.
+> **Ratified 2026-07-03 (D2), together with `decision-0016` and `research-0005–0009`.** The
+> condition this spec set for itself — that its gate and the underlying research ratify first — was
+> met: they ratified in the same pass. The schema below is now current-truth; the first artifacts
+> built against it are `signature-catalog-v1` and `profile-trellis-self` (both `draft`, pending
+> their own D2 ratification — the builder does not self-ratify its output).
 
 ## Purpose
 
@@ -51,7 +52,8 @@ Frontmatter (`spec-0001` §1 base + this type). Versioned + **revise-in-place** 
 (it is `trellis-product`, not append-only): `id: signature-catalog-v1`, `type: signature-catalog`,
 `scope: trellis-product`, `depends_on: [invariants-v1]` (it annotates that set).
 
-Body: one **entry per invariant**, keyed by its **stable slug** (`decision-0013`). Fields:
+Body: one **entry per assessable invariant** (A/B/D — not the C dials; see coverage note below),
+keyed by its **stable slug** (`decision-0013`). Fields:
 
 | Field | Req | Rule |
 |---|---|---|
@@ -62,10 +64,16 @@ Body: one **entry per invariant**, keyed by its **stable slug** (`decision-0013`
 | `mechanizable` | ✓ | `true` for the SCT-computable fragment (`inv-directional-flow`, `inv-ratifiable-artifacts`, `inv-graph-maintenance` flow-facet, `inv-gate-at-handover`); `false` for the behavioral genes (`inv-independent-judgment`, `inv-clarify-before-commit`, `floor-transparency`) — `research-0006` §Limits partitions the set |
 | `default_C1` | ✓ | default enforcement strength ∈ `{expressed, default-on-but-skippable, enforced}` (`decision-0008`) |
 | `default_C2` | ✓ | default gatekeeper ∈ `{independent-agent, human, none}`; **never `none` at the intent locus** (`floor-intent-gate`/D2) |
+| `intent_locus` | — | `true` on the intent-gate slugs (`inv-intent-locus`, `floor-intent-gate`) — marks entries a profile may never set to `C2: none` (§4.5, D2). Default `false`. |
 
-**Completeness is a gate (AC1):** the catalog covers **every** slug in `invariants-v1`. A missing
-slug is a conformance failure, not an omission — the dictionary a profile resolves against must be
-total.
+**Coverage is a gate (AC1) — the *assessable* invariants, not the dials.** The catalog covers
+every **assessable** invariant slug: the A structural set, the B operating set, and the D floors
+(14 slugs — `inv-directional-flow` … `floor-intent-gate`). It **excludes the two C dials**
+(`dial-enforcement-strength`, `dial-gatekeeper`): a project does not "honor a dial implicitly" —
+the dials are the *axes the catalog's entries are set along* (they are columns of a profile, not
+rows of the catalog). A missing *assessable* slug is a conformance failure; the two dials are
+correctly absent. *(Friction, recorded: the first-draft schema said "every slug"; populating the
+catalog surfaced that dials are not gate-like invariants — fixed here before ratification.)*
 
 ## 2. The expression-profile schema (`core-methodology`, one per instance)
 
@@ -120,8 +128,9 @@ Added checks (they compose with `spec-0001`'s existing seven):
 
 1. **Type registry.** `signature-catalog` (`scope: trellis-product`) and `expression-profile`
    (`scope: core-methodology`) are declared types with the required sections below.
-2. **Catalog completeness (AC1).** Every `invariants-v1` slug has a catalog entry; every entry
-   carries all §1 required fields. *FAIL → name the uncovered slug / missing field.*
+2. **Catalog coverage (AC1).** Every *assessable* `invariants-v1` slug (A/B/D — the 14, excluding
+   the two C dials) has a catalog entry carrying all §1 required fields; a superseded slug is
+   covered by its successor. *FAIL → name the uncovered assessable slug / missing field.*
 3. **Profile→catalog resolution (AC2).** Every profile `slug` resolves to a catalog entry — a
    profile gene with no catalog annotation is a **dangling reference** (`spec-0001` check 4). *FAIL
    → name the unresolved slug.*
@@ -189,9 +198,11 @@ one schema serves #22 (minimize), #23/#24 (assess/apply), #28 (diff).
 
 ## Acceptance criteria
 
-- **AC1 — catalog is total.** The catalog covers every `invariants-v1` slug, each with
-  `what/signature/class/mechanizable/default_C1/default_C2`; a missing slug or field fails the
-  check (§4.2).
+- **AC1 — catalog covers every assessable invariant.** The catalog covers every A/B/D slug (14),
+  each with `what/signature/class/mechanizable/default_C1/default_C2`; a missing assessable slug or
+  field fails the check (§4.2). The two C dials are excluded by design (they are the axes, not
+  entries); a superseded slug (`inv-self-improvement` → `inv-graph-maintenance`) is covered by its
+  successor, not a separate entry.
 - **AC2 — profiles resolve.** Every profile gene references a catalog slug; an unresolved slug is a
   named dangling reference (§4.3).
 - **AC3 — no silent "honored".** Every `active + honored-implicitly` entry carries a `confidence`
