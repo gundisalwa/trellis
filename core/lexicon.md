@@ -16,9 +16,17 @@ scope: trellis-product
 > uses in current-truth/product artifacts, its **lens synonyms**, a one-line definition, and where it is
 > authoritative. Policy + type introduced by `decision-0017`.
 >
-> **Store, don't flatten (`decision-0017`).** Research notes keep their lens vocabulary — that is their
-> analytical value. Current-truth/product artifacts (invariants, catalog, profile, specs, `CLAUDE.md`)
-> use the **canonical** column and link here.
+> **Three registers that nest (`decision-0017`).** *The plant on the trellis expresses its genes, and
+> its genes are its invariants* — the three vocabularies are layers, not rivals:
+> - **garden** = identity/relationship (Trellis, host-as-plant, the delivery dial) — the product's face;
+> - **gene** = mechanism + **official teaching register** (expression profile, active/latent genes,
+>   catalog = genome annotation) — how the machinery is *conveyed* (gene expression reads easier than
+>   "invariant"); promoted from "internal only" (`research-0008`);
+> - **invariant** = the precise substrate — **canonical for what is enforced.**
+> **Caveat:** gene does *not* go fully canonical — the analogy breaks at D2 (`research-0005` §Limits:
+> "no intent locus in a genome"), and the naming guardrail (`brief-§4`) forbids borrowing its authority;
+> gene-talk stays *our-synthesis teaching metaphor*, never a provenance claim. Research notes keep their
+> lens vocabulary; current-truth/product artifacts use the **canonical** column and link here.
 
 > **Status `draft` — awaiting ratification (D2).** The agent authored this; the builder does not
 > self-ratify (B3). The one term still *under decision* is the pull-end dial name (see the ⚑ row and
@@ -43,26 +51,33 @@ scope: trellis-product
 | **overlay** (Model 1) | epigenetic overlay | (external supervision) | — | apply Trellis *without editing the host's files* (augment-never-clobber) · `research-0005/0006` |
 | **morph** (Model 2) | genome edit / genetic assimilation | modify the plant | — | apply Trellis by *rewriting the host's methodology* (baked in) · `research-0006` §R6 |
 | **supervisor** (dial end) | — | — | supervisor (push/installed/live) | delivery relationship: Trellis installed and running live · `research-0007` |
-| ⚑ **cutting** *(proposed — was "consultant")* | (a taken cutting) | — | consultant (pull/referenced) | delivery relationship: Trellis *referenced* from outside, its shape rooted in the host, grows independently, no runtime tie · `research-0007` |
+| ⚑ **advisor** *(proposed — was "consultant")* | — | — | consultant (pull/referenced) | delivery relationship: Trellis *consulted* from outside, no live authority; the host internalizes its guidance and acts on its own — no runtime tie · `research-0007` |
 
-*⚑ = the one term still under decision (`decision-0017`). Until ratified, the corpus still says
-"consultant"; this lexicon records `consultant → cutting` as the proposed canonical.*
+*⚑ = the one term still awaiting the maintainer's confirm (`decision-0017`). Until then the corpus
+still says "consultant"; this lexicon records `consultant → advisor` as the proposed canonical.
+`advisor` is the role-noun parallel to `supervisor`; the garden-consistent alternative is `frame` /
+`cutting` (both object-nouns, retiring "supervisor").*
 
 ## Notes on two overloads (why the mapping is what it is)
 
 - **`supervisor` appears twice** (DES role · delivery dial end) *deliberately* — the live-delivery
   supervisor **is** Trellis performing the DES supervisor role. One metaphor, two zoom levels; kept as
   one word (`decision-0017`).
-- **relationship ≠ application-model.** The *delivery relationship* (supervisor ↔ cutting: is Trellis
-  present?) is distinct from the *application model* (overlay ↔ morph: does Trellis edit the host?).
-  They correlate (a cutting tends toward morph) but are separate axes — do not conflate them
-  (`research-0007` "the axes converge only at the +mechanism rung").
+- **relationship ≠ application-model.** The *delivery relationship* (supervisor ↔ advisor: is Trellis
+  present and running?) is distinct from the *application model* (overlay ↔ morph: does Trellis edit
+  the host?). They correlate (an advisor tends toward morph) but are separate axes — do not conflate
+  them (`research-0007` "the axes converge only at the +mechanism rung").
+- **the dial is a role-noun pair, on purpose.** `supervisor` / `advisor` are matched agent-role nouns
+  because the two ends are asymmetric — the live end is an active agent, the pull end is a consulted
+  source. The garden/gene metaphors live in the identity + expression registers, not on this technical
+  axis (`decision-0017`).
 
 ## Open questions
 
-- **The pull-end dial name** — `cutting` (proposed) vs `reference` (clear but collides with
-  `inv-reference-relationship`/B8) vs `resident`/`reference` (renames both ends, fully de-overloads
-  "supervisor") vs keep `consultant`. Owed to `decision-0017` ratification (D2).
+- **The pull-end dial name (awaiting confirm)** — `advisor` (**recommended**: role-noun parallel to
+  `supervisor`) vs `frame`/`cutting` (garden-consistent, retires "supervisor") vs `reference` (collides
+  with `inv-reference-relationship`/B8) vs keep `consultant`. Owed to `decision-0017` (D2); the rename
+  sweep waits on it.
 - **Payload-depth (Axis B)** terms (`expressed-only / +latent / +mechanism`) are not yet
   canonicalized — parked until they prove confusing.
 - **Versioning:** is one revise-in-place `lexicon-v1` right, or should canonical-term changes be
