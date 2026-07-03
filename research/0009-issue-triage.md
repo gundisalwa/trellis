@@ -1,7 +1,8 @@
 ---
 id: research-0009
 type: research-note
-status: draft
+status: ratified
+ratified: 2026-07-03
 depends_on: [invariants-v1, research-0005, research-0006, research-0007, spec-0001, decision-0009]
 owner: gundi
 ---
@@ -11,7 +12,7 @@ owner: gundi
 > **Method & honesty.** The open issues #22–#28 came from a *dry run* — pointing agents on other
 > projects at Trellis to see what would help. This note groups them into five clusters and gives each
 > a **problem + solution direction + next action**, using the vocabulary the research built
-> (expression profile, signature catalog, supervisor/consultant, the two delivery axes). `draft`; the
+> (expression profile, signature catalog, supervisor/consultant, the two delivery axes). Ratified 2026-07-03 — accepting the *triage*, not a commitment to each proposed build. The
 > solution directions are `inferred` design proposals, not decisions. Briefs are deliberately light —
 > the point is to enable iteration, not to pre-decide builds.
 

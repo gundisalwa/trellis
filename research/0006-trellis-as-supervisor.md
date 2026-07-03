@@ -1,7 +1,8 @@
 ---
 id: research-0006
 type: research-note
-status: draft
+status: ratified
+ratified: 2026-07-03
 depends_on: [invariants-v1, decision-0002, decision-0008, decision-0009, decision-0012, research-0005]
 owner: gundi
 ---
