@@ -13,8 +13,11 @@ whole point.
 from whoever produced the artifacts. Then check the target corpus.
 
 **Default corpus:** `decisions/`, `specs/`, `research/`, `core/invariants/`, `core/rubrics/`,
-`core/catalog/`, `profiles/`. **Exclude** `core/fixtures/` (deliberately-broken test data) unless
-explicitly asked to run the positive control against it.
+`core/catalog/`, `core/lexicon.md`, `profiles/`. **Exclude** `core/fixtures/` (deliberately-broken
+test data) unless explicitly asked to run the positive control against it.
+
+Recognized typed artifacts: `signature-catalog`, `expression-profile` (`spec-0002`), `lexicon`
+(`decision-0017`, sections: Canonical terms + Open questions).
 
 ## The checks
 

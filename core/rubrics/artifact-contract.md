@@ -16,7 +16,8 @@ scope: trellis-product
 > passes.**
 >
 > **Corpus:** `decisions/`, `specs/`, `research/`, `core/invariants/`, `core/rubrics/`,
-> **`core/catalog/`**, **`profiles/`**. Exclude `core/fixtures/` unless running the positive control.
+> **`core/catalog/`**, **`core/lexicon.md`**, **`profiles/`**. Exclude `core/fixtures/` unless running
+> the positive control.
 
 ## Checks
 
@@ -28,7 +29,8 @@ scope: trellis-product
    (`core-methodology` / `trellis-product` / `trellis-meta`) and a rubric *(scope/rubric may be
    declared centrally, not per-file)*; `status ∈ {draft, ratified, superseded}` (v0 — no
    `approved` yet, `spec-0001` §2). Recognized typed artifacts include `signature-catalog`
-   (`trellis-product`) and `expression-profile` (`core-methodology`) — `spec-0002`.
+   (`trellis-product`), `expression-profile` (`core-methodology`) — `spec-0002` — and `lexicon`
+   (`trellis-product`) — `decision-0017`.
 3. **`id` unique** across the corpus. *FAIL → name the colliding files.*
 4. **`depends_on` resolves.** Each entry is an existing artifact `id`, a declared external-ref
    prefix (v0 allowlist: `brief-§…`), **or** a **retired id** in the invariant-set's Identifiers
@@ -39,7 +41,7 @@ scope: trellis-product
    Acceptance criteria + Open questions; `decision` → Context/Decision/Consequences;
    `research-note` → Open questions (+ sources); `signature-catalog` → Entries + Acceptance
    criteria + Open questions; `expression-profile` → Delivery + Profile + Assessment notes +
-   Open questions; `feedback` → exempt. *FAIL → name the missing section.*
+   Open questions; `lexicon` → Canonical terms + Open questions; `feedback` → exempt. *FAIL → name the missing section.*
 7. **Supersede integrity.** A `superseded` artifact carries `superseded_by`; **revise-in-place**
    docs (specs, invariants, research, rubrics) re-point to the successor. *Exemption (B4): an
    **append-only** `decision` may keep a dependency on the version current at its ratification
