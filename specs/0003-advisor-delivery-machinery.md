@@ -1,0 +1,113 @@
+---
+id: spec-0003
+type: spec
+status: draft
+depends_on: [spec-0001, spec-0002, signature-catalog-v1, decision-0010, decision-0012, decision-0019, invariants-v1]
+owner: gundi
+rubric: spec-quality
+---
+
+# Spec 0003 — The v0 delivery machinery: advisor mode as a Claude Code plugin
+
+> **The first real machinery.** Everything so far is intent + a checkable rule-set; this is the slice
+> that puts Trellis *into a host project*. `decision-0019` fixed **advisor mode via a host-invoked CLI**
+> as the v0 on-ramp; `decision-0012` fixed **v0 delivery = a self-hostable Claude-Code plugin**;
+> `decision-0010` fixed **no runtime — it ships as instructions.** This spec assembles those into a
+> concrete plugin + flow, and executes the **activation/wiring contract** named-but-deferred in
+> `spec-0001` §5.
+
+## Purpose
+
+Specify the smallest thing that lets a developer point their coding agents at Trellis and get value:
+**onboard → assess → a ratified expression profile the host's agents consult.** No new runtime — every
+part is a **skill, a sub-agent, or a reference doc** (`decision-0010`). Draft; ratified at merge
+(`decision-0022`).
+
+## Scope
+
+**In scope (v0 advisor):** the plugin's shape (skills, the **Assess** sub-agent, the bundled
+invariants + catalog as reference); the advisor flow (onboard with a starting posture, Assess → a draft
+profile, human ratifies, agents consult); the **activation/wiring** contract (compose onto the host,
+augment-never-clobber); the onboarding **postures** (A conductor · B author-adapt · seed · Custom).
+
+**Out of scope (later specs):** **supervisor mode** (installed, live gates firing on commit/PR events
+— the paid/heavier tier); **hosted services** (conformance-in-CI, cross-instance analytics); the
+**non-Claude-host CLI** (git-copy always works; a thin cross-host CLI is later). This spec is *pull /
+consult*, not *push / enforce*.
+
+## 1. Delivery form — a Claude-Code plugin, no runtime (`decision-0010/0012`)
+
+v0 ships as a **self-hostable Claude-Code plugin** (a git repo with `marketplace.json`, no Anthropic
+approval — `decision-0012`). It bundles: the **skills** (onboard, assess), the **Assess** and existing
+**conformance-reviewer** sub-agents, and the **invariants + signature catalog** as reference docs. "The
+CLI" the maintainer invokes is **the host's own** (Claude Code) — Trellis adds advisor skills to it;
+there is no separate Trellis binary in the host's critical path. Git copy-in also works (availability
+without activation).
+
+## 2. The advisor flow
+
+1. **Onboard** *(skill)* — the maintainer picks a starting **posture**, which seeds an
+   `expression-profile` (`spec-0002`): **A · conductor** (adopt one framework, strictly — high
+   enforcement), **B · author-adapt** (synthesize/evolve — moderate, self-improvement high), **seed**
+   (grow from scratch — minimal, ratcheting), or **Custom**. These map to `decision-0009`'s three
+   scenarios; the profiles are shipped presets (owed alongside this build).
+2. **Assess** *(read-only sub-agent)* — reads the host project and detects which invariants it already
+   honors **implicitly**, matching each against the catalog's `signature` tells, and drafts an
+   `expression-profile`: per honored gene, `basis: honored-implicitly` + `confidence` + a concrete
+   `evidence` pointer (`spec-0002` evidence floor; **assert-and-verify, never silently "honored"**).
+   **Producer ≠ ratifier:** Assess emits a **draft**.
+3. **Ratify** *(D2)* — the maintainer reviews and ratifies the profile (merge = ratify, `decision-0022`,
+   or an explicit approval). Trellis **suggests, never self-applies** (B3/D2).
+4. **Consult** *(advisor mode)* — the ratified profile + the active invariants + their catalog `why`/
+   examples become the reference the host's agents consult; the profile's dials say *which* invariants
+   at *what* strength. Composed onto the host (below), the host's agents follow them — by reading
+   instructions, no runtime dependency on Trellis.
+
+## 3. Activation / wiring (executes `spec-0001` §5)
+
+- **Composition — augment, never clobber.** Trellis composes onto the host's `CLAUDE.md`/instructions;
+  it never overwrites them, and any change it proposes to host instructions is a **surfaced decision**
+  (D1) the maintainer rules on. Uninstall is clean.
+- **Activation level = the C1 dial, surfaced** (`decision-0008`): *available + referenced* → *skills
+  fire* → *default agent*, chosen by the maintainer at onboarding, **never silently maximal**. The
+  posture (A/B/seed) sets the initial dials.
+- **Model 1 overlay by default** (`research-0005/0006`): set the host's expression profile without
+  editing its files; morph (M2) is not a v0 option.
+
+## 4. No runtime (`decision-0010`)
+
+Every component is agent instructions: **skills** (model-invoked), **sub-agents** (Assess drafts a
+profile; conformance-reviewer checks the corpus), the **catalog/invariants** (reference). No Python/
+Node process sits in the host's critical path. The plugin *may* offer opt-in **hooks** (e.g.
+conformance-on-PR), but that is the *supervisor* posture's wiring — v0 advisor is **consult-only**.
+
+## Acceptance criteria
+
+- **AC1 — a real plugin, no runtime.** Installing it into a Claude-Code host adds the onboard + assess
+  skills and the sub-agents; nothing requires a Trellis runtime process (`decision-0010`).
+- **AC2 — onboarding seeds a profile.** Choosing A / B / seed / Custom produces a starting
+  `expression-profile` conforming to `spec-0002`, with the dials the posture implies.
+- **AC3 — Assess is grounded and honest.** Assess emits a **draft** profile whose every
+  `honored-implicitly` gene carries `confidence` + a real `evidence` tell from the project (iron rule);
+  it never claims a gene honored without evidence, and fails loudly on an unreadable project (D1).
+- **AC4 — augment-not-clobber.** Applying the overlay preserves the host's prior instructions; any
+  change to them is a surfaced decision; uninstall leaves the host as it was.
+- **AC5 — producer ≠ ratifier.** Assess proposes; the human ratifies the profile (D2). Trellis never
+  self-applies a profile to the host.
+- **AC6 — dogfood.** The plugin, run on *this* repo, reproduces (within confidence) the hand-authored
+  `profile-trellis-self` — the round-trip that proves Assess works (`spec-0002` AC7).
+
+## Open questions
+
+- **Skill/command surface** — the exact names + invocation (`/trellis onboard`, `/trellis assess`?),
+  and how much is one skill vs several.
+- **Preset dial precision** — the per-invariant `C1`/`C2` for the A / B / seed profiles (owed with the
+  preset artifacts; `decision-0020` flagged it).
+- **Assess detection, generically** — how the sub-agent reads an arbitrary project (languages, layouts)
+  and matches the catalog `signature` tells; the heuristics live in the catalog (`trellis-product`),
+  not the skill. First real test is the dogfood (AC6), then a genuinely external instance (the N=1 risk).
+- **The consult substrate** — does "compose onto the host" mean a generated `CLAUDE.md` section, a
+  referenced file, or a default agent? Likely the C1 dial chooses; pin it in the build.
+- **Non-Claude hosts** — git-copy works today; a thin cross-host CLI is a later slice.
+- **Supervisor mode** — installed, live gates (hooks on commit/PR), the paid/heavier tier — the next
+  delivery spec, not this one.
