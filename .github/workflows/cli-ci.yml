@@ -1,0 +1,28 @@
+name: cli-ci
+
+# Build + vet + test the Go setup CLI (decision-0023). This is the verification the
+# maintainer's environment relies on — the code is authored where `go` isn't installed,
+# so a green run here is what proves it builds and its tests pass.
+
+on:
+  pull_request:
+    paths: ["cli/**", ".github/workflows/cli-ci.yml"]
+  push:
+    branches: [main]
+    paths: ["cli/**", ".github/workflows/cli-ci.yml"]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: cli
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+          cache: false  # stdlib-only for now; enable when the first dependency lands
+      - run: go build ./...
+      - run: go vet ./...
+      - run: go test ./...
