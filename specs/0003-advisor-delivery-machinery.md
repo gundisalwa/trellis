@@ -1,7 +1,8 @@
 ---
 id: spec-0003
 type: spec
-status: draft
+status: ratified
+ratified: 2026-07-05
 depends_on: [spec-0001, spec-0002, signature-catalog-v1, decision-0010, decision-0012, decision-0019, decision-0023, invariants-v1]
 owner: gundi
 rubric: spec-quality
