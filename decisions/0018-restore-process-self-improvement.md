@@ -1,7 +1,8 @@
 ---
 id: decision-0018
 type: decision
-status: draft
+status: ratified
+ratified: 2026-07-04
 depends_on: [invariants-v1, decision-0009, decision-0014, brief-§5]
 owner: gundi
 date: 2026-07-04
@@ -121,19 +122,30 @@ disposition with examples, but it cannot *guarantee* an agent reliably notices. 
 **target, not a claim**: *"not sure a meta-rule triggers this, but that's the aim."* (Same honesty as
 B3's intent face and its positive-control open question.)
 
-**Placement (the fork — maintainer's call, D2).** Recommended: **keep the B1 umbrella** (graph
-maintenance) and attach SI-1/2/3 as **named, first-class self-improvement invariants under it** — the
-framing is shared with math-quest and is fine; what was missing is the concrete engine. The
-alternative — **un-merge B6** into a standalone self-improvement invariant — is available if the
-"evolve" pillar warrants its own top-level slug. This ADR proposes the former; see Open questions.
+**Placement — DECIDED (2026-07-04): un-merge.** Restore self-improvement as a **first-class operating
+invariant**, not a facet of B1. The deciding reason is a precedent in the set itself: **B3** is already
+a first-class invariant with a *checkable conformance face **and** a weakly-checkable intent face* —
+structurally identical to self-improvement's surfacing floor (SI-1) + proactive-notice disposition. If
+B3 earns its own slot, so does this — which is *also* a whole pillar's engine (invariant 9 / Pillar II
+"evolve"). And burying it as a facet already demonstrated the failure mode: it got treated as *done*
+until the loss was caught. **Kept from the merge's real insight** (so this is a dial, not a clean
+break): graph-maintenance and self-improvement stay documented **neighbors**, and **`inv-prune-bias`
+remains the shared hinge** — retiring stale rules genuinely *is* maintenance, so it can live in B1,
+while the surfacing floor + trigger loop + disposition constitute the standalone invariant. This ADR
+therefore **refines** the B6→B1 merge (corrects an over-prune that lost signal), it does not supersede
+graph-maintenance. Slug: reclaim `inv-self-improvement` or a clearer intent name — a small downstream
+call (see Open questions).
 
 ## Consequences
 
 *(Owed downstream, deferred until this decision ratifies — the invariant revision is the intent gate,
 D2 / `decision-0014`: significant invariant changes are recorded as ADRs, then applied revise-in-place.)*
 
-- **`invariants-v1` revised** — B1 gains the named self-improvement facet + SI-1/2/3 (intent-defined),
-  and the "evolve" framing (Pillar II) is restored in words, not just the prune mechanic.
+- **`invariants-v1` revised (un-merge)** — self-improvement restored as a **first-class operating
+  invariant** (parallel to B3: surfacing floor SI-1 + the proactive-notice intent face), carrying
+  SI-1/2/3 (intent-defined); the `inv-self-improvement` slug is un-superseded via the Identifiers
+  registry (`decision-0013`); graph-maintenance (B1) noted as its neighbor, `inv-prune-bias` the shared
+  hinge; the "evolve" framing (Pillar II) restored in words.
 - **The conformance check learns SI-1 — against the *declared channel*, not a fixed section.** It reads
   the project's chosen surfacing channel (from the profile/config) and checks that a change's
   improvement signals were surfaced *there* — never that a `## Propagation` heading exists. For a
@@ -150,9 +162,8 @@ D2 / `decision-0014`: significant invariant changes are recorded as ADRs, then a
 
 ## Open questions
 
-- **The placement fork (D2):** first-class facets under B1 (recommended) vs. un-merging B6 as its own
-  invariant. Does the "evolve" pillar warrant a top-level slug, or is slug-compatibility with
-  math-quest worth more?
+- ~~**The placement fork (D2).**~~ **Resolved 2026-07-04: un-merge** (first-class invariant, parallel
+  to B3) — see Decision.
 - **How much enforcement machinery is Trellis-core vs. instance-specific?** math-quest wires a
   PR-contract CI check + a `propagation-remediator` dispatcher; the *invariant* (SI-1) is core, but
   the CI wiring is arguably per-instance delivery — draw the line in the backport.
@@ -167,8 +178,8 @@ D2 / `decision-0014`: significant invariant changes are recorded as ADRs, then a
   B3 positive-control open question in `invariants-v1`. The honest answer today: *this is a target we
   may only partly reach with rules.*
 - **`inv-prune-bias` vs. B1's existing prune-bias** — consolidate to one statement, don't double-count.
-- **Does this reopen the B6→B1 merge decision itself?** This ADR *refines* it (restores the concrete
-  engine) rather than superseding it; confirm that's the right relationship at ratification.
+- ~~**Does this reopen the B6→B1 merge?**~~ **Resolved: refines, not supersedes** — it corrects an
+  over-prune (restores the invariant + concrete engine); B1/graph-maintenance stands.
 
 ## Supersedes / superseded by
 
