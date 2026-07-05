@@ -1,0 +1,62 @@
+name: auto-release
+
+# decision-0025: when the shipped surface changes on main, publish a release so
+# releases/latest always reflects main — and therefore matches the landing page,
+# with no one having to remember. Manual v* tags still work via release.yml for a
+# curated minor/major; the next auto-bump continues from the latest tag.
+
+on:
+  push:
+    branches: [main]
+    paths: ["cli/**", "install.sh", "plugins/**"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: auto-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+          cache: false
+      - name: Compute next patch version
+        id: ver
+        run: |
+          set -eu
+          latest="$(git tag --list 'v*' --sort=-v:refname | head -1)"
+          latest="${latest:-v0.0.0}"
+          v="${latest#v}"
+          major="${v%%.*}"; rest="${v#*.}"; minor="${rest%%.*}"; patch="${rest##*.}"
+          next="v${major}.${minor}.$((patch + 1))"
+          echo "next=$next" >> "$GITHUB_OUTPUT"
+          echo "bumping $latest -> $next"
+      - name: Build binaries
+        working-directory: cli
+        run: |
+          set -eu
+          mkdir -p dist
+          for os in darwin linux; do
+            for arch in amd64 arm64; do
+              GOOS="$os" GOARCH="$arch" go build \
+                -ldflags "-X main.version=${{ steps.ver.outputs.next }}" \
+                -o "dist/trellis_${os}_${arch}" .
+            done
+          done
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ steps.ver.outputs.next }}" cli/dist/trellis_* \
+            --target "$GITHUB_SHA" \
+            --title "${{ steps.ver.outputs.next }}" \
+            --generate-notes \
+            --latest

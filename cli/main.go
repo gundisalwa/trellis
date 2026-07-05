@@ -37,15 +37,28 @@ func run(in io.Reader, out io.Writer, args []string) error {
 	case "help", "-h", "--help":
 		usage(out)
 		return nil
-	case "setup":
-		return setup(in, out, args[1:])
-	case "remove":
-		return remove(in, out, args[1:])
-	case "uninstall":
-		return uninstall(in, out, args[1:])
-	default:
-		return fmt.Errorf("unknown command %q (try `trellis help`)", args[0])
 	}
+	if h, ok := commands[args[0]]; ok {
+		return h(in, out, args[1:])
+	}
+	return fmt.Errorf("unknown command %q (try `trellis help`)", args[0])
+}
+
+// commands is the canonical set of trellis subcommands — the single source the
+// dispatch, the usage text, and the docs-consistency check all read (decision-0025).
+var commands = map[string]func(in io.Reader, out io.Writer, args []string) error{
+	"setup":     setup,
+	"remove":    remove,
+	"uninstall": uninstall,
+}
+
+// commandNames returns every valid command word, including the built-in version/help.
+func commandNames() map[string]bool {
+	names := map[string]bool{"version": true, "help": true}
+	for k := range commands {
+		names[k] = true
+	}
+	return names
 }
 
 func usage(w io.Writer) {
