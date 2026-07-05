@@ -64,11 +64,8 @@ func setup(in io.Reader, w io.Writer, args []string) error {
 			return fmt.Errorf("mode m2 needs a harness to drive the rewrite — v0 rides Claude Code; install the `claude` CLI and re-run, or use --mode m1 (looked in %q)", *dir)
 		}
 		fmt.Fprintf(w, "detected harness: %s (%s)\n\n", h.Name, h.Detail)
-	} else {
-		fmt.Fprintf(w, "mode m1 → deterministic overlay; no harness needed\n")
-		if target, err = chooseTarget(in, sc, w, *targetKey, *dir); err != nil {
-			return err
-		}
+	} else if target, err = chooseTarget(in, sc, w, *targetKey, *dir); err != nil {
+		return err
 	}
 
 	pKey, err := ask(in, sc, w, "How strict should Trellis be?",
@@ -257,17 +254,22 @@ func ask(in io.Reader, sc *bufio.Scanner, w io.Writer, title, hint, preset strin
 	return ans, nil
 }
 
+// printPlan renders the final summary in the same visual language as the dialogs:
+// a bold header + dim, aligned labels. No trailing "what happens next" line.
 func printPlan(w io.Writer, p Plan) {
-	fmt.Fprintln(w, "setup plan:")
-	if p.Harness.Name != "" {
-		fmt.Fprintf(w, "  harness: %s\n", p.Harness.Name)
-	} else {
-		fmt.Fprintf(w, "  target:  %s (%s overlay)\n", p.Target.Name, importKind(p.Target))
+	pal := paletteFor(w)
+	fmt.Fprintf(w, "\n%s\n\n", pal.b("setup plan"))
+	row := func(label, val string) {
+		fmt.Fprintf(w, "  %s %s\n", pal.d(padTo(label, 8)), val)
 	}
-	fmt.Fprintf(w, "  profile: %s — %s\n", p.Profile.Name, p.Profile.Description)
-	fmt.Fprintf(w, "  mode:    %s — %s\n", p.Mode.Name, p.Mode.Description)
-	fmt.Fprintf(w, "  model:   %s\n", p.Model.Name)
-	fmt.Fprintln(w, "\nnext: apply — M1 composes deterministically; M2 rewrites on a branch with the model (upcoming step)")
+	if p.Harness.Name != "" {
+		row("harness", p.Harness.Name)
+	} else {
+		row("target", p.Target.Name+"  "+pal.d(importKind(p.Target)))
+	}
+	row("profile", p.Profile.Name)
+	row("mode", p.Mode.Name)
+	row("model", p.Model.Name)
 }
 
 func contains(ss []string, s string) bool {

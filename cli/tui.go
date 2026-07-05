@@ -42,6 +42,15 @@ func wrap(code, s, reset string) string {
 	return code + s + reset
 }
 
+// paletteFor returns a live palette when w is a terminal (so non-selector output like
+// the plan summary is styled consistently), else an empty one (tests, pipes, NO_COLOR).
+func paletteFor(w io.Writer) palette {
+	if f, ok := w.(*os.File); ok && term.IsTerminal(int(f.Fd())) {
+		return newPalette()
+	}
+	return palette{}
+}
+
 // ttyPair returns the concrete files when BOTH in and out are terminals, so the
 // selector can render in place. Otherwise ok=false and the caller falls back to line
 // input — every test, pipe, and CI run, so the deterministic path is preserved.
@@ -91,8 +100,8 @@ func selectInteractive(in, out *os.File, title, hint string, opts []option, def 
 	defer term.Restore(int(in.Fd()), old)
 
 	footer := p.d("↑↓ move   ⏎ select   q quit")
-	// title + [hint] + blank + options + blank + footer
-	printed := 3 + len(opts)
+	// lines drawn: title + [hint] + blank + options + blank + footer
+	printed := 4 + len(opts)
 	if hint != "" {
 		printed++
 	}
@@ -144,7 +153,7 @@ func selectInteractive(in, out *os.File, title, hint string, opts []option, def 
 		switch {
 		case n == 1 && (b[0] == '\r' || b[0] == '\n'):
 			fmt.Fprintf(out, "\x1b[%dA\r\x1b[J", printed) // collapse to one confirmed line
-			fmt.Fprintf(out, "%s %s\r\n", p.b(title), p.g(opts[cur].name))
+			fmt.Fprintf(out, "%s %s\r\n\r\n", p.b(title), p.g(opts[cur].name)) // + a blank to space answered Qs
 			return opts[cur].key, nil
 		case n == 1 && (b[0] == 3 || b[0] == 'q'): // Ctrl-C / q
 			fmt.Fprint(out, "\r\n")

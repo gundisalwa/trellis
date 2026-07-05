@@ -19,8 +19,8 @@ func TestSetupNoHarnessM1Works(t *testing.T) {
 	if err != nil {
 		t.Fatalf("m1 setup should work with no harness binary present: %v", err)
 	}
-	if !strings.Contains(out, "M1 · alongside") || !strings.Contains(out, "no harness needed") {
-		t.Errorf("expected an m1 plan that needs no harness, got:\n%s", out)
+	if !strings.Contains(out, "M1 · alongside") {
+		t.Errorf("expected an m1 plan (M1 must work with no harness binary), got:\n%s", out)
 	}
 }
 
