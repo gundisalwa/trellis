@@ -45,8 +45,9 @@ is present):**
 8. **Catalog coverage + examples.** A `signature-catalog` covers every **assessable** `invariants-v1`
    slug (A/B/D — the 14, **excluding** the two C dials; a collapsed slug is covered by its successor),
    each with `what`/`why`/`signature`/`honored`/`violated`/`class`/`mechanizable`/`default_C1`/
-   `default_C2`. Flag an uncovered assessable slug, a missing field (incl. a missing `why`/`honored`/
-   `violated`, `decision-0020`), or a stray C-dial entry.
+   `default_C2`, where `honored`/`violated` are **≥2 matched pairs** (`violated[i]`/`honored[i]` share a
+   use-case tag, `decision-0027`). Flag an uncovered assessable slug, a missing field (incl. a missing
+   `why`/`honored`/`violated`, `decision-0020`), an unaligned pair, or a stray C-dial entry.
 9. **Profile → catalog resolution.** Every `expression-profile` gene `slug` resolves to a catalog
    entry; flag a dangling profile reference.
 10. **Evidence floor.** Every `active: true` + `basis: honored-implicitly` profile entry carries

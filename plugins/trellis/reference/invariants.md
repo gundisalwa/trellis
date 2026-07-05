@@ -17,9 +17,10 @@ ratified: 2026-07-04
 
 > **What this is.** The one shipped **dictionary** of Trellis's invariants: per invariant — what it
 > *is*, **why** it earns its place (the goal, agents-first), the observable **signature** by which a
-> project is seen to honor it, **≥2 contrastive `honored` / `violated` cases each — drawn from
-> different layers** (CI / spec / research / code / UI / ops …) so the principle reads as general, not
-> domain-specific — and its **default dials**. Schema + lifecycle: `spec-0002`. Slugs: the
+> project is seen to honor it, **≥2 matched `without → with` pairs** — the same use case shown failing
+> then fixed (`violated[i]` and `honored[i]` are one pair, same layer tag; `decision-0027`), spanning
+> different layers (CI / spec / research / code / ops …) — and its **default dials**. Schema +
+> lifecycle: `spec-0002`. Slugs: the
 > `invariants-v1` registry. **The benefits page derives from the `why` + honored/violated here** — no
 > claim on the page without a rule behind it (`decision-0020`). Consumed by Assess (#23) and tutoring
 > (#27). `trellis-product` scope — one, shipped.
@@ -47,13 +48,12 @@ ratified: 2026-07-04
   - signature: ordered stage folders or a defined pipeline; artifacts carry a stage/`status`; **no
     ratified artifact cites a draft upstream**.
   - honored:
-    - *(spec)* implementation reads an **approved** spec; a ratified doc never depends on a draft.
-    - *(research)* a synthesis note cites only ratified findings, not draft ones still under review.
+    - *(spec)* implementation reads only the **approved** spec; a ratified doc never depends on a draft.
+    - *(research)* a synthesis cites only ratified findings, not drafts still under review.
   - violated:
-    - *(code)* an agent builds against a spec still being edited; it shifts, and the work is now built
-      on a version that no longer exists.
-    - *(UI)* a screen is implemented from a mockup still in review; the mockup changes and the build is
-      silently wrong.
+    - *(spec)* an agent builds against a spec still being edited; it shifts, and the work is built on a
+      version that no longer exists.
+    - *(research)* a decision cites a draft finding that is later refuted — it stood on sand.
   - class: `methodology`  ·  mechanizable: `true`  ·  intent_locus: `false`
   - default_C1: `enforced`  ·  default_C2: `independent-agent`
 
@@ -84,7 +84,7 @@ ratified: 2026-07-04
     - *(research)* a research direction has a named human sponsor who can say "that's not what we're after."
   - violated:
     - *(product)* agents optimize a proxy metric no human owns, and ship the wrong thing efficiently.
-    - *(ops)* an automated system changes behavior with no human accountable for the intent behind it.
+    - *(research)* a research direction runs with no human sponsor and drifts somewhere no one intended.
   - class: `methodology`  ·  mechanizable: `false` (an `owner` field is checkable; *that it is a
     genuine intent locus* is judgment)  ·  **intent_locus: `true`**
   - default_C1: `enforced`  ·  default_C2: `human` (never `none` — D2)
@@ -101,7 +101,7 @@ ratified: 2026-07-04
     - *(data)* a schema is versioned; downstream validates against the **approved** version, not HEAD.
   - violated:
     - *(spec)* nothing is ever "final," so implementation chases a spec that keeps moving under it.
-    - *(design)* a design system has no "released" state, so teams build against inconsistent snapshots.
+    - *(data)* there is no released schema version, so services validate against inconsistent snapshots.
   - class: `methodology`  ·  mechanizable: `true`  ·  intent_locus: `false`
   - default_C1: `enforced`  ·  default_C2: `independent-agent`
 
@@ -116,16 +116,13 @@ ratified: 2026-07-04
   - signature: a `depends_on` graph; supersede/retire records; dependents re-reviewed on upstream
     change; no silent downstream patches; a bias to retire rules over adding.
   - honored:
-    - *(docs)* a repaired ADR re-reviews its specs → plans → code, in turn.
-    - *(code)* a build uncovering a missing architectural decision **creates the ADR** instead of
-      patching around it (backprop).
+    - *(docs)* a repaired decision re-reviews its specs → plans → code, in turn.
     - *(research)* a downstream finding that contradicts an upstream note updates the *note*, not just
-      the finding.
+      the finding (backprop).
   - violated:
     - *(docs)* a decision changes but its dependent specs are never updated — they silently diverge.
-    - *(data)* a schema migration isn't propagated to the docs, so the docs now describe a DB that no
-      longer exists.
-    - *(rules)* a stale lint rule keeps firing long after the pattern it guarded was removed.
+    - *(research)* a finding contradicts an upstream note, but only the finding is recorded — the note
+      stays wrong and agents keep reading it.
   - class: `trellis-design`  ·  mechanizable: `true` (the **flow** facet; forward/backward/prune are
     judgment)  ·  intent_locus: `false`
   - default_C1: `enforced`  ·  default_C2: `independent-agent`
@@ -141,11 +138,9 @@ ratified: 2026-07-04
     - *(CI)* a flaky test recurs → a trigger is filed, the root cause fixed, the trigger retired in the
       same change.
     - *(process)* a repeated review miss becomes a checklist item that rides the PR you already write.
-    - *(research)* a recurring dead-end is recorded so the next inquiry skips it instead of re-walking it.
   - violated:
     - *(CI)* the same pipeline step fails weekly and everyone just re-runs it, forever.
-    - *(process)* a PR raises open questions with no follow-up and they rot, unowned.
-    - *(onboarding)* the same confusion hits every new contributor because no one wrote the lesson down.
+    - *(process)* a PR raises the same open question every time, with no follow-up, and it rots unowned.
   - class: `trellis-design`  ·  mechanizable: `false` (the SI-1 surfacing floor is checkable against the
     declared channel; the proactive-notice disposition is not)  ·  intent_locus: `false`
   - default_C1: `default-on-but-skippable`  ·  default_C2: `human`
@@ -158,10 +153,10 @@ ratified: 2026-07-04
     silent.
   - honored:
     - *(CI)* a conformance check + review fire on every PR; a deliberate skip is *recorded*, not hidden.
-    - *(release)* a promotion gate blocks an artifact that didn't pass the prior stage.
+    - *(release)* a promotion gate blocks anything that didn't pass the prior stage's sign-off.
   - violated:
-    - *(dev)* the review is "optional," so under deadline it silently doesn't happen and a defect ships.
-    - *(spec)* a spec goes straight to implementation with no sign-off, and no record it was skipped.
+    - *(CI)* the review is "optional," so under deadline it silently doesn't happen and a defect ships.
+    - *(release)* an artifact is promoted straight to prod with no gate, and no record the check was skipped.
   - class: `trellis-design`  ·  mechanizable: `true`  ·  intent_locus: `false`
   - default_C1: `default-on-but-skippable`  ·  default_C2: `independent-agent`
 
@@ -177,8 +172,9 @@ ratified: 2026-07-04
       what's wrong — even when inconvenient.
     - *(research)* findings are adversarially verified by a separate pass, not self-certified.
   - violated:
-    - *(code)* the agent that wrote the code decides the code is good.
-    - *(product)* the agent agrees with a flawed plan to please the stakeholder, and it sails through.
+    - *(review)* the agent that wrote the code reviews its own code and decides it's good.
+    - *(research)* an agent certifies its own findings (or agrees with a flawed plan to please you), and
+      it sails through.
   - class: `trellis-design`  ·  mechanizable: `false` (the intent face lives in system prompts, weakly
     checkable)  ·  intent_locus: `false`
   - default_C1: `default-on-but-skippable`  ·  default_C2: `independent-agent`
@@ -190,7 +186,8 @@ ratified: 2026-07-04
     separate from its change log.
   - honored:
     - *(ADR)* decisions are append-only and link their rationale; superseding writes a *new* record.
-    - *(code)* git history + a current-truth doc kept separate from its changelog.
+    - *(infra)* every prod change carries provenance — git history + a current-truth doc — so "why" is
+      always answerable.
   - violated:
     - *(ADR)* a decision is edited in place and its rationale lost; months later it is re-litigated
       from scratch.
@@ -210,8 +207,7 @@ ratified: 2026-07-04
     - *(data)* a query reads a scoped view, not the whole warehouse.
   - violated:
     - *(agent)* an op dumps the entire repo into context, dilutes the signal, and decides on noise.
-    - *(code)* a function reaches into global state instead of its parameters, and breaks when the
-      state moves.
+    - *(data)* a query scans the whole warehouse, drowns in irrelevant rows, and gets slower as it grows.
   - class: `trellis-design`  ·  mechanizable: `false` (is the context *genuinely* bounded? — judgment)
     ·  intent_locus: `false`
   - default_C1: `default-on-but-skippable`  ·  default_C2: `independent-agent`
@@ -227,7 +223,7 @@ ratified: 2026-07-04
     - *(tooling)* a build config with no unused steps; a dependency pulled in only when needed.
   - violated:
     - *(process)* a heavyweight methodology copied wholesale, most steps cargo-culted.
-    - *(code)* a whole framework pulled in to use one function.
+    - *(tooling)* a whole framework pulled in to use one function; the build carries steps no one remembers.
   - class: `trellis-design`  ·  mechanizable: `false` (a disposition)  ·  intent_locus: `false`
   - default_C1: `expressed`  ·  default_C2: `human`
 
@@ -240,9 +236,9 @@ ratified: 2026-07-04
     `/clarify`-like step ahead of implementation.
   - honored:
     - *(spec)* an agent flags a vague requirement and resolves it *before* coding.
-    - *(UI)* a designer confirms an ambiguous interaction before building it.
+    - *(data)* an ambiguous metric definition is confirmed with a human before the dashboard is built.
   - violated:
-    - *(code)* an agent silently picks one reading of a vague spec, builds it, and it's the wrong one.
+    - *(spec)* an agent silently picks one reading of a vague spec, builds it, and it's the wrong one.
     - *(data)* an ambiguous metric definition is guessed, and the dashboard is subtly, confidently wrong.
   - class: `trellis-design`  ·  mechanizable: `false` (behavioral gene)  ·  intent_locus: `false`
   - default_C1: `default-on-but-skippable`  ·  default_C2: `human`
@@ -258,14 +254,13 @@ ratified: 2026-07-04
   - signature: skips/degradations logged and visible; loud-failure on a missing tool/source; no silent
     fallbacks; divergence from a reference captured as a recorded decision.
   - honored:
-    - *(CI)* a skipped gate is logged; a missing tool halts loudly, not silently.
     - *(framework)* "we diverge from Spec Kit here" is a recorded decision, so an agent knows where you
       follow the book and where you don't.
     - *(ops)* a degraded fallback (cache miss, retry, downgrade) is surfaced, not swallowed.
   - violated:
-    - *(code)* an agent silently falls back to a degraded path; you learn when it breaks in prod.
     - *(framework)* the team quietly drifts from the methodology it *claims* to follow.
-    - *(infra)* an error is swallowed and resurfaces later as a mystery outage.
+    - *(ops)* an agent silently falls back to a degraded path or swallows an error — you learn when it
+      breaks in prod.
   - class: `floor`  ·  mechanizable: `false` (a disposition; partially checkable)  ·  intent_locus:
     `false`
   - default_C1: `enforced` (**floor — non-configurable to off**)  ·  default_C2: `human`
@@ -284,7 +279,7 @@ ratified: 2026-07-04
   - violated:
     - *(product)* a fully-automated pipeline ships something *technically* correct that no human
       confirmed was the *right* thing.
-    - *(research)* an agent auto-adopts a conclusion no human sponsored.
+    - *(release)* a deploy auto-promotes a change no human approved, on green tests alone.
   - class: `floor`  ·  mechanizable: `false`  ·  **intent_locus: `true`**
   - default_C1: `enforced` (**floor — non-configurable to off**)  ·  default_C2: `human` (never `none`)
 
@@ -294,13 +289,14 @@ ratified: 2026-07-04
   the two C dials are excluded by design.
 - Every entry carries `what` · **`why`** · `signature` · **`honored`** · **`violated`** · `class` ·
   `mechanizable` · `default_C1` · `default_C2` (+ `intent_locus` where `true`), and `honored`/`violated`
-  each carry **≥2 examples from different layers**. A missing `why` / `honored` / `violated`, or fewer
-  than 2 examples, is a conformance failure (`decision-0020` meta-rule).
+  are **≥2 matched pairs** — `violated[i]` and `honored[i]` share a use case (same layer tag, same
+  order), forming one *without → with* pair (`decision-0027`). A missing `why` / `honored` / `violated`,
+  fewer than 2, or an unaligned pair is a conformance failure (`decision-0020` meta-rule).
 - Every `default_C2` on an `intent_locus: true` entry is **not** `none` (D2).
-- Each `signature` is concrete enough for Assess to point at a real project tell; each `honored`/
-  `violated` example reads as a plain with/without a newcomer would recognize, and the set spans layers
-  (CI / spec / research / code / UI …) so the invariant reads as general (the benefits page renders a
-  subset).
+- Each `signature` is concrete enough for Assess to point at a real project tell; each pair reads as
+  the *same situation broken then fixed* a newcomer would recognize, and the pairs span layers
+  (CI / spec / research / code / ops …) so the invariant reads as general (the benefits page renders
+  these as contrastive cards, `decision-0027`).
 
 ## Open questions
 
