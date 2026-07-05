@@ -56,9 +56,10 @@ scope: trellis-product
    **assessable** `invariants-v1` slug (A/B/D — the 14, **excluding** the two C dials; a collapsed
    slug is covered by its successor). Each entry carries `what` / **`why`** / `signature` /
    **`honored`** / **`violated`** / `class` / `mechanizable` / `default_C1` / `default_C2`, and
-   **`honored`/`violated` each carry ≥2 examples** (`decision-0020`). *FAIL → name the uncovered
-   assessable slug, an entry missing a field (a missing `why`/`honored`/`violated` is a fail), or a
-   `honored`/`violated` with fewer than 2 examples; a present C-dial entry is also a FAIL.*
+   **`honored`/`violated` are ≥2 matched pairs** — `violated[i]` and `honored[i]` share a use-case tag,
+   same order (`decision-0027`). *FAIL → name the uncovered assessable slug, an entry missing a field
+   (a missing `why`/`honored`/`violated` is a fail), a `honored`/`violated` with fewer than 2, or a pair
+   whose honored/violated layer tags don't align; a present C-dial entry is also a FAIL.*
 9. **Profile → catalog resolution.** Every `expression-profile` gene `slug` resolves to a
    `signature-catalog` entry. *FAIL → name the unresolved slug (a dangling profile reference).*
 10. **Evidence floor (assert-and-verify).** In a profile, every `active: true` +
