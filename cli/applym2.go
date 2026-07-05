@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 )
 
 // runMorph is indirected so tests exercise the M2 flow without invoking claude.
@@ -20,13 +21,44 @@ func applyM2(dir string, plan Plan) (string, error) {
 	if !isGitRepo(dir) {
 		return "", fmt.Errorf("M2 rewrites the project on a git branch, but %q is not a git repository — run `git init` first, or choose M1 (alongside)", dir)
 	}
+	base, err := gitHead(dir)
+	if err != nil {
+		return "", err
+	}
 	if err := gitCheckoutNewBranch(dir, morphBranch); err != nil {
+		return "", err
+	}
+	if err := recordRollback(dir, base); err != nil {
 		return "", err
 	}
 	if err := runMorph(dir, plan.Model.Alias, morphPrompt(plan)); err != nil {
 		return "", fmt.Errorf("morph failed on branch %q: %w", morphBranch, err)
 	}
-	return fmt.Sprintf("applied (M2 morph) on branch %q — review the diff and open a PR before merging.\n", morphBranch), nil
+	return fmt.Sprintf("applied (M2 morph) on branch %q — review the diff and open a PR before merging.\n"+
+		"  rollback point recorded: %s (trellis remove will show it).\n", morphBranch, base), nil
+}
+
+// gitHead returns the current commit — the point a morph rolls back to.
+func gitHead(dir string) (string, error) {
+	out, err := exec.Command("git", "-C", dir, "rev-parse", "HEAD").Output()
+	if err != nil {
+		return "", fmt.Errorf("reading HEAD: %w", err)
+	}
+	return strings.TrimSpace(string(out)), nil
+}
+
+// recordRollback saves the pre-morph commit so `trellis remove` can point the user
+// at it: a .trellis/rollback note (the SHA) plus a git tag that survives a reset.
+func recordRollback(dir, base string) error {
+	tdir := filepath.Join(dir, ".trellis")
+	if err := os.MkdirAll(tdir, 0o755); err != nil {
+		return fmt.Errorf("creating .trellis/: %w", err)
+	}
+	if err := os.WriteFile(filepath.Join(tdir, "rollback"), []byte(base+"\n"), 0o644); err != nil {
+		return fmt.Errorf("writing rollback marker: %w", err)
+	}
+	_ = exec.Command("git", "-C", dir, "tag", "-f", "trellis-pre-morph", base).Run()
+	return nil
 }
 
 func isGitRepo(dir string) bool {
