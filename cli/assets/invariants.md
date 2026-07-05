@@ -119,8 +119,10 @@ ratified: 2026-07-04
   - why: the knowledge base **stays coherent for the agents reading it**, and a discovery deep in the
     code **repairs the decision that should have known it** (backprop) — which happens more than people
     admit.
-  - signature: a `depends_on` graph; supersede/retire records; dependents re-reviewed on upstream
-    change; no silent downstream patches; a bias to retire rules over adding.
+  - signature: a `depends_on` graph — better, **forward-edges too** (a source names what derives from
+    it, so a change surfaces its dependents; `decision-0028`); supersede/retire records; dependents
+    re-reviewed on upstream change; no silent downstream patches; a **sync guard per source→derivative
+    pair**; a bias to retire rules over adding.
   - honored:
     - *(docs)* a repaired decision re-reviews its specs → plans → code, in turn.
     - *(research)* a downstream finding that contradicts an upstream note updates the *note*, not just
