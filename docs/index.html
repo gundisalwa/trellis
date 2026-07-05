@@ -156,6 +156,20 @@
   footer .wrap { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center; color: var(--muted); font-size: 14px; }
   footer a { color: var(--muted); }
 
+  /* climbing plant — grows up the right of the hero */
+  .plant { position: absolute; right: clamp(6px, 5vw, 90px); bottom: -1px; height: min(86%, 540px); width: auto; pointer-events: none; z-index: 1; }
+  @media (max-width: 960px) { .plant { opacity: 0.18; right: -24px; } }
+  @media (max-width: 620px) { .plant { display: none; } }
+  .plant .stem { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 2.9s ease forwards 0.15s; }
+  .plant .leaf { opacity: 0; transform: scale(0); transform-box: fill-box; transform-origin: left center; animation: unfurl 0.6s cubic-bezier(0.2,0.8,0.3,1.25) forwards var(--d); }
+  .plant .bud { opacity: 0; transform: scale(0); transform-box: fill-box; transform-origin: center bottom; animation: unfurl 0.8s cubic-bezier(0.2,0.8,0.3,1.3) forwards 2.7s; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  @keyframes unfurl { to { opacity: 1; transform: scale(1); } }
+  @media (prefers-reduced-motion: reduce) {
+    .plant .stem { animation: none; stroke-dashoffset: 0; }
+    .plant .leaf, .plant .bud { animation: none; opacity: 1; transform: scale(1); }
+  }
+
   .footprint { margin-top: 40px; }
   .fp-label { color: var(--muted); font-size: 0.95rem; margin: 0 0 12px; }
   .fp-code {
@@ -184,8 +198,8 @@
         Trellis
       </div>
       <nav>
-        <a href="#what">What</a>
         <a href="#how">How</a>
+        <a href="invariants.html">Invariants</a>
         <a href="#pricing">Pricing</a>
         <a href="https://github.com/gundisalwa/trellis">GitHub</a>
         <button class="toggle" id="themeToggle" aria-label="Toggle color theme">theme</button>
@@ -213,10 +227,33 @@
       </div>
 
       <div class="cta">
-        <a class="btn btn-primary" href="https://github.com/gundisalwa/trellis">Get started</a>
+        <a class="btn btn-primary" href="invariants.html">Explore the invariants →</a>
         <a class="btn btn-ghost" href="https://github.com/gundisalwa/trellis">View on GitHub →</a>
       </div>
     </div>
+
+    <svg class="plant" viewBox="0 0 200 560" fill="none" aria-hidden="true" preserveAspectRatio="xMidYMax meet">
+      <defs>
+        <g id="tl-leaf">
+          <path d="M0 0 C 14 -16 40 -20 58 -7 C 44 5 18 9 0 0 Z" fill="var(--accent)"/>
+          <path d="M6 -1 C 22 -7 40 -9 52 -8" stroke="#06110b" stroke-opacity=".22" stroke-width="1.4" fill="none"/>
+        </g>
+      </defs>
+      <path class="stem" pathLength="1"
+        d="M100 558 C 86 500 116 470 98 410 C 82 356 112 320 96 258 C 84 208 110 172 98 112 C 92 78 100 56 96 24"
+        stroke="var(--accent)" stroke-width="3.2" stroke-linecap="round"/>
+      <g transform="translate(103,486) rotate(-30)"><use href="#tl-leaf" class="leaf" style="--d:.7s"/></g>
+      <g transform="translate(92,430) scale(-1,1) rotate(-26)"><use href="#tl-leaf" class="leaf" style="--d:1s"/></g>
+      <g transform="translate(101,372) rotate(-24)"><use href="#tl-leaf" class="leaf" style="--d:1.3s"/></g>
+      <g transform="translate(90,310) scale(-1,1) rotate(-26)"><use href="#tl-leaf" class="leaf" style="--d:1.6s"/></g>
+      <g transform="translate(101,248) rotate(-26)"><use href="#tl-leaf" class="leaf" style="--d:1.9s"/></g>
+      <g transform="translate(92,192) scale(-1,1) rotate(-30)"><use href="#tl-leaf" class="leaf" style="--d:2.2s"/></g>
+      <g transform="translate(99,140) rotate(-32)"><use href="#tl-leaf" class="leaf" style="--d:2.45s"/></g>
+      <g class="bud" transform="translate(96,24)">
+        <circle cx="0" cy="0" r="7.5" fill="var(--accent)"/>
+        <circle cx="0" cy="-2.5" r="3.2" fill="#ffffff" fill-opacity=".4"/>
+      </g>
+    </svg>
   </div>
 
   <section id="what">
@@ -315,6 +352,7 @@
           <p>Gatekeepers are whatever your project already declares — detected and respected, not imposed. Trellis enforces the invariants and gets out of the way of your methodology.</p>
         </div>
       </div>
+      <p style="margin-top:28px"><a class="btn btn-ghost" href="invariants.html">See all fourteen, with why + examples →</a></p>
     </div>
   </section>
 

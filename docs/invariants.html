@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The invariants — Trellis</title>
+<meta name="description" content="The fourteen Trellis invariants, each with why it earns its place and a with/without example — the catalog, made readable." />
+<style>
+  :root {
+    --bg: #f5f7f4; --surface: #ffffff; --text: #16201b; --muted: #5a6b62;
+    --accent: #1f9d68; --accent-ink: #0c5d3c; --line: #e0e7e1;
+    --with-bg: #eaf6f0; --with-line: #b7e0cc; --with-ink: #0c5d3c;
+    --without-bg: #f7ece9; --without-line: #e6c3ba; --without-ink: #a23f2c;
+    --chip: #eef2ee; --chip-ink: #55665d;
+    --maxw: 1000px;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1411; --surface: #131c18; --text: #e2eae5; --muted: #91a59b;
+      --accent: #4ccb90; --accent-ink: #9fe9c4; --line: #223029;
+      --with-bg: #12231b; --with-line: #2c5340; --with-ink: #7fdcae;
+      --without-bg: #241713; --without-line: #543229; --without-ink: #e79b86;
+      --chip: #1a251f; --chip-ink: #93a89d;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #f5f7f4; --surface: #ffffff; --text: #16201b; --muted: #5a6b62;
+    --accent: #1f9d68; --accent-ink: #0c5d3c; --line: #e0e7e1;
+    --with-bg: #eaf6f0; --with-line: #b7e0cc; --with-ink: #0c5d3c;
+    --without-bg: #f7ece9; --without-line: #e6c3ba; --without-ink: #a23f2c;
+    --chip: #eef2ee; --chip-ink: #55665d;
+  }
+  :root[data-theme="dark"] {
+    --bg: #0d1411; --surface: #131c18; --text: #e2eae5; --muted: #91a59b;
+    --accent: #4ccb90; --accent-ink: #9fe9c4; --line: #223029;
+    --with-bg: #12231b; --with-line: #2c5340; --with-ink: #7fdcae;
+    --without-bg: #241713; --without-line: #543229; --without-ink: #e79b86;
+    --chip: #1a251f; --chip-ink: #93a89d;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans); line-height: 1.6; font-size: 16.5px; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+  a { color: var(--accent-ink); }
+  h1, h2, h3 { line-height: 1.14; letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
+  .eyebrow { font-family: var(--mono); font-size: 12.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent-ink); }
+  .muted { color: var(--muted); }
+
+  header.bar { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  .bar .wrap { display: flex; align-items: center; justify-content: space-between; height: 58px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 650; text-decoration: none; color: var(--text); }
+  .brand .mark { width: 20px; height: 20px; }
+  .bar nav { display: flex; align-items: center; gap: 20px; font-size: 15px; }
+  .bar nav a { color: var(--text); text-decoration: none; }
+  .bar nav a:hover { color: var(--accent-ink); }
+  .toggle { font-family: var(--mono); font-size: 12px; cursor: pointer; background: transparent; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 5px 11px; }
+  .toggle:hover { color: var(--text); border-color: var(--accent); }
+
+  .head { padding: 64px 0 34px; border-bottom: 1px solid var(--line); }
+  .head h1 { font-size: clamp(2rem, 5vw, 3.1rem); font-weight: 700; margin-top: 14px; max-width: 20ch; }
+  .head .lede { color: var(--muted); font-size: 1.1rem; max-width: 62ch; margin-top: 18px; }
+  .head .legend { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-top: 24px; font-size: 14px; }
+  .head .legend span { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); }
+  .swatch { width: 12px; height: 12px; border-radius: 3px; }
+  .sw-with { background: var(--accent); }
+  .sw-without { background: #c0553f; }
+
+  .group { padding: 50px 0 8px; }
+  .group h2 { font-size: 1.5rem; display: flex; align-items: baseline; gap: 12px; }
+  .group h2 .g-code { font-family: var(--mono); font-size: 0.85rem; color: var(--accent-ink); letter-spacing: 0.1em; }
+  .group > .wrap > p { color: var(--muted); margin: 10px 0 0; max-width: 62ch; }
+
+  .cards { display: grid; gap: 18px; padding: 26px 0 8px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 24px 24px 22px; }
+  .card-top { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .code { font-family: var(--mono); font-size: 12px; font-weight: 600; letter-spacing: 0.06em; color: #06110b; background: var(--accent); border-radius: 6px; padding: 3px 8px; }
+  .name { font-size: 1.3rem; font-weight: 650; letter-spacing: -0.015em; }
+  .what { color: var(--muted); margin: 12px 0 0; font-size: 0.98rem; }
+  .why { margin: 16px 0 0; padding-left: 16px; border-left: 3px solid var(--accent); font-size: 1.05rem; }
+  .why b { color: var(--accent-ink); }
+
+  .wo { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 20px; }
+  @media (max-width: 720px) { .wo { grid-template-columns: 1fr; } }
+  .pane { border-radius: 12px; padding: 15px 16px; border: 1px solid; }
+  .pane.with { background: var(--with-bg); border-color: var(--with-line); }
+  .pane.without { background: var(--without-bg); border-color: var(--without-line); }
+  .pane .tag { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+  .pane.with .tag { color: var(--with-ink); }
+  .pane.without .tag { color: var(--without-ink); }
+  .ex { margin-top: 11px; font-size: 0.92rem; }
+  .ex:first-of-type { margin-top: 12px; }
+  .layer { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--chip-ink); background: var(--chip); border-radius: 5px; padding: 1px 6px; margin-right: 7px; vertical-align: 1px; }
+
+  .dials { margin-top: 16px; font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
+  .dials b { color: var(--text); font-weight: 600; }
+
+  footer { padding: 48px 0 64px; border-top: 1px solid var(--line); margin-top: 40px; color: var(--muted); font-size: 14px; }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+</style>
+</head>
+<body>
+  <header class="bar">
+    <div class="wrap">
+      <a class="brand" href="index.html">
+        <svg class="mark" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 21V5M12 21V3M20 21V5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" style="color:var(--accent)"/>
+          <path d="M2 9h20M2 15h20" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" style="color:var(--accent);opacity:.55"/>
+        </svg>
+        Trellis
+      </a>
+      <nav>
+        <a href="index.html">← Landing</a>
+        <a href="https://github.com/gundisalwa/trellis">GitHub</a>
+        <button class="toggle" id="themeToggle" aria-label="Toggle color theme">theme</button>
+      </nav>
+    </div>
+  </header>
+
+  <div class="head">
+    <div class="wrap">
+      <p class="eyebrow">The catalog, made readable</p>
+      <h1>Fourteen invariants. Why each earns its place.</h1>
+      <p class="lede">These are the load-bearing properties Trellis keeps true no matter how fast your agents move. For each: what it is, <strong>why</strong> it matters, and the same situation <em>with</em> it and <em>without</em>. Everything else about your process, Trellis leaves alone.</p>
+      <div class="legend">
+        <span><i class="swatch sw-with"></i> with the invariant</span>
+        <span><i class="swatch sw-without"></i> without it</span>
+        <span class="muted">Each example is tagged by the layer it shows up in.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- A -->
+  <div class="group"><div class="wrap">
+    <h2><span class="g-code">A</span> Structural gate</h2>
+    <p>A four-point admission check: does the process even have the shape to be governed? If it lacks one, Trellis says so loudly.</p>
+  </div></div>
+  <div class="wrap"><div class="cards">
+
+    <div class="card">
+      <div class="card-top"><span class="code">A1</span><span class="name">Directional flow</span></div>
+      <p class="what">One-way stages of decreasing ambiguity (research → decisions → contracts → implementation → validation); downstream never consumes a draft.</p>
+      <p class="why"><b>Why:</b> agents always build on <b>settled</b> ground — ambiguity only decreases, so no one codes against a spec that is still moving.</p>
+      <div class="wo">
+        <div class="pane with"><span class="tag">With</span>
+          <p class="ex"><span class="layer">spec</span>implementation reads an approved spec; a ratified doc never depends on a draft.</p>
+          <p class="ex"><span class="layer">research</span>a synthesis note cites only ratified findings, not drafts still under review.</p>
+        </div>
+        <div class="pane without"><span class="tag">Without</span>
+          <p class="ex"><span class="layer">code</span>an agent builds against a spec still being edited; it shifts, and the work is built on a version that no longer exists.</p>
+          <p class="ex"><span class="layer">ui</span>a screen is built from a mockup still in review; the mockup changes and the build is silently wrong.</p>
+        </div>
+      </div>
+      <p class="dials"><b>default:</b> enforced · independent-agent</p>
+    </div>
+
+    <div class="card">
+      <div class="card-top"><span class="code">A2</span><span class="name">Handover points</span></div>
+      <p class="what">Defined transitions between stages, each a place a gate can attach. (A1 is which way work moves; this is that it moves in steps.)</p>
+      <p class="why"><b>Why:</b> development moves in <b>discrete</b> steps with boundaries, not one fluid blur — the seams are where work can be stopped, inspected, and handed on.</p>
+      <div class="wo">
+        <div class="pane with"><span class="tag">With</span>
+          <p class="ex"><span class="layer">dev</span>a plan is "done," a spec "approved," a change "ready" — defined seams you can pause at.</p>
+          <p class="ex"><span class="layer">ci</span>each pipeline stage is a gate a check can attach to (lint → test → build → deploy).</p>
+        </div>
+        <div class="pane without"><span class="tag">Without</span>
+          <p class="ex"><span class="layer">dev</span>vibe-coding melts prompt → code → prompt into one stream with no seam to inspect or gate.</p>
+          <p class="ex"><span class="layer">ci</span>one monolithic script does build+test+deploy with no checkpoint to stop or roll back at.</p>
+        </div>
+      </div>
+      <p class="dials"><b>default:</b> enforced · independent-agent</p>
+    </div>
+
+    <div class="card">
+      <div class="card-top"><span class="code">A3</span><span class="name">Intent locus</span></div>
+      <p class="what">Humans own intent and values somewhere identifiable — a process with no human intent locus can't be held accountable.</p>
+      <p class="why"><b>Why:</b> an <b>accountable human owns the goal</b>, so a wrong <em>direction</em> gets caught before it's built.</p>
+      <div class="wo">
+        <div class="pane with"><span class="tag">With</span>
+          <p class="ex"><span class="layer">product</span>every feature traces to an accountable human owner; the "why" is a recorded decision.</p>
+          <p class="ex"><span class="layer">research</span>a direction has a named human sponsor who can say "that's not what we're after."</p>
+        </div>
+        <div class="pane without"><span class="tag">Without</span>
+          <p class="ex"><span class="layer">product</span>agents optimize a proxy metric no human owns, and ship the wrong thing efficiently.</p>
+          <p class="ex"><span class="layer">ops</span>an automated system changes behavior with no human accountable for the intent behind it.</p>
+        </div>
+      </div>
+      <p class="dials"><b>default:</b> enforced · human <span class="muted">(intent gate — never "nobody")</span></p>
+    </div>
+
+    <div class="card">
+      <div class="card-top"><span class="code">A4</span><span class="name">Ratifiable artifacts</span></div>
+      <p class="what">Upstream can reach an approved state downstream consumes; outputs are checkable against it.</p>
+      <p class="why"><b>Why:</b> you build against a <b>stable, approved target with a real pass/fail criterion</b> — not a moving one, and not "looks done to me."</p>
+      <div class="wo">
+        <div class="pane with"><span class="tag">With</span>
+          <p class="ex"><span class="layer">spec</span>a spec reaches ratified, carries acceptance criteria, and work is graded against it.</p>
+          <p class="ex"><span class="layer">data</span>a schema is versioned; downstream validates against the approved version, not HEAD.</p>
+        </div>
+        <div class="pane without"><span class="tag">Without</span>
+          <p class="ex"><span class="layer">spec</span>nothing is ever "final," so implementation chases a spec that keeps moving under it.</p>
+          <p class="ex"><span class="layer">design</span>a design system has no "released" state, so teams build against inconsistent snapshots.</p>
+        </div>
+      </div>
+      <p class="dials"><b>default:</b> enforced · independent-agent</p>
+    </div>
+
+  </div></div>
+
+  <!-- B -->
+  <div class="group"><div class="wrap">
+    <h2><span class="g-code">B</span> Operating layer</h2>
+    <p>What Trellis actually supplies once a process is admissible: the gates, the checks, the memory, and the discipline that keeps agents honest.</p>
+  </div></div>
+  <div class="wrap"><div class="cards">
+
+    <div class="card">
+      <div class="card-top"><span class="code">B1</span><span class="name">Graph maintenance</span></div>
+      <p class="what">The dependency graph of artifacts and rules kept consistent and minimal; append-only records superseded, never edited in substance.</p>
+      <p class="why"><b>Why:</b> the knowledge base <b>stays coherent for the agents reading it</b>, and a discovery deep in the code <b>repairs the decision that should have known it</b> (backprop).</p>
+      <div class="wo">
+        <div class="pane with"><span class="tag">With</span>
+          <p class="ex"><span class="layer">docs</span>a repaired decision re-reviews its specs → plans → code, in turn.</p>
+          <p class="ex"><span class="layer">code</span>a build uncovering a missing decision creates the record instead of patching around it.</p>
+          <p class="ex"><span class="layer">research</span>a downstream finding that contradicts an upstream note updates the note, not just the finding.</p>
+        </div>
+        <div class="pane without"><span class="tag">Without</span>
+          <p class="ex"><span class="layer">docs</span>a decision changes but its dependent specs are never updated — they silently diverge.</p>
+          <p class="ex"><span class="layer">data</span>a migration isn't propagated to the docs, so the docs now describe a DB that no longer exists.</p>
+          <p class="ex"><span class="layer">rules</span>a stale lint rule keeps firing long after the pattern it guarded was removed.</p>
+        </div>
+      </div>
+      <p class="dials"><b>default:</b> enforced · independent-agent</p>
+    </div>
+
+    <div class="card">
+      <div class="card-top"><span class="code">B2</span><span class="name">Gate at handover</span></div>
+      <p class="what">Apply the verification gate at every handover; any skip is surfaced.</p>
+      <p class="why"><b>Why:</b> the review <b>actually fires</b> (not quietly skipped under deadline) — and if it is skipped, you can <em>see</em> it was.</p>
+      <div class="wo">
+        <div class="pane with"><span class="tag">With</span>
+          <p class="ex"><span class="layer">ci</span>a conformance check + review fire on every PR; a deliberate skip is recorded, not hidden.</p>
+          <p class="ex"><span class="layer">release</span>a promotion gate blocks an artifact that didn't pass the prior stage.</p>
+        </div>
+        <div class="pane without"><span class="tag">Without</span>
+          <p class="ex"><span class="layer">dev</span>the review is "optional," so under deadline it silently doesn't happen and a defect ships.</p>
+          <p class="ex"><span class="layer">spec</span>a spec goes straight to implementation with no sign-off, and no record it was skipped.</p>
+        </div>
+      </div>
+      <p class="dials"><b>default:</b> default-on-but-skippable · independent-agent</p>
+    </div>
+
+    <div class="card">
+      <div class="card-top"><span class="code">B3</span><span class="name">Independent judgment</span></div>
+      <p class="what">The assessor is independent of what it assesses — the builder doesn't grade itself, and the agent doesn't flatter the human.</p>
+      <p class="why"><b>Why:</b> the <b>builder doesn't grade its own homework</b>, and the agent <b>names the risk</b> instead of flattering the plan — so verification and the intent gate are real, not decorative.</p>
+      <div class="wo">
+        <div class="pane with"><span class="tag">With</span>
+          <p class="ex"><span class="layer">review</span>a read-only reviewer, distinct from the author, derives its own checklist and reports what's wrong — even when inconvenient.</p>
+          <p class="ex"><span class="layer">research</span>findings are adversarially verified by a separate pass, not self-certified.</p>
+        </div>
+        <div class="pane without"><span class="tag">Without</span>
+          <p class="ex"><span class="layer">code</span>the agent that wrote the code decides the code is good.</p>
+          <p class="ex"><span class="layer">product</span>the agent agrees with a flawed plan to please the stakeholder, and it sails through.</p>
+        </div>
+      </div>
+      <p class="dials"><b>default:</b> default-on-but-skippable · independent-agent</p>
+    </div>
+
+    <div class="card">
+      <div class="card-top"><span class="code">B4</span><span class="name">Auditable archive</span></div>
+      <p class="what">Provenance + immutable decision history + a consolidated current-truth.</p>
+      <p class="why"><b>Why:</b> you can always answer <b>"why is it this way?"</b> — decisions are not lost or quietly rewritten.</p>
+      <div class="wo">
+        <div class="pane with"><span class="tag">With</span>
+          <p class="ex"><span class="layer">adr</span>decisions are append-only and link their rationale; superseding writes a new record.</p>
+          <p class="ex"><span class="layer">code</span>git history + a current-truth doc kept separate from its changelog.</p>
+        </div>
+        <div class="pane without"><span class="tag">Without</span>
+          <p class="ex"><span class="layer">adr</span>a decision is edited in place and its rationale lost; months later it's re-litigated from scratch.</p>
+          <p class="ex"><span class="layer">infra</span>an undocumented prod change, so no one can say why it's configured this way.</p>
+        </div>
+      </div>
+      <p class="dials"><b>default:</b> enforced · independent-agent</p>
+    </div>
+
+    <div class="card">
+      <div class="card-top"><span class="code">B5</span><span class="name">Bounded context</span></div>
+      <p class="what">Each operation reads only its declared inputs, never the whole archive.</p>
+      <p class="why"><b>Why:</b> agents decide on <b>sharp, relevant context</b> instead of drowning in everything — better calls, and it scales as the archive grows.</p>
+      <div class="wo">
+        <div class="pane with"><span class="tag">With</span>
+          <p class="ex"><span class="layer">agent</span>a sub-agent gets exactly its declared inputs and decides crisply within them.</p>
+          <p class="ex"><span class="layer">data</span>a query reads a scoped view, not the whole warehouse.</p>
+        </div>
+        <div class="pane without"><span class="tag">Without</span>
+          <p class="ex"><span class="layer">agent</span>an op dumps the entire repo into context, dilutes the signal, and decides on noise.</p>
+          <p class="ex"><span class="layer">code</span>a function reaches into global state instead of its parameters, and breaks when the state moves.</p>
+        </div>
+      </div>
+      <p class="dials"><b>default:</b> default-on-but-skippable · independent-agent</p>
+    </div>
+
+    <div class="card">
+      <div class="card-top"><span class="code">B6</span><span class="name">Self-improvement</span></div>
+      <p class="what">The process learns from friction and gets better — improvement signals are surfaced and acted on, so a glitch doesn't happen twice.</p>
+      <p class="why"><b>Why:</b> <b>a process glitch never happens twice</b> — friction becomes a fix, not a recurring tax.</p>
+      <div class="wo">
+        <div class="pane with"><span class="tag">With</span>
+          <p class="ex"><span class="layer">ci</span>a flaky test recurs → a trigger is filed, the root cause fixed, the trigger retired in the same change.</p>
+          <p class="ex"><span class="layer">process</span>a repeated review miss becomes a checklist item that rides the PR you already write.</p>
+          <p class="ex"><span class="layer">research</span>a recurring dead-end is recorded so the next inquiry skips it instead of re-walking it.</p>
+        </div>
+        <div class="pane without"><span class="tag">Without</span>
+          <p class="ex"><span class="layer">ci</span>the same pipeline step fails weekly and everyone just re-runs it, forever.</p>
+          <p class="ex"><span class="layer">process</span>a PR raises open questions with no follow-up and they rot, unowned.</p>
+          <p class="ex"><span class="layer">onboarding</span>the same confusion hits every new contributor because no one wrote the lesson down.</p>
+        </div>
+      </div>
+      <p class="dials"><b>default:</b> default-on-but-skippable · human</p>
+    </div>
+
+    <div class="card">
+      <div class="card-top"><span class="code">B7</span><span class="name">Minimal first</span></div>
+      <p class="what">The smallest process that works; add a step only when friction reveals the boundary; bias to retire over add.</p>
+      <p class="why"><b>Why:</b> <b>no ceremony for its own sake</b> — every step has earned its place, so the process stays light.</p>
+      <div class="wo">
+        <div class="pane with"><span class="tag">With</span>
+          <p class="ex"><span class="layer">process</span>a deliberately tiny rule set; a new step lands only with a recorded reason.</p>
+          <p class="ex"><span class="layer">tooling</span>a build config with no unused steps; a dependency pulled in only when needed.</p>
+        </div>
+        <div class="pane without"><span class="tag">Without</span>
+          <p class="ex"><span class="layer">process</span>a heavyweight methodology copied wholesale, most steps cargo-culted.</p>
+          <p class="ex"><span class="layer">code</span>a whole framework pulled in to use one function.</p>
+        </div>
+      </div>
+      <p class="dials"><b>default:</b> expressed · human</p>
+    </div>
+
+    <div class="card">
+      <div class="card-top"><span class="code">B9</span><span class="name">Clarify before commit</span></div>
+      <p class="what">Ambiguity in an upstream is surfaced and resolved (usually by asking a human) before downstream consumes it — never silently guessed.</p>
+      <p class="why"><b>Why:</b> <b>agents ask instead of guessing</b> — you don't discover three files later that they took the wrong reading of a vague spec.</p>
+      <div class="wo">
+        <div class="pane with"><span class="tag">With</span>
+          <p class="ex"><span class="layer">spec</span>an agent flags a vague requirement and resolves it before coding.</p>
+          <p class="ex"><span class="layer">ui</span>a designer confirms an ambiguous interaction before building it.</p>
+        </div>
+        <div class="pane without"><span class="tag">Without</span>
+          <p class="ex"><span class="layer">code</span>an agent silently picks one reading of a vague spec, builds it, and it's the wrong one.</p>
+          <p class="ex"><span class="layer">data</span>an ambiguous metric definition is guessed, and the dashboard is subtly, confidently wrong.</p>
+        </div>
+      </div>
+      <p class="dials"><b>default:</b> default-on-but-skippable · human</p>
+    </div>
+
+  </div></div>
+
+  <!-- D -->
+  <div class="group"><div class="wrap">
+    <h2><span class="g-code">D</span> The two floors</h2>
+    <p>The only settings that never dial to zero. Everything else Trellis lets you tune; these two it holds firm.</p>
+  </div></div>
+  <div class="wrap"><div class="cards">
+
+    <div class="card">
+      <div class="card-top"><span class="code">D1</span><span class="name">Transparency</span></div>
+      <p class="what">Every consequential choice is surfaced — a skipped gate, a missing capability, a degraded result, a divergence from a framework you claim to follow. Drift is allowed, but never silent.</p>
+      <p class="why"><b>Why:</b> <b>nothing consequential happens silently</b> — you learn about the shortcut <em>when it's taken</em>, not when it breaks in production.</p>
+      <div class="wo">
+        <div class="pane with"><span class="tag">With</span>
+          <p class="ex"><span class="layer">ci</span>a skipped gate is logged; a missing tool halts loudly, not silently.</p>
+          <p class="ex"><span class="layer">framework</span>"we diverge from Spec Kit here" is a recorded decision, so an agent knows where you follow the book and where you don't.</p>
+          <p class="ex"><span class="layer">ops</span>a degraded fallback (cache miss, retry, downgrade) is surfaced, not swallowed.</p>
+        </div>
+        <div class="pane without"><span class="tag">Without</span>
+          <p class="ex"><span class="layer">code</span>an agent silently falls back to a degraded path; you learn when it breaks in prod.</p>
+          <p class="ex"><span class="layer">framework</span>the team quietly drifts from the methodology it claims to follow.</p>
+          <p class="ex"><span class="layer">infra</span>an error is swallowed and resurfaces later as a mystery outage.</p>
+        </div>
+      </div>
+      <p class="dials"><b>floor:</b> enforced (non-configurable to off) · human</p>
+    </div>
+
+    <div class="card">
+      <div class="card-top"><span class="code">D2</span><span class="name">The intent gate</span></div>
+      <p class="what">The intent gate never fully opens — at the intent locus, a human (or a human-authorized independent check) is always mandatory. The one place an upstream that is itself wrong gets caught.</p>
+      <p class="why"><b>Why:</b> <b>"is this the right thing to build?" always has a human behind it</b> — the one call you never hand fully to the machine.</p>
+      <div class="wo">
+        <div class="pane with"><span class="tag">With</span>
+          <p class="ex"><span class="layer">product</span>a human ratifies at the intent gate (here: the maintainer's merge).</p>
+          <p class="ex"><span class="layer">release</span>no deploy ships a feature no human approved, however green the pipeline.</p>
+        </div>
+        <div class="pane without"><span class="tag">Without</span>
+          <p class="ex"><span class="layer">product</span>a fully-automated pipeline ships something technically correct that no human confirmed was the right thing.</p>
+          <p class="ex"><span class="layer">research</span>an agent auto-adopts a conclusion no human sponsored.</p>
+        </div>
+      </div>
+      <p class="dials"><b>floor:</b> enforced (non-configurable to off) · human (never "nobody")</p>
+    </div>
+
+  </div></div>
+
+  <footer>
+    <div class="wrap">
+      <div>Rendered from <a href="https://github.com/gundisalwa/trellis/blob/main/core/catalog/signature-catalog-v1.md">the signature catalog</a> — the single source. No claim here without a rule behind it.</div>
+      <div><a href="index.html">← Back to landing</a> · MIT</div>
+    </div>
+  </footer>
+
+<script>
+  (function () {
+    var root = document.documentElement, saved = null;
+    try { saved = localStorage.getItem("trellis-theme"); } catch (e) {}
+    if (saved) root.setAttribute("data-theme", saved);
+    document.getElementById("themeToggle").addEventListener("click", function () {
+      var cur = root.getAttribute("data-theme");
+      if (!cur) cur = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      var next = cur === "dark" ? "light" : "dark";
+      root.setAttribute("data-theme", next);
+      try { localStorage.setItem("trellis-theme", next); } catch (e) {}
+    });
+  })();
+</script>
+</body>
+</html>
