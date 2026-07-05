@@ -20,6 +20,8 @@ concurrency:
 jobs:
   release:
     runs-on: ubuntu-latest
+    env:
+      TAP_TOKEN: ${{ secrets.TAP_DISPATCH_TOKEN }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -60,3 +62,14 @@ jobs:
             --title "${{ steps.ver.outputs.next }}" \
             --generate-notes \
             --latest
+      # Tell the Homebrew tap to re-pin its formula to the new release (decision-0032).
+      # No-op until TAP_DISPATCH_TOKEN (a fine-grained PAT for homebrew-trellis) is set;
+      # the tap's own `Run workflow` bumps it manually in the meantime.
+      - name: Notify the Homebrew tap
+        if: ${{ env.TAP_TOKEN != '' }}
+        run: |
+          curl -fsSL -X POST \
+            -H "Authorization: Bearer $TAP_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/gundisalwa/homebrew-trellis/dispatches \
+            -d '{"event_type":"new-release"}'

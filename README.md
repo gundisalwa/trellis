@@ -14,7 +14,8 @@ things non-negotiable — and surfaces every time something bends — without di
 ## Get started
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/gundisalwa/trellis/main/install.sh | sh
+brew install gundisalwa/trellis/trellis                                                # Homebrew
+# or, any Unix:  curl -fsSL https://raw.githubusercontent.com/gundisalwa/trellis/main/install.sh | sh
 trellis setup
 ```
 
