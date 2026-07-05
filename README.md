@@ -45,7 +45,10 @@ change that will pass.
   **surfaced**, and the **human intent gate never fully opens**.
 
 The full set: [`core/invariants/trellis-invariants-v1.md`](core/invariants/trellis-invariants-v1.md).
-The thesis behind it: [`agentic-dev-meta-layer-brief.md`](agentic-dev-meta-layer-brief.md).
+Every invariant with its **why** and a **with/without** example at several layers lives in the
+[**signature catalog**](core/catalog/signature-catalog-v1.md) — the single source (rendered readable on
+the [project site](https://gundisalwa.github.io/trellis/invariants.html)). The thesis behind it:
+[`agentic-dev-meta-layer-brief.md`](agentic-dev-meta-layer-brief.md).
 
 ## Two ways to run it
 
