@@ -4,12 +4,15 @@ name: cli-ci
 # maintainer's environment relies on — the code is authored where `go` isn't installed,
 # so a green run here is what proves it builds and its tests pass.
 
+# Paths include the doc surfaces (docs/, README, install.sh, plugins/) so the
+# docs-consistency test (decision-0025) runs when a doc claim changes, not only on
+# code changes.
 on:
   pull_request:
-    paths: ["cli/**", ".github/workflows/cli-ci.yml"]
+    paths: ["cli/**", "docs/**", "README.md", "install.sh", "plugins/**", ".github/workflows/cli-ci.yml"]
   push:
     branches: [main]
-    paths: ["cli/**", ".github/workflows/cli-ci.yml"]
+    paths: ["cli/**", "docs/**", "README.md", "install.sh", "plugins/**", ".github/workflows/cli-ci.yml"]
 
 jobs:
   build-test:
