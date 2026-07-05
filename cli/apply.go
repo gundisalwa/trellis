@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
+	"sort"
 	"strings"
 )
 
@@ -97,20 +99,84 @@ func renderHeader(plan Plan) string {
 		"**Key behavior:** surface any **human-gated handover performed without its human approval** (invariant B2). Agent-gated handovers proceed silently. Gatekeepers are whatever this project already declares — respected, not imposed (decision-0024).\n\n" +
 		"## This project's profile\n\n" +
 		"@profile.md\n\n" +
-		"## Invariant reference\n\n" +
-		"Full definitions — what each invariant is, why it matters, and how it's honored vs violated — live in `.trellis/invariants.md`. Read it when you need the detail behind a rule.\n"
+		"## Reference\n\n" +
+		"The **active rules are in the profile above** — always in context, so they govern every turn. The full *why* and with/without examples for each, plus the invariants not active here, live in `.trellis/invariants.md`; read it for the detail behind a rule.\n"
 }
 
 // renderProfile is the tunable readout: posture, active invariants, dials. The
 // governance behavior lives in the header (single source), not here.
+// renderProfile is auto-imported (always in context). Per decision-0026 it carries
+// the active invariants as concise *rules* — not just names — so they genuinely
+// govern every turn. The full why + examples stay on-demand in invariants.md.
 func renderProfile(plan Plan) string {
-	return "# Trellis expression profile\n\n" +
-		fmt.Sprintf("- posture: %s — %s\n", plan.Profile.Name, plan.Profile.Description) +
-		fmt.Sprintf("- enforcement (C1) lean: `%s`\n", plan.Profile.C1Lean) +
-		fmt.Sprintf("- active invariants: %s\n", activeList(plan)) +
-		"- gatekeeper (C2): detected from this project, not preset (decision-0024)\n" +
-		fmt.Sprintf("- install mode: %s\n", plan.Mode.Name) +
-		"\nEdit this file to tune the profile; `CLAUDE.md` imports `.trellis/trellis.md`, which imports this.\n"
+	rules := invariantRules()
+	active := plan.Profile.Active
+	if len(active) == 0 { // postures A/B: all assessable invariants
+		active = sortedKeys(rules)
+	}
+
+	var b strings.Builder
+	b.WriteString("# Trellis expression profile\n\n")
+	b.WriteString(fmt.Sprintf("- posture: %s — %s\n", plan.Profile.Name, plan.Profile.Description))
+	b.WriteString(fmt.Sprintf("- enforcement (C1) lean: `%s`\n", plan.Profile.C1Lean))
+	b.WriteString("- gatekeeper (C2): detected from this project, not preset (decision-0024)\n")
+	b.WriteString(fmt.Sprintf("- install mode: %s\n", plan.Mode.Name))
+	b.WriteString("\n## Active invariants — follow these\n\n")
+	b.WriteString("In force for this project, at the enforcement lean above. The *why* and with/without " +
+		"examples for each (and the invariants not active here) are in `.trellis/invariants.md`.\n\n")
+	for _, slug := range active {
+		if r := rules[slug]; r != "" {
+			b.WriteString(fmt.Sprintf("- **%s** — %s\n", slug, r))
+		} else {
+			b.WriteString(fmt.Sprintf("- **%s**\n", slug))
+		}
+	}
+	b.WriteString("\nEdit this file to tune the profile; `CLAUDE.md` imports `.trellis/trellis.md`, which imports this.\n")
+	return b.String()
+}
+
+// invariantRules parses the bundled catalog into slug → its one-line `what` rule —
+// the single source, so the always-loaded rules can't drift from the reference.
+func invariantRules() map[string]string {
+	slugRe := regexp.MustCompile("^- \\*\\*`([a-z][a-z-]*)`\\*\\*")
+	rules := map[string]string{}
+	var cur string
+	var buf []string
+	collecting := false
+	flush := func() {
+		if cur != "" && len(buf) > 0 {
+			rules[cur] = strings.TrimSpace(strings.Join(buf, " "))
+		}
+		buf, collecting = nil, false
+	}
+	for _, ln := range strings.Split(invariantsRef, "\n") {
+		if m := slugRe.FindStringSubmatch(ln); m != nil {
+			flush()
+			cur = m[1]
+			continue
+		}
+		t := strings.TrimSpace(ln)
+		switch {
+		case strings.HasPrefix(t, "- what:"):
+			buf = []string{strings.TrimSpace(strings.TrimPrefix(t, "- what:"))}
+			collecting = true
+		case collecting && strings.HasPrefix(t, "- "): // next field ends the `what`
+			flush()
+		case collecting && t != "":
+			buf = append(buf, t)
+		}
+	}
+	flush()
+	return rules
+}
+
+func sortedKeys(m map[string]string) []string {
+	keys := make([]string, 0, len(m))
+	for k := range m {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	return keys
 }
 
 func activeList(plan Plan) string {
