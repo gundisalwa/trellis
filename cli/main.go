@@ -39,6 +39,10 @@ func run(in io.Reader, out io.Writer, args []string) error {
 		return nil
 	case "setup":
 		return setup(in, out, args[1:])
+	case "remove":
+		return remove(in, out, args[1:])
+	case "uninstall":
+		return uninstall(in, out, args[1:])
 	default:
 		return fmt.Errorf("unknown command %q (try `trellis help`)", args[0])
 	}
@@ -49,6 +53,8 @@ func usage(w io.Writer) {
 
 usage:
   trellis setup      interactive setup: detect harness, pick a profile, mode, and model
+  trellis remove     undo setup in a project (removes the .trellis overlay)
+  trellis uninstall  remove the trellis binary
   trellis version    print the version
   trellis help       show this message`)
 }

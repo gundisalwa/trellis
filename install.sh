@@ -5,13 +5,25 @@
 #
 # No package manager: this downloads a single static binary from GitHub Releases
 # (decision-0023). Set TRELLIS_VERSION to pin a release; defaults to the latest.
-# Set TRELLIS_INSTALL_DIR to choose where the binary lands (default: a dir on PATH,
-# falling back to ~/.local/bin).
+# Set TRELLIS_INSTALL_DIR to choose where the binary lands (default: ~/.local/bin).
+#
+# Uninstall:  curl -fsSL .../install.sh | sh -s -- --uninstall
 set -eu
 
 REPO="gundisalwa/trellis"
 BIN="trellis"
 VERSION="${TRELLIS_VERSION:-latest}"
+dir="${TRELLIS_INSTALL_DIR:-$HOME/.local/bin}"
+
+# --uninstall: remove the binary and exit (mirror of `trellis uninstall`).
+if [ "${1:-}" = "--uninstall" ]; then
+  if [ -f "$dir/$BIN" ]; then
+    rm -f "$dir/$BIN" && echo "trellis: removed $dir/$BIN"
+  else
+    echo "trellis: nothing to remove at $dir/$BIN"
+  fi
+  exit 0
+fi
 
 os="$(uname -s | tr '[:upper:]' '[:lower:]')"
 arch="$(uname -m)"
@@ -32,7 +44,6 @@ else
   url="https://github.com/${REPO}/releases/download/${VERSION}/${asset}"
 fi
 
-dir="${TRELLIS_INSTALL_DIR:-$HOME/.local/bin}"
 mkdir -p "$dir"
 
 echo "trellis: downloading ${asset} (${VERSION}) …"
