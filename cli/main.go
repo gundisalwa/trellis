@@ -7,6 +7,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io"
 	"os"
@@ -52,10 +53,22 @@ usage:
   trellis help       show this message`)
 }
 
-// setup will run the interactive setup flow (spec-0003 §2b): detect the harness
-// (Claude-only in v0; exit if absent), pick an expression profile, then choose an
-// install mode (M1 alongside / M2 rewrite-on-a-branch). The flow lands in the next
-// stacked PR; this stub keeps the command surface honest until then.
-func setup(_ io.Writer, _ []string) error {
-	return fmt.Errorf("setup is not implemented yet — see specs/0003 §2b (next stacked PR)")
+// setup runs the interactive setup flow (spec-0003 §2b). Step C wires the first
+// stage: detect the harness (Claude-only in v0) and exit cleanly if none is found.
+// Profile selection and install mode (M1/M2) land in the following steps.
+func setup(w io.Writer, args []string) error {
+	fs := flag.NewFlagSet("setup", flag.ContinueOnError)
+	fs.SetOutput(w)
+	dir := fs.String("dir", ".", "project directory to set up")
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
+	h, ok := detectHarness(*dir)
+	if !ok {
+		return fmt.Errorf("no supported agent harness detected in %q — v0 supports Claude Code "+
+			"(expected a .claude/ directory or a CLAUDE.md); nothing to set up", *dir)
+	}
+	fmt.Fprintf(w, "detected harness: %s (%s)\n", h.Name, h.Detail)
+	fmt.Fprintln(w, "next: pick an expression profile — A conductor / B author-adapt / seed / Custom (upcoming step)")
+	return nil
 }

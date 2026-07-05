@@ -2,6 +2,8 @@ package main
 
 import (
 	"bytes"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -35,10 +37,24 @@ func TestRunUnknownCommand(t *testing.T) {
 	}
 }
 
-func TestSetupStubIsHonest(t *testing.T) {
-	// Until the flow is built, setup must fail loudly rather than pretend (D1).
+func TestSetupNoHarness(t *testing.T) {
+	// A dir with no harness: setup must fail loudly rather than guess (D1).
 	var buf bytes.Buffer
-	if err := run(&buf, []string{"setup"}); err == nil {
-		t.Fatal("setup stub should return an error until implemented")
+	if err := run(&buf, []string{"setup", "--dir", t.TempDir()}); err == nil {
+		t.Fatal("setup on a dir with no harness should return an error")
+	}
+}
+
+func TestSetupDetectsHarness(t *testing.T) {
+	dir := t.TempDir()
+	if err := os.WriteFile(filepath.Join(dir, "CLAUDE.md"), []byte("# host"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	var buf bytes.Buffer
+	if err := run(&buf, []string{"setup", "--dir", dir}); err != nil {
+		t.Fatalf("setup with a CLAUDE.md should succeed, got %v", err)
+	}
+	if !strings.Contains(buf.String(), "detected harness") {
+		t.Errorf("setup output should report the detected harness, got %q", buf.String())
 	}
 }
