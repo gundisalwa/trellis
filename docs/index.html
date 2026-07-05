@@ -112,6 +112,10 @@
     background: #ffffff12; color: #cfe9db; border: 0; border-radius: 7px; padding: 6px 11px;
   }
   .copy:hover { background: #ffffff22; }
+  .terminal .cmd-sub { padding-top: 4px; padding-bottom: 18px; }
+  .terminal .cmt { color: #ffffff40; }
+  .tnote { margin-top: 14px; color: var(--muted); font-size: 0.92rem; max-width: 640px; }
+  .tnote code { font-family: var(--mono); font-size: 0.85em; background: color-mix(in srgb, var(--accent) 13%, transparent); padding: 1px 6px; border-radius: 5px; color: var(--accent-ink); }
 
   /* --- sections --- */
   section { padding: 72px 0; border-bottom: 1px solid var(--line); }
@@ -218,13 +222,17 @@
         invariants — so a process glitch never has to happen twice.
       </p>
 
-      <div class="terminal" role="group" aria-label="Install command">
-        <div class="tt"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span>install</span></div>
+      <div class="terminal" role="group" aria-label="Install, then set up Trellis">
+        <div class="tt"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span>install, then set up</span></div>
         <div class="cmd">
           <code><span class="prompt">$ </span><span id="installcmd">curl -fsSL https://raw.githubusercontent.com/gundisalwa/trellis/main/install.sh | sh</span></code>
           <button class="copy" id="copyBtn" aria-label="Copy install command">copy</button>
         </div>
+        <div class="cmd cmd-sub">
+          <code><span class="prompt">$ </span>trellis setup<span class="cmt">    # then set it up in your project</span></code>
+        </div>
       </div>
+      <p class="tnote">The installer just drops a single binary — it doesn't run anything on its own; you run <code>trellis setup</code>. Remove it any time: <code>trellis remove</code> inside a project, or <code>trellis uninstall</code> for the binary.</p>
 
       <div class="cta">
         <a class="btn btn-primary" href="invariants.html">Explore the invariants →</a>
