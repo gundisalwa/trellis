@@ -11,6 +11,24 @@ It exists for one failure mode: **fast agents drift.** They skip reviews, resolv
 guessing, grade their own work, and leave no trace of where a decision came from. Trellis makes a few
 things non-negotiable — and surfaces every time something bends — without dictating how you build.
 
+## Get started
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/gundisalwa/trellis/main/install.sh | sh
+trellis setup
+```
+
+A single static binary — no package manager, no runtime. `trellis setup` rides your agent harness
+(Claude Code today), asks a few things — a **posture** (`conductor` / `author-adapt` / `seed`), an
+**install mode**, and, for a rewrite, a **model** — then, only with your go-ahead, composes Trellis
+onto your project:
+
+- **M1 · alongside** — a deterministic overlay: a one-line `@import` in your `CLAUDE.md` plus a
+  `.trellis/` bundle (your profile + the invariant reference). Augment-never-clobber, idempotent.
+- **M2 · morph** — a model-driven rewrite of your own instructions, on a fresh git branch to review.
+
+Nothing is written without `--apply` (or your `y` at the prompt). Built from [`cli/`](cli/) (Go).
+
 ## The model
 
 Deliberately tiny — small enough that a newcomer, human or agent, can read it and know how to make a
@@ -31,13 +49,12 @@ The thesis behind it: [`agentic-dev-meta-layer-brief.md`](agentic-dev-meta-layer
 
 ## Two ways to run it
 
-- **Advisor** *(open, no runtime)* — Trellis is never installed; your agents **consult** this repo as
-  a reference and internalize what applies. Today that means pointing your coding agent at the repo.
-  The intended interface is a small **CLI your host invokes**, so the boundary is crisp rather than
-  "read whatever you find" *(in progress)*. Nothing to secure or remove at runtime.
-- **Supervisor** *(installed, live)* — Trellis is wired into your pipeline: gates fire on commit/PR
-  events via hooks, it stays current through an update channel, and it comes off cleanly. *In
-  progress — this is the machinery the delivery slice is building.*
+- **Advisor** *(open, no runtime — shipped)* — Trellis composes onto your project as instructions your
+  agents **consult**; nothing of Trellis runs at agent-time. This is what `trellis setup` installs
+  today (M1 overlay or M2 morph). Nothing to secure or remove at runtime.
+- **Supervisor** *(installed, live — in progress)* — Trellis wired into your pipeline: gates fire on
+  commit/PR events via hooks, it stays current through an update channel, and it comes off cleanly.
+  The next delivery slice.
 
 These are the two ends of the delivery relationship; the cross-lens vocabulary lives in
 [`core/lexicon.md`](core/lexicon.md).
@@ -46,13 +63,13 @@ These are the two ends of the delivery relationship; the cross-lens vocabulary l
 
 Built in the open, dogfooded on itself from commit one. The honest state:
 
-- **Ratified** — the invariant set (`invariants-v1`), 17 decisions, 8 research notes.
-- **Built** — the *spine*: the artifact contract, lifecycle, and an **independent conformance check**
-  (`spec-0001`, running on this repo); the expression-profile + signature-catalog **schema**
-  (`spec-0002`); the populated catalog and the first per-project **profile** (dogfooded as instance
-  #1); the cross-lens **lexicon**.
-- **In progress** — the **delivery machinery**: the Assess → Apply flow and the installed supervisor /
-  CLI. This is what turns the design into a running product.
+- **Ratified** — the invariant set (`invariants-v1`), 24 decisions, 8 research notes.
+- **Shipped** — the **v0 setup CLI** (`trellis setup`, released `v0.1.0`): harness detection, the
+  onboarding flow, and both install modes (M1 deterministic overlay, M2 model-driven morph). It stands
+  on the *spine* + an **independent conformance check** (`spec-0001`, running on this repo), the
+  expression-profile + catalog **schema** (`spec-0002`), the machinery design (`spec-0003`), the
+  populated catalog and the first per-project **profile** (instance #1), and the cross-lens **lexicon**.
+- **In progress** — **supervisor mode** (installed live gates) and a Claude-marketplace install route.
 - **The open risk** — the invariants are validated on essentially *one* project. **Instance #2** — a
   second, different project — is the next real test of whether they generalize.
 
@@ -62,8 +79,9 @@ Built in the open, dogfooded on itself from commit one. The honest state:
 |---|---|
 | [`agentic-dev-meta-layer-brief.md`](agentic-dev-meta-layer-brief.md) | The full thesis (start at §10 verdict, §11 start-here, §12 operating method). |
 | [`core/`](core/) | The shippable product: invariants, the conformance rubric, the signature catalog, the lexicon. |
-| [`specs/`](specs/) | The spine (`0001`) and the expression-profile / catalog schema (`0002`). |
-| [`decisions/`](decisions/) | Append-only decision records (`0001–0017`). |
+| [`cli/`](cli/) | The **setup CLI** (Go) — `trellis setup`: detect the harness, onboard, and apply (M1/M2). |
+| [`specs/`](specs/) | The spine (`0001`), the profile / catalog schema (`0002`), the delivery machinery (`0003`). |
+| [`decisions/`](decisions/) | Append-only decision records (`0001–0024`). |
 | [`research/`](research/) | Framework gate-tests + the genetics / control-theory lenses behind the design. |
 | [`profiles/`](profiles/) | Per-instance expression profiles (`trellis-self` = instance #1). |
 | [`CLAUDE.md`](CLAUDE.md) | The methodology we use to build Trellis (Layer B / instance #1). |

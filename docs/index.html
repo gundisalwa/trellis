@@ -156,6 +156,17 @@
   footer .wrap { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center; color: var(--muted); font-size: 14px; }
   footer a { color: var(--muted); }
 
+  .footprint { margin-top: 40px; }
+  .fp-label { color: var(--muted); font-size: 0.95rem; margin: 0 0 12px; }
+  .fp-code {
+    margin: 0; background: var(--code-bg); color: var(--code-text); border: 1px solid #ffffff10;
+    border-radius: 12px; padding: 20px; overflow-x: auto; font-family: var(--mono);
+    font-size: 13.5px; line-height: 1.75;
+  }
+  .fp-code .fp-c { color: #82bfa6; }
+  .fp-code .fp-a { color: var(--code-accent); }
+  .fp-code .fp-m { color: #ffffff44; }
+
   @media (prefers-reduced-motion: no-preference) {
     .btn, .toggle, .copy, .card { transition: all 0.15s ease; }
   }
@@ -274,6 +285,15 @@
         <div class="step"><p class="k">02 · profile</p><h4>Pick a posture</h4><p>Conductor, author-adapt, or seed — how strict, and what's active.</p></div>
         <div class="step"><p class="k">03 · mode</p><h4>Alongside or rewrite</h4><p>Overlay next to your rules, or morph them in on a branch.</p></div>
         <div class="step"><p class="k">04 · apply</p><h4>You approve</h4><p>Augment-never-clobber. Trellis proposes; the merge is yours.</p></div>
+      </div>
+
+      <div class="footprint">
+        <p class="fp-label">What it leaves in your repo — small, single-source, and yours to remove:</p>
+        <pre class="fp-code"><span class="fp-c">CLAUDE.md</span>          <span class="fp-m"># + a 3-line managed block:</span> <span class="fp-a">@.trellis/trellis.md</span>
+<span class="fp-c">.trellis/</span>
+  <span class="fp-c">trellis.md</span>       <span class="fp-m"># the header your agents read</span>
+  <span class="fp-c">profile.md</span>       <span class="fp-m"># your posture + active invariants</span>
+  <span class="fp-c">invariants.md</span>    <span class="fp-m"># the full reference, on demand</span></pre>
       </div>
     </div>
   </section>
