@@ -70,6 +70,12 @@ human sign-off vs auto-complete).
   instructions, not the world. Scoring behavior (not instructions) is the mitigation, not a cure.
 - **Sample size** — first runs are a proof-of-concept (few tasks × few repeats), not a powered study;
   the harness is built to scale the counts up.
+- **Effect size ∝ task subtlety × baseline weakness** (learned from a confounded task-03 run,
+  `eval/runs/spec-kit-lite/03-finalize-and-ship/NOTES.md`): the worker is Claude, whose *default* judgment
+  is already strong, so Trellis's measurable Δ concentrates where a strong agent **still slips** (task 01's
+  self-certification of a plausibly-complete feature) — not on obvious violations (task 03's nothing-to-
+  merge, which the baseline already catches). Design tasks for *subtle* invariant moments; consider a
+  weaker/faster worker on some arms to widen the gap.
 - **Framework set** — Spec Kit first (richest checkable artifacts, official/MIT); BMAD/Agent OS next.
 - **Harness shape** — a shell orchestrator (scaffold → apply → `claude -p` worker → `claude -p`
   reviewer → aggregate) vs a Trellis Workflow script; the former is opt-in-free and CI-friendly.
