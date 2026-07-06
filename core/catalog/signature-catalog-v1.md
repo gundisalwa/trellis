@@ -127,15 +127,30 @@ ratified: 2026-07-04
   - signature: a `depends_on` graph — better, **forward-edges too** (a source names what derives from
     it, so a change surfaces its dependents; `decision-0028`); supersede/retire records; dependents
     re-reviewed on upstream change; no silent downstream patches; a **sync guard per source→derivative
-    pair**; a bias to retire rules over adding.
+    pair**; a bias to retire rules over adding; **one home per kind of information**, placed by which
+    consumer must trip over it — a copy elsewhere points at the home, never carries the truth
+    (`decision-0040`); **tests name their upstream** (a spec anchor or a defect id), and a test↔spec
+    conflict is repaired deliberately, never silently.
   - honored:
     - *(docs)* a repaired decision re-reviews its specs → plans → code, in turn.
     - *(research)* a downstream finding that contradicts an upstream note updates the *note*, not just
       the finding (backprop).
+    - *(ops)* each kind of information has exactly **one home**, chosen by which consumer must trip
+      over it; recorded elsewhere first (a chat thread, a meeting note), it lands in its home before
+      anything downstream consumes it, and the other copy just points.
+    - *(code)* every test names the upstream it guards (a spec anchor or a defect id); when a test and
+      the spec disagree, the conflict is surfaced and resolved deliberately — the spec gains its
+      missing invariant, or the over-pinning test is retired, citing why. A regression test is never
+      weakened just to make a reading of the spec pass.
   - violated:
     - *(docs)* a decision changes but its dependent specs are never updated — they silently diverge.
     - *(research)* a finding contradicts an upstream note, but only the finding is recorded — the note
       stays wrong and agents keep reading it.
+    - *(ops)* the same plan lives in a tracker *and* a wiki — the copies diverge, and the agents that
+      should trip over the current state are reading the stale one; a parked item sits in a channel
+      its executor never reads, trips nothing, and rots.
+    - *(code)* a regression test blocks a convenient reading of the spec, so it is quietly deleted —
+      the defect it pinned ships again; no one can say which requirement any test guards.
   - class: `trellis-design`  ·  mechanizable: `true` (the **flow** facet; forward/backward/prune are
     judgment)  ·  intent_locus: `false`
   - default_C1: `enforced`  ·  default_C2: `independent-agent`
@@ -178,19 +193,27 @@ ratified: 2026-07-04
 - **`inv-independent-judgment`** *(two faces: conformance + intent)*
   - what: the assessor is independent of what it assesses — the builder does not grade itself
     (conformance face); the agent does not flatter the human (intent face).
-  - directive: Don't rule your own work correct — tell the human an independent review is needed and let someone (or something) other than the author check it. And don't just agree to please the human; say what you actually think, problems included.
+  - directive: Don't rule your own work correct — tell the human an independent review is needed and let someone (or something) other than the author check it. Don't just agree to please the human; say what you actually think, problems included. And before calling a thing right *or* wrong — especially when your verdict matches what the human just suggested — verify it against the source: quote it, run the obvious counter-checks, and separate what it says from what you infer.
   - why: **the builder doesn't grade its own homework**, and the agent **names the risk** instead of
     flattering the plan — so verification and the intent gate are real, not decorative.
   - signature: a verifier **distinct from the producer** (fresh-context review agent); reviews record
-    dissent/risks, not reflexive assent; the verifier derives its checklist from the approved upstream.
+    dissent/risks, not reflexive assent; the verifier derives its checklist from the approved upstream;
+    **verdicts cite the source they judged** (the quoted line, the counter-check run), with fact
+    separated from inference (`decision-0040`).
   - honored:
     - *(review)* a read-only reviewer, distinct from the author, derives its own checklist and reports
       what's wrong — even when inconvenient.
     - *(research)* findings are adversarially verified by a separate pass, not self-certified.
+    - *(collab)* before agreeing or disagreeing with the human's hunch — *especially* when the verdict
+      would match it — the agent opens the file, quotes the actual lines, runs the obvious
+      counter-checks, and labels what is fact and what is inference; "I can't confirm this" is said
+      out loud when it can't.
   - violated:
     - *(review)* the agent that wrote the code reviews its own code and decides it's good.
     - *(research)* an agent certifies its own findings (or agrees with a flawed plan to please you), and
       it sails through.
+    - *(collab)* the human suggests the old code is wrong; the agent answers "you're right, good catch"
+      without opening it — the code was fine, and the plausible agreement ships a bug.
   - class: `trellis-design`  ·  mechanizable: `false` (the intent face lives in system prompts, weakly
     checkable)  ·  intent_locus: `false`
   - default_C1: `default-on-but-skippable`  ·  default_C2: `independent-agent`
@@ -200,7 +223,9 @@ ratified: 2026-07-04
   - directive: Record why decisions are made and keep that history — don't edit past decisions in place and lose the reasoning. "Why is it this way?" should be answerable later.
   - why: you can always answer **"why is it this way?"** — decisions are not lost or quietly rewritten.
   - signature: append-only decision records; retained change history (git); a current-truth doc kept
-    separate from its change log.
+    separate from its change log; **supersession can be partial** — a superseded-in-part pointer marks
+    the outgrown half so the live remainder stays navigable and no reader lands on stale text without
+    a forward link (`spec-0001` §2, `decision-0040`).
   - honored:
     - *(ADR)* decisions are append-only and link their rationale; superseding writes a *new* record.
     - *(infra)* every prod change carries provenance — git history + a current-truth doc — so "why" is
@@ -273,15 +298,22 @@ ratified: 2026-07-04
   - why: **nothing consequential happens silently** — you learn about the shortcut *when it is taken*,
     not when it breaks in production.
   - signature: skips/degradations logged and visible; loud-failure on a missing tool/source; no silent
-    fallbacks; divergence from a reference captured as a recorded decision.
+    fallbacks; divergence from a reference captured as a recorded decision; **bounded runs checkpoint
+    and resume** — resumable state left behind, a successor continuing rather than restarting,
+    bounded auto-resumes, and the bound itself a loud demand for human attention (`decision-0040`).
   - honored:
     - *(framework)* "we diverge from Spec Kit here" is a recorded decision, so an agent knows where you
       follow the book and where you don't.
     - *(ops)* a degraded fallback (cache miss, retry, downgrade) is surfaced, not swallowed.
+    - *(agent)* every bounded run leaves resumable state — the work pushed, a note of what's left — so
+      a successor continues instead of restarting; auto-resumes are bounded, and hitting the bound
+      produces a loud demand for human attention, never a quiet dead-end.
   - violated:
     - *(framework)* the team quietly drifts from the methodology it *claims* to follow.
     - *(ops)* an agent silently falls back to a degraded path or swallows an error — you learn when it
       breaks in prod.
+    - *(agent)* a run dies at its turn cap mid-task and nothing marks where it stopped — the next run
+      redoes the work from zero, or the half-finished state sits unnoticed until something breaks.
   - class: `floor`  ·  mechanizable: `false` (a disposition; partially checkable)  ·  intent_locus:
     `false`
   - default_C1: `enforced` (**floor — non-configurable to off**)  ·  default_C2: `human`

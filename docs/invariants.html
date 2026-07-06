@@ -244,6 +244,16 @@
         <div class="s wo"><span class="lbl wo">Without</span><span>a finding contradicts an upstream note, but only the finding is recorded — the note stays wrong and agents keep reading it.</span></div>
         <div class="s wi"><span class="lbl wi">With</span><span>a downstream finding that contradicts an upstream note updates the note, not just the finding (backprop).</span></div>
       </div>
+      <div class="stack">
+        <div class="case">ops</div>
+        <div class="s wo"><span class="lbl wo">Without</span><span>the same plan lives in a tracker and a wiki — the copies diverge, and the agents that should trip over the current state are reading the stale one; a parked item sits in a channel its executor never reads, trips nothing, and rots.</span></div>
+        <div class="s wi"><span class="lbl wi">With</span><span>each kind of information has exactly one home, chosen by which consumer must trip over it; recorded elsewhere first (a chat thread, a meeting note), it lands in its home before anything downstream consumes it, and the other copy just points.</span></div>
+      </div>
+      <div class="stack">
+        <div class="case">code</div>
+        <div class="s wo"><span class="lbl wo">Without</span><span>a regression test blocks a convenient reading of the spec, so it is quietly deleted — the defect it pinned ships again; no one can say which requirement any test guards.</span></div>
+        <div class="s wi"><span class="lbl wi">With</span><span>every test names the upstream it guards (a spec anchor or a defect id); when a test and the spec disagree, the conflict is surfaced and resolved deliberately — the spec gains its missing invariant, or the over-pinning test is retired, citing why. A regression test is never weakened just to make a reading of the spec pass.</span></div>
+      </div>
       </div><p class="dials"><b>default:</b> enforced · independent-agent</p>
     </div>
 
@@ -279,6 +289,11 @@
         <div class="case">research</div>
         <div class="s wo"><span class="lbl wo">Without</span><span>an agent certifies its own findings (or agrees with a flawed plan to please you), and it sails through.</span></div>
         <div class="s wi"><span class="lbl wi">With</span><span>findings are adversarially verified by a separate pass, not self-certified.</span></div>
+      </div>
+      <div class="stack">
+        <div class="case">collab</div>
+        <div class="s wo"><span class="lbl wo">Without</span><span>the human suggests the old code is wrong; the agent answers "you're right, good catch" without opening it — the code was fine, and the plausible agreement ships a bug.</span></div>
+        <div class="s wi"><span class="lbl wi">With</span><span>before agreeing or disagreeing with the human's hunch — especially when the verdict would match it — the agent opens the file, quotes the actual lines, runs the obvious counter-checks, and labels what is fact and what is inference; "I can't confirm this" is said out loud when it can't.</span></div>
       </div>
       </div><p class="dials"><b>default:</b> default-on-but-skippable · independent-agent</p>
     </div>
@@ -396,6 +411,11 @@
         <div class="case">ops</div>
         <div class="s wo"><span class="lbl wo">Without</span><span>an agent silently falls back to a degraded path or swallows an error — you learn when it breaks in prod.</span></div>
         <div class="s wi"><span class="lbl wi">With</span><span>a degraded fallback (cache miss, retry, downgrade) is surfaced, not swallowed.</span></div>
+      </div>
+      <div class="stack">
+        <div class="case">agent</div>
+        <div class="s wo"><span class="lbl wo">Without</span><span>a run dies at its turn cap mid-task and nothing marks where it stopped — the next run redoes the work from zero, or the half-finished state sits unnoticed until something breaks.</span></div>
+        <div class="s wi"><span class="lbl wi">With</span><span>every bounded run leaves resumable state — the work pushed, a note of what's left — so a successor continues instead of restarting; auto-resumes are bounded, and hitting the bound produces a loud demand for human attention, never a quiet dead-end.</span></div>
       </div>
       </div><p class="dials"><b>floor:</b> enforced (non-configurable to off) · human</p>
     </div>

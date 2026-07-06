@@ -3,6 +3,7 @@ id: decision-0013
 type: decision
 status: ratified
 depends_on: [invariants-v1, decision-0004]
+superseded_in_part_by: [decision-0038]
 owner: gundi
 date: 2026-07-01
 ratified: 2026-07-01

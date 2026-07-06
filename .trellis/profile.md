@@ -20,7 +20,7 @@ Each is a rule to follow, then the ✗ failure it prevents:
     ✗ a decision changes but its dependent specs are never updated — they silently diverge.
 - Work in reviewable steps with clear stopping points — a plan, a spec, a PR — not one unbroken stream. Leave seams where the work can be paused and checked.
     ✗ vibe-coding melts prompt → code → prompt into one stream with no seam to inspect or gate.
-- Don't rule your own work correct — tell the human an independent review is needed and let someone (or something) other than the author check it. And don't just agree to please the human; say what you actually think, problems included.
+- Don't rule your own work correct — tell the human an independent review is needed and let someone (or something) other than the author check it. Don't just agree to please the human; say what you actually think, problems included. And before calling a thing right *or* wrong — especially when your verdict matches what the human just suggested — verify it against the source: quote it, run the obvious counter-checks, and separate what it says from what you infer.
     ✗ the agent that wrote the code reviews its own code and decides it's good.
 - Make sure a human owns the goal of what you're doing. Don't chase a proxy metric or ship something no human has confirmed is the right thing to build.
     ✗ agents optimize a proxy metric no human owns, and ship the wrong thing efficiently.

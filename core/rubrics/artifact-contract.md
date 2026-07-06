@@ -44,7 +44,9 @@ scope: trellis-product
    criteria + Open questions; `expression-profile` → Delivery + Profile + Assessment notes +
    Open questions; `lexicon` → Canonical terms + Open questions; `feedback` → exempt. *FAIL → name the missing section.*
 7. **Supersede integrity.** A `superseded` artifact carries `superseded_by`; **revise-in-place**
-   docs (specs, invariants, research, rubrics) re-point to the successor. *Exemption (`inv-auditable-archive`): an
+   docs (specs, invariants, research, rubrics) re-point to the successor. A **partially
+   superseded** artifact keeps `status: ratified` and carries `superseded_in_part_by`, whose
+   entries resolve like `depends_on` (`spec-0001` §2, `decision-0040`). *Exemption (`inv-auditable-archive`): an
    **append-only** `decision` may keep a dependency on the version current at its ratification
    (historical, not current-truth); a successor referencing its predecessor for diffing is also
    exempt.* *FAIL → name the offender.*
