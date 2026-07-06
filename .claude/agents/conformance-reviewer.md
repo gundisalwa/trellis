@@ -35,7 +35,9 @@ Recognized typed artifacts: `signature-catalog`, `expression-profile` (`spec-000
    Consequences; `spec`/`invariant-set` → Acceptance criteria/Open questions; `research-note`
    → Open questions; `feedback` → exempt.
 7. Supersede integrity: a `superseded` artifact carries `superseded_by`; **revise-in-place**
-   docs (specs, invariants, research, rubrics) re-point to the successor. *Exemption (`inv-auditable-archive`): an
+   docs (specs, invariants, research, rubrics) re-point to the successor. A **partially
+   superseded** artifact keeps `status: ratified` and carries `superseded_in_part_by`, whose
+   entries resolve like `depends_on` (`spec-0001` §2, `decision-0040`). *Exemption (`inv-auditable-archive`): an
    **append-only** `decision` may keep a dependency on the version current at its ratification
    (historical, not current-truth); a successor referencing its predecessor for diffing is also
    exempt.*
