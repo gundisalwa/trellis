@@ -1,0 +1,48 @@
+# Trellis eval harness
+
+Does laying Trellis over a project measurably change how an agent behaves? This harness answers that
+**empirically**, per `research-0011`: a **blind A/B** where the only difference is the Trellis overlay,
+scored by an **independent reviewer** against two rubrics.
+
+```
+scaffold framework X ─┬─ arm A (baseline)      ─┐
+                      └─ arm B (+ trellis setup) ┘
+        run a dev task with a worker agent  →  transcript per arm
+        independent reviewer scores each transcript (blind to arm) against:
+          · eval/scorecards/<framework>.md   — the framework's own rules
+          · eval/scorecards/invariants.md     — the invariants (✗-failure rubric)
+        Δ = B − A on each scorecard, over repeats × tasks
+```
+
+**Win condition:** +Trellis lifts the invariant score **without hurting** framework-adherence.
+
+## Layout
+
+| path | what |
+|---|---|
+| `tasks/*.md` | dev tasks chosen to create invariant-testing moments |
+| `scorecards/invariants.md` | the invariant rubric — **auto-derived** from the catalog (`gen-invariant-scorecard.py`) |
+| `scorecards/<framework>.md` | the framework's own declared rules |
+| `prompts/worker.md` | the worker prompt (do the task, following the project's instructions) |
+| `prompts/reviewer.md` | the reviewer prompt (score a transcript against a rubric; blind to arm) |
+| `run.sh` | the orchestrator (scaffold → apply → worker → reviewer → record) |
+| `aggregate.py` | roll per-run scores into the Δ |
+
+## Run
+
+Pluggable via env; defaults to Spec Kit + headless Claude. Needs the framework's installer on PATH
+(`uv` for Spec Kit, `npx` for BMAD) and a worker/reviewer agent (`claude`).
+
+```sh
+FRAMEWORK=spec-kit TASK=eval/tasks/01-ambiguous-feature.md REPEATS=3 ./eval/run.sh
+python3 eval/aggregate.py runs/           # Δ across the recorded runs
+```
+
+## Honest limits (see `research-0011` open questions)
+
+- **Blinding is imperfect** — the overlay is in the worker's instructions; we blind the *reviewer* to
+  instructions (it scores behavior), not the world.
+- **Stochastic** — one run proves nothing; use `REPEATS` + the judge panel, and trust the **Δ** more than
+  any absolute score.
+- **Worker = headless Claude** by default; a different agent shifts the baseline (the Δ should be steadier).
+- First runs are a **proof-of-concept**, not a powered study.

@@ -1,0 +1,14 @@
+name: eval-scorecard-sync
+# The eval invariant scorecard is derived from the catalog (decision-0028); keep it in sync.
+on:
+  pull_request:
+    paths:
+      - core/catalog/**
+      - eval/scorecards/invariants.md
+      - eval/gen-invariant-scorecard.py
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: ./eval/check-scorecard.sh
