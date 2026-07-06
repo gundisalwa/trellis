@@ -46,7 +46,7 @@ Every non-code artifact opens with YAML frontmatter:
 | `depends_on` | ✓ | list of `id`s and/or declared external refs; `[]` for a root |
 | `owner` | ✓ | the accountable human (the `inv-intent-locus` role). The *role* is contract; the *field* is mappable — a methodology whose `owner` means something else declares which field/mechanism carries the accountable human (`decision-0037`) |
 | `author` | — | optional: who wrote it (human or agent), distinct from accountability |
-| `date` / `ratified` / `supersedes` / `superseded_by` / `rubric` | — | optional |
+| `date` / `ratified` / `supersedes` / `superseded_by` / `superseded_in_part_by` / `rubric` | — | optional |
 
 **External refs:** a `depends_on` entry that is not an artifact `id` must match a declared
 external-ref prefix (v0 allowlist: `brief-§…`). Anything else is a **dangling reference** →
@@ -91,6 +91,13 @@ composed onto a host that brings none): `draft → ratified`; plus `ratified →
 - **`superseded`** — replaced; must carry `superseded_by`; **never** consumed as current truth
   (B4). Decisions are append-only: supersede, never edit a ratified one.
 
+**Supersession can be partial (`decision-0040`).** A decision can be outgrown in *part* while
+its remainder stays live. The successor states what it supersedes in part; the old record
+**keeps `status: ratified`** (the remainder is current) and gains
+**`superseded_in_part_by: [successor…]`** — a **marking, not an edit-in-substance** (the same
+class of permitted touch as the full-supersede status flip), so no reader lands on the
+outgrown half without a forward link. Each entry must resolve like any `depends_on` id.
+
 *(Worked instance of the open contract, `decision-0037`: math-quest's `draft → gated →
 approved` — `gated` is rubric-self-checked and agent-consumable under a recorded ratchet,
 `approved` is the human merge = ratified. Same shape, different names.)*
@@ -124,7 +131,9 @@ checklist from this spec, not from the producer (B3). Its checks:
 6. Required body sections present per type (§4).
 7. **Supersede integrity:** a `superseded` artifact carries `superseded_by`; **revise-in-place**
    docs (specs, invariants, research, rubrics — B4 consolidated truth) re-point to the
-   successor. *Exemption (B4): an **append-only** `decision` may keep a dependency on the
+   successor. A **partially superseded** artifact keeps `status: ratified` and carries
+   `superseded_in_part_by`, whose entries must resolve (`decision-0040`). *Exemption (B4): an
+   **append-only** `decision` may keep a dependency on the
    upstream version current at its ratification — a historical fact, not current-truth
    consumption.* A successor referencing its own predecessor (for diffing) is also exempt.
 
