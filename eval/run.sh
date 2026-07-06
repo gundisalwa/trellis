@@ -12,7 +12,12 @@ set -euo pipefail
 FRAMEWORK="${FRAMEWORK:-spec-kit}"
 TASK="${TASK:?set TASK=eval/tasks/NN-....md}"
 REPEATS="${REPEATS:-1}"
-AGENT="${AGENT:-claude -p}"                 # worker/reviewer driver; must accept a prompt arg
+# Worker edits files + runs commands (needs write perms); reviewer only reads + prints.
+# For a fully-autonomous worker in a trusted sandbox, set WORKER_AGENT to use
+# `--permission-mode bypassPermissions`. Run this yourself in an env where you've authorized
+# headless agents — it deliberately runs unsupervised coding agents per arm.
+WORKER_AGENT="${WORKER_AGENT:-claude -p --permission-mode acceptEdits}"
+REVIEWER_AGENT="${REVIEWER_AGENT:-claude -p}"
 OUTDIR="${OUTDIR:-runs}"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 need() { command -v "$1" >/dev/null || { echo "FATAL: '$1' not on PATH — $2" >&2; exit 1; }; }
@@ -42,7 +47,7 @@ score() {  # $1 arm  $2 idx  $3 transcript  — one reviewer per rubric (extend 
     local rp; rp="$(mktemp)"
     python3 "$ROOT/eval/fill.py" "$ROOT/eval/prompts/reviewer.md" \
       "TASK=$TASK" "TRANSCRIPT=$transcript" "RUBRIC=$card" > "$rp"
-    $AGENT "$(cat "$rp")" > "$base.$rubric.score.md" 2>&1 || true
+    $REVIEWER_AGENT "$(cat "$rp")" > "$base.$rubric.score.md" 2>&1 || true
     rm -f "$rp"
   done
 }
@@ -57,7 +62,7 @@ run_arm() {  # $1 arm (baseline|trellis)  $2 idx
   local wp; wp="$(mktemp)"
   python3 "$ROOT/eval/fill.py" "$ROOT/eval/prompts/worker.md" "TASK=$TASK" > "$wp"
   local transcript="$base.transcript.md"
-  (cd "$dir" && $AGENT "$(cat "$wp")") > "$transcript" 2>&1 || true
+  (cd "$dir" && $WORKER_AGENT "$(cat "$wp")") > "$transcript" 2>&1 || true
   rm -f "$wp"; rm -rf "$dir"
   score "$arm" "$i" "$transcript" "$base"
 }
