@@ -22,9 +22,15 @@ scaffold() {  # $1 = target dir. Non-interactive per research-0011.
     spec-kit) need uv "install uv for Spec Kit"
       uvx --from git+https://github.com/github/spec-kit.git specify init "$1" \
         --integration claude --script sh --ignore-agent-tools ;;
+    openspec) need npx "install node/npx for OpenSpec"
+      mkdir -p "$1" && npx --yes @fission-ai/openspec@latest init "$1" --tools claude --force ;;
+    cc-sdd) need npx "install node/npx for cc-sdd"
+      mkdir -p "$1" && (cd "$1" && npx --yes cc-sdd@latest --claude-skills) ;;
     bmad) need npx "install node/npx for BMAD"
       mkdir -p "$1" && (cd "$1" && npx --yes bmad-method install --yes --tools claude-code --modules bmm) ;;
-    *) echo "FATAL: unknown FRAMEWORK '$FRAMEWORK'" >&2; exit 1 ;;
+    # spec-swarm is intentionally absent — it installs only as an interactive Claude Code plugin
+    # (research-0011), so it can't be scaffolded headlessly here.
+    *) echo "FATAL: unknown FRAMEWORK '$FRAMEWORK' (spec-swarm is not scriptable — see research-0011)" >&2; exit 1 ;;
   esac
 }
 

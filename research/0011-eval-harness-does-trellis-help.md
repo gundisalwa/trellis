@@ -21,13 +21,23 @@ setup command** and **rules concrete enough to score adherence**.
 
 | Framework | Non-interactive setup | Declares checkable rules |
 |---|---|---|
-| **GitHub Spec Kit** (primary) | `uvx --from git+https://github.com/github/spec-kit.git specify init NAME --integration claude --script sh --ignore-agent-tools` | strong: `constitution.md` + ordered `spec → plan → tasks` |
+| **GitHub Spec Kit** (primary, scaffold verified) | `uvx --from git+https://github.com/github/spec-kit.git specify init NAME --integration claude --script sh --ignore-agent-tools` | strong: `constitution.md` + ordered `spec → plan → tasks` |
+| **OpenSpec** (Fission-AI, 58.8k★) | `npm i -g @fission-ai/openspec@latest && openspec init . --tools claude --force` | change folders (`proposal/specs/design/tasks`) + `openspec validate` + `--json` |
+| **cc-sdd** (gotalab, best-fit new) | `npx cc-sdd@latest --claude-skills` | EARS requirements → approval gate → per-task TDD review |
 | **BMAD-METHOD** | `npx bmad-method install --yes --tools claude-code --modules bmm` | phased role-agent workflow; PRD/architecture/stories |
 | **Agent OS** | `curl -sSL .../setup/project.sh \| bash -s -- --no-base --claude-code` | `standards/` + `instructions/` |
+| **spec-workflow-mcp** (GPL-3.0) | `npx -y @pimzino/spec-workflow-mcp@latest <path>` (MCP server) | Req→Design→Tasks + per-stage approval — enforced via **MCP tool state**, not files |
+
+**Blocked — `spec-swarm`** (MartyBonacci): good rules (constitution + a 0–100 ship gate, default 80), but
+install is **Claude-Code-plugin-only via interactive slash commands** (`/plugin install` + `/ss:init`) —
+no scriptable setup, so it fails the harness's one hard gate. Include only if we can drive Claude Code's
+plugin install out-of-band (unverified). **Tessl** is excluded too (closed beta, non-deterministic).
 
 **Aider is the harness *driver*, not a framework to A/B** — it runs headless (`aider --message … --yes`)
 but imposes no process. `AGENTS.md` / Cursor rules are *targets* (where instructions land), not
-installable scaffolds. (Full survey: the research subagent's report, folded here.)
+installable scaffolds. Ranked fit for A/B (install × checkable rules × reproducibility): **cc-sdd ·
+OpenSpec · Spec Kit** lead; the MCP-shaped `spec-workflow-mcp` needs a scorer that reads tool state, not
+files. (Full survey: the two research subagent reports, folded here.)
 
 ## Method
 
