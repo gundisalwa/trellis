@@ -25,8 +25,17 @@ scaffold framework X ─┬─ arm A (baseline)      ─┐
 | `scorecards/<framework>.md` | the framework's own declared rules |
 | `prompts/worker.md` | the worker prompt (do the task, following the project's instructions) |
 | `prompts/reviewer.md` | the reviewer prompt (score a transcript against a rubric; blind to arm) |
+| `prompts/diff.md` | the behavioral-diff prompt (compare the two arms: *did behavior differ, and how?*) |
 | `run.sh` | the orchestrator (scaffold → apply → worker → reviewer → record) |
 | `aggregate.py` | roll per-run scores into the Δ |
+
+Two outputs per run: the **Δ** (`aggregate.py` — *whether* behavior differed, in counts) and the
+**behavioral diff** (`prompts/diff.md` — *how* it differed, in evidence). See `runs/…/RESULT.md` +
+`BEHAVIORAL-DIFF.md` for a worked example.
+
+**Frameworks** (`FRAMEWORK=`): `spec-kit` (scaffold verified), `openspec`, `cc-sdd`, `bmad`. All install
+non-interactively. `spec-swarm` is **not** supported — it installs only as an interactive Claude Code
+plugin (`research-0011`).
 
 ## Run
 
