@@ -1,10 +1,10 @@
 ---
 id: decision-0041
 type: decision
-status: draft
+status: ratified
 depends_on: [decision-0032]
 owner: gundi
-ratified:
+ratified: 2026-07-07
 ---
 
 # 0041 — the tap is the family's, not trellis's own; supersedes decision-0032's tap shape
