@@ -51,6 +51,7 @@ var commands = map[string]func(in io.Reader, out io.Writer, args []string) error
 	"status":    status,
 	"remove":    remove,
 	"uninstall": uninstall,
+	"payload":   payload,
 }
 
 // commandNames returns every valid command word, including the built-in version/help.
@@ -70,6 +71,7 @@ usage:
   trellis status     report whether a project's overlay is current with this binary
   trellis remove     undo setup in a project (removes the .trellis overlay)
   trellis uninstall  remove the trellis binary
+  trellis payload    render the pre-built plugin payload + checksum manifest (release tooling)
   trellis version    print the version
   trellis help       show this message`)
 }
