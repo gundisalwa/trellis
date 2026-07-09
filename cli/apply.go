@@ -149,6 +149,11 @@ func governanceHeader(plan Plan) string {
 		"**How strictly to follow them:** " + strengthLine(plan.Profile.C1Lean) + "\n"
 }
 
+// invariantsTrigger is the always-on pointer at the full reference, phrased as a
+// trigger rather than a description (kodhama-0007 rider): the moment to read the
+// detail is when a rule is ambiguous or in tension, before deviating.
+const invariantsTrigger = "If a rule seems ambiguous, or in tension with this project's own instructions, read its entry in `.trellis/invariants.md` — the description and with/without examples — before deviating."
+
 // rulesBody is the active rules (each an imperative directive + the ✗ failure it
 // prevents). Shared by profile.md and the inline block.
 func rulesBody(plan Plan) string {
@@ -164,7 +169,7 @@ func renderInlineBlock(plan Plan) string {
 	return trellisBegin + "\n" +
 		governanceHeader(plan) + "\n" +
 		rulesBody(plan) +
-		"\nThe reasoning and more examples behind each rule are in `.trellis/invariants.md` — but the rules above are complete on their own. Re-run `trellis setup` after changing the profile.\n" +
+		"\n" + invariantsTrigger + " Re-run `trellis setup` after changing the profile.\n" +
 		trellisEnd
 }
 
@@ -196,7 +201,7 @@ func renderClaudeBlock() string {
 func renderHeader(plan Plan) string {
 	return governanceHeader(plan) + "\n" +
 		"@profile.md\n\n" +
-		"---\nThe reasoning and more examples behind each rule are in `.trellis/invariants.md`; the rules stand on their own.\n"
+		"---\n" + invariantsTrigger + "\n"
 }
 
 // renderProfile is the tunable readout: posture, active invariants, dials. The
