@@ -8,11 +8,14 @@ import (
 
 // docSurfaces are the user-facing files whose claims must match the shipped product
 // (decision-0025). Paths are relative to this package dir (cli/).
-// install.sh retired with the end-user binary channel (#120, decision-0043).
+// The binary-era install.sh retired with the end-user binary channel (#120,
+// decision-0043); the file returned in #124 as the thin mechanical payload
+// writer — a doc surface like any other (it names plugin skills in its output).
 var docSurfaces = []string{
 	"../README.md",
 	"../docs/index.html",
 	"../docs/invariants.html",
+	"../install.sh",
 }
 
 // proseAfterTrellis are lowercase words that legitimately follow "trellis" in prose
@@ -22,6 +25,7 @@ var proseAfterTrellis = map[string]bool{
 	"is": true, "a": true, "an": true, "the": true, "and": true, "or": true,
 	"on": true, "in": true, "to": true, "as": true, "for": true, "with": true,
 	"that": true, "governance": true, "mark": true,
+	"block": true, "marker": true, "markers": true, // install.sh's messages (#124)
 }
 
 // TestDocsClaimOnlyRealCommands enforces decision-0025: the docs must not advertise a
