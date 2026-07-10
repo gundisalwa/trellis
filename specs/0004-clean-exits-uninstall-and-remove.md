@@ -3,6 +3,7 @@ id: spec-0004
 type: spec
 status: ratified
 ratified: 2026-07-05
+superseded_in_part_by: [decision-0043]
 depends_on: [spec-0003, decision-0023, invariants-v1]
 owner: gundi
 rubric: spec-quality
