@@ -10,6 +10,15 @@ date: 2026-07-05
 
 # 0023 — Trellis's first code: Go, single binary, no package manager; the dev cycle
 
+> **Retired by `decision-0043` (2026-07-10, #120; text below preserved as written).** The
+> distribution model this decision set — GitHub Releases plus a `curl … | sh` installer, and
+> the release/CI machinery built to ship that binary to end users — is gone: `decision-0043`
+> deletes the end-user binary channel outright (`auto-release.yml`, `release.yml`, and the
+> release-era `install.sh` removed), and the CLI survives only as a generator-only tool that
+> renders the vendored payload — never something a user installs directly. This decision's
+> entire subject matter — Trellis shipped as a curl-installed end-user binary — is retired;
+> nothing below describes the current CLI.
+
 **Raised by:** the maintainer — the setup CLI (`spec-0003`) is Trellis's **first code**. So far the
 repo has been instructions only, with no code dev cycle; now one is needed, and the distribution must
 not depend on a package manager.
