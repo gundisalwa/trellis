@@ -35,8 +35,12 @@ scope: trellis-product
    (`trellis-product`) — `decision-0017`.
 3. **`id` unique** across the corpus. *FAIL → name the colliding files.*
 4. **`depends_on` resolves.** Each entry is an existing artifact `id`, a declared external-ref
-   prefix (v0 allowlist: `brief-§…`), **or** a **retired id** in the invariant-set's Identifiers
-   registry (mapping to a successor). *FAIL → name the dangling reference.*
+   form — `brief-§…`, **or** a qualified `<repo>/<id>` cross-repo reference whose `<repo>` is a
+   member of the recognized registry (kodhama, trellis, grove, wisp, design-system,
+   homebrew-tap, math-quest) (`spec-0001` §1, `decision-0044`; shape + registry-membership
+   only — not verified against the referent's actual home corpus, same treatment as
+   `brief-§…`) — **or** a **retired id** in the invariant-set's Identifiers registry (mapping to
+   a successor). *FAIL → name the dangling reference.*
 5. **Directional flow (load-bearing — `inv-directional-flow`/`inv-graph-maintenance`).** No `gated`/`approved` (or legacy
    `ratified`) artifact `depends_on` a `draft` artifact. *FAIL → name the edge.*
 6. **Required body sections per type** (`spec-0001` §4, `spec-0002` §4): `spec`/`invariant-set` →
