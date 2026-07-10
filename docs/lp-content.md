@@ -43,7 +43,7 @@ the canonical front door per `kodhama-0002`):
 - `manual` (any other harness):
   ```
   $ git clone --depth 1 https://github.com/kodhama/trellis
-  $ cp trellis/plugins/trellis/reference/... your-project/.trellis/    # copy, paste, shasum -c — see the README
+  $ cp trellis/plugins/trellis/reference/... .trellis/    # copy, paste, shasum -c — see the README
   ```
 
 **Note under the terminal:** No binary, no runtime — the bundle is
