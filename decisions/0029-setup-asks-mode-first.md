@@ -9,6 +9,15 @@ ratified: 2026-07-05
 
 # 0029 — Setup asks the mode first; detection is per-mode (M1 needs no harness)
 
+> **Retired by `decision-0043` (2026-07-10, #120; text below preserved as written).** The
+> interactive `setup` CLI this decision ordered — ask the install mode first, then detect only
+> what that mode needs — is deleted along with the rest of the binary's interactive flow
+> (`decision-0043` rule 1: "the interactive `setup` TUI … the harness detection, and the
+> binary's M2 path are deleted, not merely undocumented"); the M1/M2 mode split now lives only
+> as the plugin skill's own logic (`/trellis:setup`, incl. the M2 morph). This decision's entire
+> subject matter — the CLI's mode-first ordering of harness detection — is retired; nothing
+> below describes the current setup flow.
+
 ## Context
 
 `spec-0003 §2b` had setup **detect the harness first** and **exit if the `claude` binary isn't on
