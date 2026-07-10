@@ -2,6 +2,7 @@
 id: decision-0023
 type: decision
 status: ratified
+superseded_in_part_by: [decision-0043]
 ratified: 2026-07-05
 depends_on: [decision-0010, decision-0012, decision-0019]
 owner: gundi
@@ -10,14 +11,20 @@ date: 2026-07-05
 
 # 0023 — Trellis's first code: Go, single binary, no package manager; the dev cycle
 
-> **Retired by `decision-0043` (2026-07-10, #120; text below preserved as written).** The
-> distribution model this decision set — GitHub Releases plus a `curl … | sh` installer, and
-> the release/CI machinery built to ship that binary to end users — is gone: `decision-0043`
-> deletes the end-user binary channel outright (`auto-release.yml`, `release.yml`, and the
-> release-era `install.sh` removed), and the CLI survives only as a generator-only tool that
-> renders the vendored payload — never something a user installs directly. This decision's
-> entire subject matter — Trellis shipped as a curl-installed end-user binary — is retired;
-> nothing below describes the current CLI.
+> **Superseded in part by `decision-0043` (2026-07-10, #120; text below preserved as written).**
+> Only point 2 (distribution: GitHub Releases + a `curl … | sh` installer) is retired —
+> `decision-0043` deletes the end-user binary channel outright (`auto-release.yml`, `release.yml`,
+> and the release-era `install.sh` removed) and the CLI survives only as a generator-only tool
+> that renders the vendored payload, never something a user installs directly. The rest of this
+> decision stands: point 1 (Go, a single static binary) survives verbatim —
+> `decision-0043` rule 1 is explicit that "the Go code survives generator-only"; point 3
+> (`go test` + CI, test-first discipline for non-trivial logic) substantially survives — the
+> package's tests remain the CI guards per `decision-0043` rule 1, though the specific suite has
+> shifted (the M2 CLI e2e workflow retired with the deleted M2 path, `decision-0043` rule 4); and
+> point 4 (no-runtime scope) is untouched by `decision-0043` and reaffirmed by its own
+> Consequences ("Consistent with `decision-0010`"). Not the whole decision's subject matter, as
+> an earlier annotation on this file claimed — corrected during the 2026-07-10 consistency-sweep
+> review.
 
 **Raised by:** the maintainer — the setup CLI (`spec-0003`) is Trellis's **first code**. So far the
 repo has been instructions only, with no code dev cycle; now one is needed, and the distribution must
