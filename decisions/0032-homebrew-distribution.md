@@ -2,6 +2,7 @@
 id: decision-0032
 type: decision
 status: superseded
+superseded_by: [decision-0041]
 depends_on: [decision-0023, decision-0028]
 owner: gundi
 ratified: 2026-07-05

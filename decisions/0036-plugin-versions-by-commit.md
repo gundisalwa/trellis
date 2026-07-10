@@ -2,6 +2,7 @@
 id: decision-0036
 type: decision
 status: ratified
+superseded_in_part_by: [decision-0043]
 depends_on: [decision-0035]
 owner: gundi
 ratified: 2026-07-06
