@@ -35,11 +35,16 @@ compare wins. This record resolves both, so neither lives only in a PR body.
    code already is the generator, shares its parsing with the guards, and rewriting it would
    re-derive rendered content — the drift class `kodhama-0007` exists to kill.
 
-2. **The overlay stamp is the render stamp** (maintainer ruling, #120 addendum 4). Every writer
-   copies the payload's `version` file verbatim to `.trellis/version` (`payload@<content-hash>`);
-   `plugin@<sha>` stamping goes away entirely. This supersedes `decision-0039` rule 2 (the stamp
-   format — its rule 1, SessionStart + `additionalContext` as the only agent-facing surface,
-   stands unchanged) and folds the stamp into the manifest-verified copy set.
+2. **The overlay stamp is the render stamp** (maintainer ruling, #120 addendum 4). Every
+   *installing* writer — the setup skill, the manual copy path — copies the payload's `version`
+   file verbatim to `.trellis/version` (`payload@<content-hash>`); `plugin@<sha>` stamping goes
+   away entirely. One deliberate exception: the repo's own self-hosted overlay carries no stamp
+   (`.trellis/version` is gitignored) — its currency is guarded by CI regenerate-and-diff, not a
+   stamp, so a per-copy stamp would be noise (rationale in `TestRepoOverlayIsCurrent`'s doc
+   comment and the `.gitignore` entry, per `decision-0035`). This supersedes `decision-0039`
+   rule 2 (the stamp format — its rule 1, SessionStart + `additionalContext` as the only
+   agent-facing surface, stands unchanged) and folds the stamp into the manifest-verified copy
+   set.
 
 3. **Staleness is a file-to-file compare; `trellis status` retires.** `hooks/staleness.sh`
    compares `.trellis/version` against the installed plugin's `reference/version`: warn on
