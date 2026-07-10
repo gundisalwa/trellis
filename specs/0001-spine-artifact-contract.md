@@ -2,7 +2,7 @@
 id: spec-0001
 type: spec
 status: ratified
-depends_on: [invariants-v1, decision-0005, decision-0010, decision-0011, decision-0012, decision-0037, research-0003]
+depends_on: [invariants-v1, decision-0005, decision-0010, decision-0011, decision-0012, decision-0037, decision-0044, research-0003]
 owner: gundi
 rubric: rubric-artifact-contract
 ratified: 2026-06-30
@@ -49,8 +49,15 @@ Every non-code artifact opens with YAML frontmatter:
 | `date` / `ratified` / `supersedes` / `superseded_by` / `superseded_in_part_by` / `rubric` | — | optional |
 
 **External refs:** a `depends_on` entry that is not an artifact `id` must match a declared
-external-ref prefix (v0 allowlist: `brief-§…`). Anything else is a **dangling reference** →
-fail.
+external-ref form. **v0 recognizes two:** `brief-§…` (an unverified section-cite into a
+planning brief); and a qualified **`<repo>/<id>`** cross-repo reference (`decision-0044`) —
+`<repo>` must be a member of the recognized registry (**kodhama, trellis, grove, wisp,
+design-system, homebrew-tap, math-quest**) and `<id>` is the referenced artifact's own id
+exactly as declared in its home corpus (e.g. `math-quest/adr-0030-espalier`,
+`kodhama/kodhama-0007-one-render-many-copiers`). **Resolution depth (v0):** shape +
+registry-membership only, matching `brief-§…`'s own non-verified treatment — no
+fetch-and-confirm-the-referent-actually-exists mechanism. Anything else is a **dangling
+reference** → fail.
 
 **Types are open (`decision-0003`, `research-0003`).** Trellis does not impose a fixed type
 set — a methodology brings its own (`spec`/`requirements`/`PRD`/`changes` are one function
@@ -196,9 +203,46 @@ a host's behavior, even though the binding is built when delivery is:
   (minimal-first threshold)? This spec assumes the latter.
 - **Two consumable states or one?** Is the `ratified`/`approved` split worth it at v0, or
   collapse to `draft → ratified`? (Keeps the B3 two-faces distinction; may be premature.)
-- **External-ref mechanism:** an allowlist prefix (v0) vs a registry artifact — revisit when
-  refs multiply.
+- **External-ref mechanism — extended, not replaced (`decision-0044`):** refs multiplied (a
+  2026-07-10 family-wide consistency sweep found four concrete dangling-reference instances
+  across kodhama/trellis/wisp/grove) and the resolution kept the allowlist mechanism rather
+  than moving to a registry *artifact* — a second recognized form (`<repo>/<id>`, §1) extends
+  the existing `brief-§…` pattern instead. The **registry of recognized repo names** is inlined
+  directly in §1 for v0 (duplicated here, not a pointer at a separate canonical source) — revisit
+  if the registry itself starts drifting across repos, or the list keeps growing enough to
+  justify externalizing it into its own artifact.
 - **`core/` placement (`0005`):** the built resources (rubric, sub-agent) are Layer-A product
   → `core/`; this spec moves there in the `0005` reorg.
 - **Activation/wiring (§5, `0012`):** which hooks/skills/default-agent per dial level — owed
   by the delivery slice, not this build.
+
+## Rubric check
+
+**First rubric-check pass applied to `spec-0001` itself.** Specs `0002`–`0004` predate the
+self-check convention and carry no such section; `0005` is the first spec authored under it.
+This spec's situation differs from a fresh `0005`-style authoring: it is not moving through a
+lifecycle stage here, it is an already-`ratified` (family-enum equivalent: `approved`) artifact
+receiving an **in-place amendment** — the same class of touch `decision-0037` and `decision-0040`
+made to this same spec previously (`spec-0001` is revise-in-place current-truth,
+`decision-0014`/`decision-0037` pattern). So the scope of this check is **the amendment only** —
+the new external-ref form added to §1, the Open Questions update, and the frontmatter
+`depends_on` addition — not a retroactive re-audit of the spec's entire pre-existing body.
+
+Self-checked against `core/rubrics/artifact-contract.md`, per the `contract-author` agent's own
+§Method item 4 (trellis has no dedicated spec-quality rubric).
+
+| Check | Result | Note |
+|---|---|---|
+| 1. Frontmatter present & required fields valid | PASS | `id/type/status/depends_on/owner` shape unchanged; `depends_on` gained one well-typed entry, `decision-0044`. |
+| 2. `type`/`status` declared | PASS | `type: spec`, `status: ratified` (pre-`decision-0042` spelling of the family enum's `approved`) — left untouched by this amendment; bumping/relabeling `status` is explicitly out of scope for this task, done as a separate step. |
+| 3. `id` unique | PASS | `spec-0001` — no change. |
+| 4. `depends_on` resolves | PASS | New entry `decision-0044` — read directly this run: `status: approved`. |
+| 5. Directional flow (no `ratified`/`approved` depends on `draft`) | PASS | `decision-0044` is `approved`, not `draft` — no violation. |
+| 6. Required body sections per type (spec → Acceptance criteria + Open questions) | PASS | Both present; structure untouched by this amendment. |
+| 7. Supersede integrity | N/A | Not a supersession — an in-place amendment, the established precedent for this spec. |
+| Honesty clause | Self-assessed honest | This section states plainly that it checks the amendment's own conformance, not a fresh full audit of `spec-0001`'s pre-existing content. |
+
+No promotion statement follows. The `draft → gated → approved` mechanic in the `contract-author`
+charter governs *new* artifacts moving through the lifecycle; this is an in-place amendment to
+an already-`approved`/`ratified` artifact, matching the `decision-0037`/`decision-0040`
+precedent — `status` is not touched here, per this task's explicit scope.
