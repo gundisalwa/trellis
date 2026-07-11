@@ -1,7 +1,7 @@
 ---
 id: decision-0046
 type: decision
-status: gated  # self-checked 2026-07-11; ratified post-merge (old mechanic — see Self-check)
+status: approved  # 2026-07-11 — in-PR flip recording the maintainer's pre-merge intent act; the first decision ratified under its own rule (see Self-check)
 depends_on: [decision-0042, decision-0037, spec-0001, invariants-v1]
 owner: agent
 date: 2026-07-11
@@ -112,11 +112,14 @@ it. The proxy mislabeled a real human approval as not-yet-approved.
    ratchet" (§2). This decision refines trellis's **self-application**
    mechanic (`decision-0022`/`0042` + the guard), not the portable
    contract.
-4. **This decision is itself ratified under the *old* mechanic** — shipped
-   `gated`, merged (ratification), then a post-merge bump to `approved`. The
-   new in-PR-flip rule cannot apply to its own ratification before it
-   exists; this is the **last** trellis artifact ratified the
-   post-merge-bump way. Henceforth, in-PR flips.
+4. **This decision is ratified under its *own* new rule** — the **first**
+   trellis artifact so ratified. The maintainer's pre-merge approval
+   (2026-07-11) is the human intent act; the `status: approved` flip **in
+   this PR** records it; the merge lands it. There is no bootstrap paradox:
+   `floor-intent-gate` is satisfied by the human act itself, which does not
+   depend on this decision — the decision only recognizes that the act can
+   be performed pre-merge. The slimmed guard (no self-approval check)
+   permits the flip. The decision demonstrates its own mechanism.
 5. **Pairs with trellis#25** (execution-layer `approved` — does an
    implementation conform to its upstream). This decision settles the
    **intent-layer** half; #25 is the execution-layer half.
@@ -169,11 +172,10 @@ it. The proxy mislabeled a real human approval as not-yet-approved.
   **revise-in-place operating docs**, not append-only artifacts — a
   legitimate in-place update, the same class `decision-0042` made to
   `CLAUDE.md`. PASS.
-- **Approval mechanic**: left `gated`, not flipped. Ratified the **old**
-  way (merge + post-merge bump) — this decision cannot ride its own new
-  rule before it exists (Consequences 4). `ratify-guard` passes a `gated`
-  artifact (and the slimmed guard still runs on this very PR), so this PR
-  is guard-clean. PASS.
+- **Approval mechanic**: flipped to `approved` **in this PR**, recording
+  the maintainer's pre-merge intent act (2026-07-11) — the decision's own
+  new rule, applied to itself (Consequences 4). The slimmed guard has no
+  self-approval check, so the flip is guard-clean. PASS.
 - **Adversary round**: `spec-adversary` returned NEEDS-REVISION. Premise
   cleared (`floor-intent-gate` intact — it governs gatekeeper *identity*,
   not mechanical enforcement; `spec-0001` §2 no-amendment verified;
@@ -185,7 +187,8 @@ it. The proxy mislabeled a real human approval as not-yet-approved.
   draft-landing check → the guard is now **slimmed, not removed** (draft
   check kept, Decision 4). PASS (revised).
 
-**Overall: internally sound, consumable, and `gated`** — self-checked,
-survived an adversary round (revised), awaiting the maintainer's approval
-and the post-merge bump, which closes kodhama/trellis#142 (the intent-layer
-half) and hands the family-wide guard to grove#38.
+**Overall: internally sound, consumable, and `approved`** — self-checked,
+survived two adversary rounds (revised), ratified by the maintainer's
+pre-merge intent act via in-PR flip (its own new rule, applied to itself).
+Closes kodhama/trellis#142 (the intent-layer half); hands the family-wide
+guard to grove#38.
