@@ -50,10 +50,11 @@ relitigate the spec; you are here to answer one question honestly:
    - **scope creep** — changes not justified by the upstream.
 6. **Check propagation substantively.** trellis's PR contract is CI,
    not prose — no PR-body sections are required; the `cli-ci` and
-   `ratify-guard` checks must pass (ratify-guard, per `decision-0042`:
-   a ready PR must not touch a still-`draft` decision/spec — `gated` is
-   the mergeable state — and must not add a new artifact already
-   `approved`). A green check only proves the mechanical contract; you
+   `ratify-guard` checks must pass (ratify-guard, per `decision-0042` as
+   refined by `decision-0046`: a ready PR must not touch a still-`draft`
+   decision/spec — `gated` is the mergeable state. The old self-approval
+   check was retired — an in-PR `approved` flip that records a human act is
+   legitimate). A green check only proves the mechanical contract; you
    check the change is *true*. Ask: does this change action or fire any
    parked item (trellis has no dedicated parked-item store — parked
    items ride each artifact's own `## Open questions` section), a
