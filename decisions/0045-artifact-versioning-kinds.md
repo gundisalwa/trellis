@@ -1,20 +1,21 @@
 ---
 id: decision-0045
 type: decision
-status: gated  # self-checked 2026-07-11, shaping converged — see Self-check
-depends_on: [decision-0037, decision-0044, spec-0001]
+status: gated  # self-checked 2026-07-11, shaping converged + adversary round — see Self-check
+depends_on: [decision-0037, decision-0044, decision-0014, spec-0001]
 owner: agent
 date: 2026-07-11
 ---
 
 > Shaped interactively with the maintainer (2026-07-11), resolving
 > kodhama/trellis#143 — the principles-layer piece of the
-> artifact-conformance program (kodhama#31). This decision fixes the
-> type-agnostic primitives; their operational application (the
-> decision→spec→tests→code sync chain, and the check that runs it) is
+> artifact-conformance program (kodhama#31). Passed an independent
+> `spec-adversary` round (NEEDS-REVISION → this revision): the spine held,
+> several rationales were corrected to match their own sources. Operational
+> application (the sync *check*, the decision→spec→tests→code chain) is
 > grove#34, downstream.
 
-# 0045 — Two artifact-versioning kinds (append-only/implicit vs. versioned/explicit); the version form follows the kind; pin-vs-current conformance
+# 0045 — Artifact-versioning kinds; the version form fits what "conform" means; pin-vs-current conformance
 
 ## Context
 
@@ -23,22 +24,28 @@ trellis is the type-agnostic contract layer: per `decision-0037`, types
 "artifacts" with a declared type/scope/rubric and a `depends_on`. This
 decision extends the artifact contract so that "is a consumer still in
 sync with the upstream it built against?" becomes a **derived, checkable**
-question rather than a matter of trust — the structural prerequisite
-`inv-ratifiable-artifacts` names (and which trellis itself flags "strong,
-less settled" — a real cost, named here, not hidden).
+question. It leans on `inv-ratifiable-artifacts` (which trellis itself
+flags "strong, less settled" — a real cost, named).
 
-The motivating gap (kodhama#31): an `approved` upstream whose downstream
-(code, a vendored copy) hasn't caught up is a silent nonconformance. The
-resolution is not new machinery but a generalization: treat the downstream
-as *itself an artifact* whose `depends_on` pins a *version* of its
-upstream, and make "out of sync" the comparison of pinned-vs-current.
+**Precedents, read directly (three forms, not two).** The family already
+versions artifacts three different ways, and the difference is instructive:
+- trellis's **payload** — a **content-hash** (`payload@<12-hex>`,
+  `decision-0043`). It's a vendored bundle where **byte-identity is
+  correctness**; the hash is derived, automatic, bumps on any byte.
+- design-system's **tokens** — **human-cut git tags** (`vX.Y.Z`;
+  `design-system/README.md`: "Version = git tags … the tag *is* the
+  version", "an untagged commit has no stable identity"). *Not* a
+  content-hash (an earlier draft of this decision wrongly said so): a
+  human-judgment-cut release marker, which sits closer to the behavioral
+  model than to the payload's hash.
+- (proposed here) **specs** — an agent-generated significance counter
+  (below).
 
-**Precedent, not green-field.** design-system already does this for one
-artifact kind — current-state assets + explicit git-tag versions
-(`vX.Y.Z`), consumers pin the tag, "current?" = is the pin behind the
-latest tag. And trellis already versions its own `payload` by content-hash
-(`payload@<12-hex>`). Both are the same shape (stamp + pin + compare) on
-different kinds; this decision names the shape and the two kinds.
+The lesson: **the version form is not a clean two-way function of "kind."
+It fits what "conform" means for the artifact and how its significance can
+be judged** — and that ranges over at least byte-identity (hash),
+human-cut release (tag), and agent-judged behavioral significance
+(counter).
 
 ## Decision
 
@@ -51,132 +58,196 @@ different kinds; this decision names the shape and the two kinds.
 2. **Two artifact-versioning kinds — stated abstractly** (trellis names no
    concrete type):
    - **Append-only** — immutable; versions *implicitly* (the id already
-     pins a unique state; supersession is the history). This is trellis's
-     existing supersede discipline (`spec-0001` §2/§3.7).
+     pins a unique state; supersession is the history). trellis's existing
+     supersede discipline (`spec-0001` §2/§3.7).
    - **Versioned / revise-in-place** — mutable; carries an *explicit
      version stamp*, because the id alone doesn't identify *which* state a
      consumer built against.
 
-3. **Pin-vs-current conformance.** A downstream `depends_on` pins a
-   version of a versioned upstream; conformance = compare pinned vs.
-   current — **derived, not a self-reported "in-sync" boolean** (which
-   could lie; cf. wisp's ADR-0030). The pin is the versioned artifact's
-   **own stamp, never a decision-id**: a revise-in-place artifact retains
-   no deltas, so "its state as of decision X" is unreconstructable — only
-   an explicit stamp (+ git) recovers a past state.
+3. **Pin-vs-current conformance.** A downstream `depends_on` pins a version
+   of a versioned upstream; conformance = compare pinned vs. current —
+   **derived, not a self-reported "in-sync" boolean.** The pin is the
+   **versioned artifact's own version marker** (a counter, a git tag —
+   whatever form fits the kind), **not a foreign decision-id**. *(The
+   reason is granularity, corrected from an earlier draft: it is not that
+   a past state is "unreconstructable" — git recovers a state whether you
+   label it with a stamp or a decision's merge-commit. It is that the pin
+   must be the artifact's **own** comparison-currency at the artifact's own
+   granularity; a decision-id is a foreign, coarser marker shared across
+   whatever it changed. design-system's precedent already pins a git tag —
+   the artifact's own marker — not the decision that cut it.)*
 
 4. **The concrete type→kind mapping is family-level and already exists** —
-   not asserted here. Versioned ↔ specs (grove `adr-0004`: specs are
-   revise-in-place); append-only ↔ decisions (each repo's
-   `decisions/README`). This decision names the *kinds* and the *rule*;
-   the family already said which of its types are which.
+   not asserted here. Versioned ↔ specs (grove `adr-0004`, revise-in-place)
+   and ↔ invariant-sets (`decision-0014`, a revise-in-place spec that is
+   *not* a `spec` type); append-only ↔ decisions. This decision names the
+   *kinds* and the *rule*; the family already says which of its types are
+   which — and that classification is **incomplete** (see Open questions:
+   several seed types, and dual-consumed artifacts, are unclassified).
 
-5. **The version *form* follows the artifact kind.** One primitive
-   (stamp + pin + compare); the stamp's form is chosen by what "conform"
-   means for the kind:
-   - **Byte-identity kinds** (generated / vendored — trellis's `payload`,
-     design-system's tokens): a **content-hash**. Byte-identity *is*
-     correctness there; derived, automatic, can't lie, bumps on any
-     content change. (Unchanged — these already work this way.)
-   - **Behavioral kinds** (specs): a **significant-change version** —
-     bumps only on a *significant* (behavioral) change, which per
-     `adr-0004` already gets a decision; editorial edits don't bump. So
-     pin-vs-current tracks *behavioral* drift, not every byte. A
-     content-hash on a behavioral contract answers the wrong question
-     ("did any byte change?" incl. a typo fix) and cries wolf.
+5. **The version form fits what "conform" means for the artifact.** One
+   primitive (stamp + pin + compare); the stamp's form is chosen by what
+   "conform" means and how significance is judged:
+   - **Byte-identity** (vendored bundles — trellis's `payload`): a
+     **content-hash** (derived, automatic, can't lie, bumps on any byte).
+     Unchanged; already so.
+   - **Behavioral** (specs): an **agent-generated significance counter**
+     (item 6).
+   - **Human-cut release** (design-system's tokens today): **git tags**
+     (`vX.Y.Z`). A distinct, human-judgment-gated form; whether it should
+     migrate toward the agent-generated counter is out of scope here.
+   - A content-hash on a behavioral contract answers the wrong question
+     ("did any byte change?" incl. a typo fix) — so byte-identity and
+     behavioral forms are genuinely different, even if the two-way "kind"
+     framing is too crude for the full spectrum.
 
-6. **The behavioral (spec) version is *stamped + audited*.** A static
-   frontmatter field (`version: N`) — readable, pinnable — **reconciled by
-   a `corpus-reviewer` check against the append-only decision record** (the
-   significant-change decisions affecting the artifact). Drift is caught,
-   so the stamp can't silently lie: static-field simplicity *and* the
-   ADR-0030 "derived truth over self-report" property, via audit rather
-   than pure derivation.
-   - **Corollary (new requirement):** a **significant-change decision must
-     declare which artifact(s) it changes**, so the audit has something to
-     count against. The exact field is left to the amendment (below).
+6. **The behavioral (spec) version is an agent-generated, review-bounded
+   significance counter.** A plain monotonic counter (`v1, v2, …`) — an
+   ordering, nothing more (major/minor semantics would force a fallible
+   breaking-vs-additive call for zero sync benefit; a consumer re-verifies
+   on any bump regardless). It is **agent-generated**, not human-curated
+   (tedious, and the ADR-0030 self-report failure) — the agent bumps it
+   when a change is behaviorally significant.
+   - **Significance has a semi-mechanical anchor, not pure vibes:** because
+     specs are GWT/EARS-structured (`adr-0004` / grove#21), *"did a
+     testable clause — a scenario or an invariant — change?"* is the
+     signal; a prose-only edit does not bump. Agent interpretation covers
+     the fuzzy edges (a clause changed trivially; prose that carries real
+     behavior).
+   - **Honest epistemic status — bounded, not "can't lie."** Behavioral
+     *significance is inherently a judgment*: no mechanical rule fully
+     distinguishes a rewrite from a typo (the very reason a content-hash is
+     wrong here). So this version is a **claim, bounded by independent
+     review** (a reviewer sanity-checks that bumps track real
+     significance) — *not* the "derived, can't-lie" property a hash has.
+     Full derivation is not achievable for a behavioral version; bounded
+     judgment is the ceiling. *(This corrects an earlier draft that claimed
+     audit gave "the same can't-lie guarantee as derivation" — an audit
+     detects drift after the fact; it does not prevent it.)*
+   - **The change-without-a-decision residual (named, not hidden).** If a
+     behaviorally-significant change is made with **no** decision *and* the
+     agent fails to bump, it escapes detection. That is exactly grove#20's
+     process-gap class; its enforcement is the artifact-gated dispatch +
+     strict-TDD discipline of grove `adr-0005` and the sync check of
+     grove#34 — **not** this decision. This decision does not guarantee
+     completeness; it defines the version and names its dependency on that
+     upstream discipline.
+   - **Decision record as a *partial cross-check*, not the source.** Where
+     a significant change *did* file a decision, the version and the record
+     should agree — a `corpus-reviewer` reconciliation that catches
+     decision-without-bump / bump-without-decision. It is a bounded audit,
+     not the version's definition (not every significant change need flow
+     from a decision — see Open questions).
 
-7. **Pin shape:** `repo/id@version` (and `id@version` for a local pin),
-   extending `decision-0044`'s qualified `repo/id` cross-repo form. Exact
-   spelling is a `spec-0001`-amendment detail; this decision fixes the
-   shape.
+7. **`changes:` is a distinct forward-pointer relation.** For the partial
+   cross-check (item 6) a significant-change decision may declare which
+   artifact(s) it changes. This is a **forward-pointer relation of the
+   `superseded_by` class — never a reused `depends_on` edge.** A spec both
+   `depends_on` its authorizing decision *and* being named in that
+   decision's `changes:` is a benign two-relation pair only if `changes:`
+   is not graph-typed as a `depends_on`-class edge; typed as forward-only,
+   it raises no cycle against directional flow (`spec-0001` §3 check 5).
+
+8. **Pin shape:** `repo/id@version` (and `id@version` local), extending
+   `decision-0044`'s qualified `repo/id` form. Exact spelling (and the
+   `@` delimiter's collision-safety, which `decision-0044` checked for
+   `/`/`:`) is a `spec-0001`-amendment detail; this decision fixes shape.
 
 ## Considered and rejected
 
-- **Pin = a decision-id** (pin the decision that last changed the
-  upstream) — rejected: a revise-in-place artifact retains no deltas, so
-  the decision can't reconstruct the pinned state. The stamp must be on
-  the artifact.
-- **One uniform version form for all kinds** — rejected: it gets one kind
-  wrong. A content-hash is noisy on a behavioral spec (flags editorial
-  edits); a significant-change version is meaningless for a vendored
-  bundle where byte-identity *is* correctness.
-- **Spec version stamped-only (no audit)** — rejected: a bare
-  self-reported field can drift silently (decision filed, bump forgotten),
-  the exact ADR-0030 failure. Audit closes it.
-- **Spec version fully-derived (computed, no static field)** — rejected in
-  favour of stamped+audited: derivation can't lie either, but it's not a
-  static value a consumer can read off the file and pin against, and it's
-  heavier. Stamped+audited keeps the static field and gets the same
-  can't-lie guarantee via reconciliation.
-- **A self-reported "in-sync" boolean** — rejected at the root: conformance
-  must be *derived* (compare pin vs. current), never a claim.
+- **Pin = a decision-id** — rejected because the pin must be the
+  artifact's *own* comparison-currency at its own granularity, not a
+  foreign, coarser marker shared across everything a decision touched.
+  *(Not* rejected for "unreconstructability" — an earlier draft's reason,
+  false: git recovers a past state from either a stamp-label or a
+  decision's commit.)
+- **One uniform version form for all kinds** — rejected: it gets a kind
+  wrong (a hash is noisy on a behavioral spec; a significance counter is
+  meaningless for a byte-identical bundle). The real space is a spectrum
+  (hash / release-tag / significance-counter), not one form.
+- **A fully-derived spec version** (e.g. count of significant-change
+  decisions) — rejected: it presumes every significant change flows from a
+  decision, which is *not* established, and behavioral significance is a
+  judgment no mechanism fully computes. Derivation is unachievable here;
+  agent-generated + review-bounded is the honest ceiling.
+- **Claiming "audit gives can't-lie"** — retracted as an overclaim: audit
+  *bounds* drift (catches it at the next run), it does not *eliminate* the
+  possibility of a wrong bump, because the underlying significance call is
+  a judgment.
+- **A self-reported "in-sync" boolean** — rejected at the root:
+  conformance must be *derived by comparison* (pin vs. current), never a
+  claim of the answer.
+- **Semver for the behavioral version** — rejected for a plain counter:
+  sync detection needs an ordering, not compatibility semantics; major/
+  minor is a fallible agent judgment for zero sync benefit. (Revisitable
+  if a real compatibility-signalling need ever emerges — not on spec.)
 
 ## Consequences
 
-None executed by this decision itself — a follow-on `contract-author` pass
-amends `spec-0001` once this is `approved`:
+None executed by this decision — a follow-on `contract-author` pass amends
+`spec-0001` once this is `approved`:
 
-1. **`spec-0001` §1/§2 amendment** — the versioned kind's frontmatter
-   contract gains the version-stamp field; the `depends_on` grammar gains
-   the `repo/id@version` pin form (extending `decision-0044`). The
-   generated/vendored kind's content-hash stays as-is (already in use).
-2. **Decisions declare what they change** — a `changes:` / `affects:`
-   frontmatter list (or a reused relation) on significant-change
-   decisions, so the version audit can reconcile. Exact form settled in
-   the amendment.
-3. **`corpus-reviewer` gains the version audit** — for a versioned
-   behavioral artifact, its `version` reconciles against the
-   significant-change decisions declaring they affect it; a mismatch is a
-   finding. (This is the *frontmatter-vs-record* audit — distinct from the
-   *pin-vs-current sync* check between a consumer and its upstream, which
-   is operational and lives in grove#34.)
-4. **The concrete mapping is unchanged** — specs already revise-in-place
-   (`adr-0004`), decisions already append-only. No repo restates it.
+1. **`spec-0001` §1/§2 amendment** — the versioned kind's frontmatter gains
+   a version marker; the `depends_on` grammar gains the `repo/id@version`
+   pin form (extending `decision-0044`). The generated/vendored kind's
+   content-hash and design-system's git tags stay as-is.
+2. **`changes:` / `affects:` forward-pointer relation** on significant-change
+   decisions (for the partial cross-check), typed distinct from
+   `depends_on`. Exact form settled in the amendment.
+3. **`corpus-reviewer` gains the partial version cross-check** — where a
+   significant-change decision declares it changes a behavioral artifact,
+   reconcile its declared version against the record; a mismatch is a
+   finding. A *bounded* audit (this is the frontmatter-vs-record check,
+   distinct from the consumer-vs-upstream *sync* check, which is grove#34).
+4. **The concrete mapping is unchanged** — specs revise-in-place
+   (`adr-0004`), decisions append-only; no repo restates it.
 
 ## Open questions
 
-- **The pin-vs-current *sync* check** — how a consumer's pin is compared
-  to its upstream's current stamp, and where that check runs
-  (`conformance-reviewer` / a mode of it / new) — is *operational*, parked
-  to **grove#34**. This decision fixes only the primitive it acts on.
-- **Does a passing sync check materialize the deferred execution-layer
-  `approved`** (`spec-0001` §2 — a status, or a gate-outcome)? Pairs with
-  **trellis#142** (the intent-act half) and **trellis#25**; not this
-  decision.
-- **Exact spellings** — the version field name, the `changes:`/`affects:`
-  field, the `@version` delimiter — are the follow-on `spec-0001`
-  amendment's to fix; this decision fixes shapes, not spellings.
+- **Must every significant spec change flow from a decision?** If yes, the
+  partial cross-check strengthens toward derivation; if no, the
+  agent-generated + review-bounded version stands on its own. Same shape as
+  grove#20/#21 one level up. Open — not settled here.
+- **Dual-consumed artifacts** (a **charter** is consumed *both* by
+  vendoring/byte-identity *and* by conformance/behavioral — and grove#34
+  acts on exactly this artifact): does it carry *two* markers (a byte-hash
+  *and* a behavioral counter)? The two-kind partition doesn't answer this;
+  0045's own "form fits what conform means" implies it might. Left to
+  grove#34 / the amendment.
+- **Unclassified seed types** — `plan`, `tasks`, `research-note`,
+  `feedback`, `rubric` (`spec-0001` §1) have no declared kind; the
+  family-level classification is incomplete. Not this decision's to
+  complete (it's methodology-defined), but flagged.
+- **The pin-vs-current *sync* check** — how a consumer's pin is compared to
+  its upstream's current marker, and where it runs — is operational, parked
+  to **grove#34**.
+- **Execution-layer `approved`** (status vs. gate-outcome, `spec-0001` §2)
+  — pairs with **trellis#142** + **trellis#25**; not this decision.
+- **Exact spellings** (version field, `changes:`, `@version` delimiter) —
+  the follow-on `spec-0001` amendment's to fix.
 
 ## Self-check (gate)
 
 - **Frontmatter**: `id`/`type`/`status`/`depends_on`/`owner`/`date`
   present, well-typed. PASS.
-- **`depends_on` resolution**: `decision-0037` (`ratified`), `spec-0001`
-  (`ratified`), `decision-0044` (`approved`) — all resolve in this repo,
-  none `draft`. PASS.
-- **Directional flow**: this artifact is `gated`; every dependency is
-  ratified/approved, not draft. No `gated`→`draft` violation. PASS.
-- **Required body sections** (`spec-0001` §4, `decision` →
-  Context/Decision/Consequences): present, plus Considered-and-rejected,
-  Open questions, this Self-check. PASS.
+- **`depends_on` resolution**: `decision-0037` (`ratified`), `decision-0014`
+  (added this revision — the invariant-set-as-revise-in-place precedent,
+  `ratified`), `decision-0044` (`approved`), `spec-0001` (`ratified`) — all
+  resolve, none `draft`. PASS.
+- **Directional flow**: `gated`; every dependency is ratified/approved,
+  not draft. PASS.
+- **Required body sections** (`spec-0001` §4): Context/Decision/Consequences
+  present, plus Considered-and-rejected, Open questions, Self-check. PASS.
 - **Append-only discipline**: new artifact; nothing edited in place; no
-  ratified decision superseded (it *extends* the contract). N/A — no
-  violation possible.
-- **Approval mechanic**: left `gated`, **not** flipped to `approved`. The
-  design is settled but ratification (the maintainer's act) is owed — this
-  record does not pre-empt it. PASS.
+  ratified decision superseded (it *extends* the contract). N/A.
+- **Adversary round**: `spec-adversary` returned NEEDS-REVISION; findings
+  A (design-system form), B (can't-lie overclaim), C (change-without-
+  decision hole), D (unreconstructable reasoning), E (`changes:` edge
+  type), F (dual-consumed/unclassified) each corrected or named above.
+  Verdict was "spine sound, rationales need to match sources" — done.
+- **Approval mechanic**: left `gated`, not flipped to `approved`; the
+  design is settled but ratification (the maintainer's act) is owed. PASS.
 
 **Overall: internally sound, consumable, and `gated`** — self-checked,
-agent-consumable, awaiting the maintainer's approval, which closes
-kodhama/trellis#143 and authorizes the `spec-0001` amendment (Consequences).
+adversary-revised, awaiting the maintainer's approval, which closes
+kodhama/trellis#143 and authorizes the `spec-0001` amendment.
