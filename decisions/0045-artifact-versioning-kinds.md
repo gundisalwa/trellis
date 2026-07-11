@@ -68,20 +68,26 @@ date: 2026-07-11
     change?" — and the family already draws that line (`adr-0004`
     significant vs. editorial). Forcing one form on both kinds gets one
     of them wrong.
+- **The spec (behavioral) version is *stamped + audited*** (2026-07-11).
+  A static frontmatter field (`version: N`) — readable, pinnable — but
+  **reconciled by a corpus-reviewer check against the append-only
+  decision record** (the significant-change decisions affecting the
+  spec). Drift is caught, so the stamp can't silently lie: it keeps the
+  static-field simplicity *and* the `ADR-0030` "derived truth over
+  self-report" property, via audit rather than pure derivation.
+- **Corollary (new machinery this requires):** a **significant-change
+  decision must declare which artifact(s) it changes**, so the audit has
+  something to count against. The exact field (a `changes:` / `affects:`
+  frontmatter list on the decision, vs. reusing an existing relation) is
+  a `spec-0001`-amendment detail left to the follow-on contract-author
+  pass — but the *requirement* is decided here.
 
 **Open** (live design questions — the substance still to shape):
-1. **Is the spec (behavioral) version *stamped* or *derived*?** A written
-   frontmatter field (`version: 3`), bumped by hand when the
-   significant-change decision is filed — can drift (decision filed,
-   bump forgotten); vs. *derived* from the decision record (e.g. a
-   function of the significant-change decisions affecting the artifact) —
-   can't drift, but needs decisions to declare what they change and isn't
-   a static value you read off the file. (The "can it lie?" question the
-   `ADR-0030` principle cares about.)
-2. **Stamp location + pin syntax** — proposed (to confirm): the stamp is a
-   `spec-0001` frontmatter field on the versioned artifact; a pin extends
-   `decision-0044`'s qualified form to `repo/id@version` (and `id@version`
-   local). Low-fork unless the derive-vs-stamp answer (1) reshapes it.
+1. **Stamp location + pin syntax** — proposed (to confirm): the stamp is
+   a `spec-0001` frontmatter field on the versioned artifact; a pin
+   extends `decision-0044`'s qualified form to `repo/id@version` (and
+   `id@version` local). Low-fork — the exact spelling is a `spec-0001`
+   amendment detail; this decision just fixes the shape.
 
 **Parked** (moved out of this decision):
 - **The check mechanism** — how the conformance check reads current-stamp
