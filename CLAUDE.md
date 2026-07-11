@@ -53,10 +53,13 @@ rule you can't exemplify is probably vaporware.*
 - **Gates.** Human approval at the **intent** layer (vision, decisions, the invariant
   set). **Independent verification** at the **execution** layer (a conformance check
   against the approved upstream before merge — *the builder does not grade itself*).
-  **Ratification rides the merge (`decision-0022`, as amended by `decision-0042`):** a PR
-  carries the `draft → gated` flip in its diff, **merging *is* the ratification**, and a
-  post-merge bump commit records `approved` — no draft is left on `main` past the PR that
-  introduced it (gate it, or keep it clearly WIP; never write `approved` in the PR itself).
+  **Ratification is a human intent act (`decision-0022`/`0042`, refined by `decision-0046`):**
+  a human's approval — in conversation, review, or by merging — is the ratification act;
+  flipping `draft → gated → approved` in the PR **records** it. An **in-PR `approved` flip is
+  legitimate when it records a human act**; an agent writing `approved` with no human act is
+  forbidden (`floor-intent-gate`). Merging is one way to perform ratification, not the only
+  one. **No draft is left on `main` past the PR that introduced it** (gate it, or keep the PR
+  clearly WIP) — the `ratify-guard` check still enforces this draft-landing rule.
 - **Work.** One logical change per PR; descriptive, linear history; diffs small enough to
   review on a phone.
 - **Self-improvement.** Triggers, not vigilance (invariant 8): when friction reveals a
