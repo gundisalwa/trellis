@@ -2,8 +2,9 @@
 id: spec-0001
 type: spec
 status: ratified
-depends_on: [invariants-v1, decision-0005, decision-0010, decision-0011, decision-0012, decision-0037, decision-0044, decision-0045, research-0003]
+depends_on: [invariants-v1, decision-0005, decision-0010, decision-0011, decision-0012, decision-0037, decision-0044, decision-0045, grove/adr-0010-versioning-is-operational, research-0003]
 owner: gundi
+version: 1  # counter initialized 2026-07-12 with the adr-0010 de-reflection amendment — forward-only from materialization; prior states uncounted (.grove/versioning.md initialization rule)
 rubric: rubric-artifact-contract
 ratified: 2026-06-30
 ---
@@ -13,6 +14,21 @@ ratified: 2026-06-30
 > **Ratified 2026-06-30 (A2 / D2)** — the gate is passed; the spine is being built against
 > this. It is the first artifact of the spec stage (`decision-0011`), and the first user of
 > that stage.
+>
+> *Amended in place 2026-07-12 (`grove/adr-0010`; layering: kodhama-0008 §3). WHAT: versioning
+> content reduced to **shape only** — the §1 `version`/`changes` rows and the pin paragraph now
+> defer semantics to the methodology (the open-field treatment `type` and `status` already get);
+> §2's stamping note likewise; §3 check 8 (the version cross-check) retired, re-homed to the
+> grove operating model's `corpus-reviewer` (rubric check 12 likewise). WHY: versioning is
+> detection mechanics for the sync principle, not principle — its single home is the installed
+> methodology companion (`.grove/versioning.md`; origin record `decision-0045`, superseded in
+> part on its execution-home consequences only). SCOPE: §1 two rows + pin block, §2 one note,
+> §3 checks 4/5 (citation repoints) + 8 (retired); rubric checks 4/5/12 in the same PR. POINTER:
+> `grove/adr-0010`, kodhama/kodhama#35. VALUE: a contract reader gets the portable shape; no
+> second home for semantics can drift. CONFIDENCE: verified (companion approved + installed).
+> `status` unchanged; a significant change (testable checks retired), so the behavioral
+> **`version` counter is initialized at `v1`** in this same edit, per the methodology's
+> initialization rule.*
 
 ## Purpose
 
@@ -46,8 +62,8 @@ Every non-code artifact opens with YAML frontmatter:
 | `depends_on` | ✓ | list of `id`s and/or declared external refs; `[]` for a root |
 | `owner` | ✓ | the accountable human (the `inv-intent-locus` role). The *role* is contract; the *field* is mappable — a methodology whose `owner` means something else declares which field/mechanism carries the accountable human (`decision-0037`) |
 | `author` | — | optional: who wrote it (human or agent), distinct from accountability |
-| `version` | — | the **versioned (revise-in-place) artifact's own version marker**, at its own granularity — *not* a foreign decision-id (`decision-0045` item 3). **Required** on a versioned artifact that downstreams pin; **omitted** by append-only artifacts (decisions), which version *implicitly* via id + supersession (item 2). **Form fits the kind** (item 5 — a spectrum, not a two-way function): a **behavioral spec** → a plain monotonic counter (`v1`, `v2`, …), agent-generated, a review-bounded significance *ordering* (**not** semver; a testable-clause — scenario/invariant — change bumps it, a prose-only edit does not — item 6); a **vendored / byte-identical bundle** (trellis's `payload`) → a content-hash (`payload@<12-hex>`, `decision-0043` — unchanged); a **human-cut release** (design-system tokens) → a git tag (`vX.Y.Z` — unchanged). The behavioral counter is a **claim bounded by review, not a "can't-lie" derivation** (item 6). *Version **presence** is not itself gate-enforced at v0* — a versioned artifact lacking a stamp is not FAILed (this keeps trellis's current unstamped specs, `spec-0001` included, from retroactively failing); presence matters once a `@version` pin needs it, and the pin-vs-current enforcement is grove#34 / `adr-0006`'s. |
-| `changes` | — | on a **significant-change `decision`** only: the versioned artifact(s) it changes, each pinned to the version it set (`id@version` or `<repo>/<id>@version`). A **forward-pointer relation of the `superseded_by` / `superseded_in_part_by` class — never a `depends_on`-class edge** (`decision-0045` item 7); entries resolve like any `id`. Feeds the §3 partial version cross-check (**behavioral / counter-versioned artifacts only** — `decision-0045` Consequences item 3). |
+| `version` | — | **open field — methodology-defined**, like `type` and `status` (`grove/adr-0010`; origin record `decision-0045`): a **versioned (revise-in-place)** artifact's own version marker — present when downstreams pin it, **omitted** by append-only artifacts (which version *implicitly* via id + supersession). This contract states **shape only**; the forms, bump semantics, presence enforcement, and initialization rule live in the installed methodology companion (in a grove-managed install, `.grove/versioning.md`) — their single home, deliberately not restated here. |
+| `changes` | — | on a **significant-change `decision`** only: the versioned artifact(s) it changes, each pinned (`id@version` or `<repo>/<id>@version`). **Shape at this layer:** a **forward-pointer relation of the `superseded_by` / `superseded_in_part_by` class — never a `depends_on`-class edge** (walked accordingly, §3 check 5); entries resolve like any `id`. Its reconciliation semantics are **methodology-defined** (`grove/adr-0010` — the operating model's `corpus-reviewer` owns the cross-check). |
 | `date` / `ratified` / `supersedes` / `superseded_by` / `superseded_in_part_by` / `rubric` | — | optional |
 
 **External refs:** a `depends_on` entry that is not an artifact `id` must match a declared
@@ -61,32 +77,16 @@ registry-membership only, matching `brief-§…`'s own non-verified treatment �
 fetch-and-confirm-the-referent-actually-exists mechanism. Anything else is a **dangling
 reference** → fail.
 
-**Version pins (`@version`, `decision-0045`).** A `depends_on` entry pinning a **versioned**
-upstream (one that carries a `version` marker, §1/§2) may qualify the referent with the version it
-was built against: **`id@version`** locally (e.g. `spec-mastery-engine@v3`), or
-**`<repo>/<id>@version`** cross-repo (e.g. `math-quest/spec-slice-01-first-loop@v3`) — extending
-`decision-0044`'s qualified `<repo>/<id>` form. **`@` is already the family's version delimiter:**
-`decision-0043`'s `payload@<12-hex>` content-hash stamp already uses it, so this amendment
-*generalizes* that existing delimiter to all versioned pins — it does not invent one. The
-`<version>` is whatever form fits the upstream's kind (a counter `vN`, a git tag `vX.Y.Z`, a hex
-hash — the §1 `version` row). A `@version` pin is meaningful **only on a versioned upstream**;
-an **append-only** artifact (a `decision`) carries no `version` marker (§2), so pinning one with
-`@version` is a category error. v0's no-fetch resolution strips `@version` and resolves the bare
-`id` regardless, so it does **not** actively reject such a pin — a possible grove#34 refinement,
-not a v0 gate.
-
-**`@` collision-safety (checked the way `decision-0044` checked `/` and `:`).**
-`<repo>/<id>@<version>` parses unambiguously: repo names (the registry — **kodhama, trellis,
-grove, wisp, design-system, homebrew-tap, math-quest**) and artifact `id`s (kebab slugs) contain
-no `@`; version markers (`vN`, `vX.Y.Z`, a hex hash) contain no `/` or `@`. So **split on the
-first `/`, then split on `@`** recovers `<repo>`, `<id>`, and `<version>` with no ambiguity — the
-same *structural* (not heuristic) guarantee `decision-0044` established for the `/` delimiter.
-
-**Resolution depth (v0, no-fetch — `decision-0044`).** A `@version` pin is checked on **shape +
-the bare `id`/`<repo>/<id>`'s registry/corpus membership only**; v0 does **not** fetch the upstream
-to compare the pinned version against its current one. That **pin-vs-current *sync* comparison is
-the operational check owned by grove#34 / grove `adr-0006`**, not this spec's §3 conformance check
-— the same non-verified treatment `brief-§…` and a bare `<repo>/<id>` already get.
+**Version pins (`@version`) — shape only (`grove/adr-0010`).** A `depends_on` referent pinning a
+versioned upstream may be qualified with the version it was built against: **`id@version`**
+locally, **`<repo>/<id>@version`** cross-repo (extending `decision-0044`'s qualified form; `@` is
+already the family delimiter — `decision-0043`'s `payload@<12-hex>`). Parse structurally: repo
+names and `id`s contain no `@`, version markers no `/` or `@`, so **split on the first `/`, then
+on `@`** — the same guarantee `decision-0044` established for `/`. v0's no-fetch resolution
+strips `@version` and resolves the bare `id` on shape + registry/corpus membership only.
+Everything past shape — which forms exist, what pinning an upstream means, pin-vs-current sync —
+is **methodology-defined** (the installed companion; operationally the conformance chain's,
+grove `adr-0006`).
 
 **Types are open (`decision-0003`, `research-0003`).** Trellis does not impose a fixed type
 set — a methodology brings its own (`spec`/`requirements`/`PRD`/`changes` are one function
@@ -134,12 +134,10 @@ its remainder stays live. The successor states what it supersedes in part; the o
 class of permitted touch as the full-supersede status flip), so no reader lands on the
 outgrown half without a forward link. Each entry must resolve like any `depends_on` id.
 
-**Version stamping is a property of *kind*, not lifecycle state (`decision-0045`).** A
-**versioned / revise-in-place** artifact (a spec — grove `adr-0004`; a `decision-0014`
-invariant-set) carries an **explicit `version` stamp** (§1): its `id` alone does not identify
-*which* state a downstream built against, so the stamp is that pin currency. An **append-only**
-artifact (a `decision`) needs no stamp — it versions *implicitly*: the `id` already pins a unique
-immutable state and supersession is its history (`decision-0045` item 2).
+**Version stamping follows the artifact's kind (§1), and its semantics are
+methodology-defined** (`grove/adr-0010`; origin record `decision-0045`) — versioned artifacts
+carry the marker, append-only artifacts version implicitly via id + supersession; nothing more
+is stated at this layer.
 
 *(Worked instance of the open contract, `decision-0037`: math-quest's `draft → gated →
 approved` — `gated` is rubric-self-checked and agent-consumable under a recorded ratchet,
@@ -168,12 +166,12 @@ checklist from this spec, not from the producer (B3). Its checks:
 3. `id` unique across the corpus.
 4. Every `depends_on` resolves to an existing artifact `id`, a declared external ref, **or** a
    **retired id** in the invariant-set's Identifiers registry (mapping to its successor); no
-   dangling references. A referent may carry a **`@version` pin** (`decision-0045`, §1); resolve
-   it on **shape + the bare `id`/`<repo>/<id>`'s membership only** (v0, no-fetch) — the
-   pinned-version-vs-upstream's-current *sync* comparison is **not** this check's; it is grove#34 /
-   grove `adr-0006`'s operational check.
+   dangling references. A referent may carry a **`@version` pin** (§1 — shape only); resolve
+   it on **shape + the bare `id`/`<repo>/<id>`'s membership only** (v0, no-fetch) — everything
+   past shape is methodology-defined (`grove/adr-0010`); the pin-vs-current *sync* comparison is
+   the operational chain's (grove `adr-0006`).
 5. **Directional flow (load-bearing, A1/B1):** no `ratified` artifact `depends_on` a
-   `draft` artifact. A decision's **`changes:`** relation (`decision-0045` item 7) is a
+   `draft` artifact. A decision's **`changes:`** relation (§1 — shape) is a
    **forward-pointer of the `superseded_by` class, not a `depends_on`-class dependency edge** — it
    is **not walked** as a flow edge. A spec both `depends_on`-ing its authorizing decision *and*
    named in that decision's `changes:` is a benign two-relation pair, **not a cycle** (the same way
@@ -187,24 +185,10 @@ checklist from this spec, not from the producer (B3). Its checks:
    **append-only** `decision` may keep a dependency on the
    upstream version current at its ratification — a historical fact, not current-truth
    consumption.* A successor referencing its own predecessor (for diffing) is also exempt.
-8. **Version cross-check (partial, `decision-0045` Consequences item 3).** **Scope: behavioral /
-   counter-versioned artifacts only** — the version form `decision-0045` item 6 defines as a
-   monotonic *ordering*, which is exactly what this check's comparison needs. A **content-hash**
-   (`decision-0043`'s `payload@<hex>`) has **no ordering** (it answers "did any byte change?",
-   item 5), and cross-repo **git-tag** forms are the operational sync check's territory — both are
-   **out of this check's scope**. Within scope: where a significant-change `decision` carries
-   `changes: [X@vN]`, reconcile it against `X`'s `version` **record** — **not** a naive
-   `declared == current` equality. A `decision` is append-only, so its declared `@vN` is a
-   *historical* fact that legitimately sits **behind** `X`'s current counter once `X` bumps again
-   (a decision that set `X@v3` is not wrong because `X` later reached `v4`). The **sound finding is
-   a declared change that never landed** — `changes: [X@vN]` where `X`'s current counter is *behind*
-   `vN` (`X` never reached the version the decision claims to have set). The reverse direction — a
-   bump in `X` with **no** accounting `changes:` decision — is **softer, never a hard FAIL**:
-   `decision-0045`'s own open question leaves *"must every significant change flow from a
-   decision?"* unsettled, so an unaccounted bump is at most a prompt to look, not a violation. A
-   **bounded, intra-repo frontmatter-vs-record audit**, owned by the conformance check /
-   `corpus-reviewer` — **distinct** from the consumer-vs-upstream *sync* check (check 4), which is
-   grove#34 / grove `adr-0006`'s.
+8. *(Retired 2026-07-12, `grove/adr-0010` — the version cross-check is methodology semantics,
+   re-homed to the operating model: `.grove/versioning.md` §"The `changes:` relation and its
+   cross-check" defines it; the operating model's `corpus-reviewer` owns it. Number retained so
+   external references to "§3 check 8" resolve to this pointer rather than shifting.)*
 
 **Honesty clause (math-quest):** *accurately listing the violations is success.* A check that
 hides drift to report "pass" has failed this spec. The report is also the raw **friction
@@ -352,3 +336,21 @@ now **scoped to the behavioral / counter-versioned form** and **wired into the r
 **Status unchanged.** As with the `decision-0044` amendment, `status` stays `ratified`; no
 promotion statement follows — the `draft → gated → approved` mechanic governs *new* artifacts, not
 an in-place amendment to an already-ratified one.
+
+### Rubric check — `grove/adr-0010` de-reflection amendment (2026-07-12)
+
+Scope: this amendment only (§1 two rows + pin paragraph, §2 stamping note, §3 checks 4/5
+repoints + check 8 retired; `version: 1` initialized) — not a re-audit of the pre-existing body.
+Self-checked by the amending agent; an independent conformance review of the same diff runs on
+the amending PR (its verdict is recorded there).
+
+| Check | Verdict | Evidence |
+|---|---|---|
+| 1. Frontmatter valid | PASS | `version: 1` added (optional field, initialization rule applied at first significant change); `depends_on` gained `grove/adr-0010-versioning-is-operational`, well-typed per `decision-0044`'s qualified form. |
+| 4. `depends_on` resolves | PASS | `grove/adr-0010` read directly this run: `status: approved` (grove#50). |
+| 5. Directional flow | PASS | The new upstream is `approved`, not `draft`. |
+| 7. Supersede integrity | PASS | Nothing here superseded; `decision-0045`'s partial marks land in the same PR with resolving entries. |
+| 8. Version cross-check | N/A | Retired by this amendment (pointer retained); the re-homed check is the operating model's. `adr-0010` carries no `changes:` field — recorded honestly: the bump is decision-backed but not `changes:`-declared, the soft direction the semantics permit. |
+
+Status stays `ratified` (in-place amendment, the repo's precedent). The amendment note at the
+head is the delta record; POINTER `grove/adr-0010` / kodhama/kodhama#35.

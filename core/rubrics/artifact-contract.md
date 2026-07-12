@@ -40,13 +40,13 @@ scope: trellis-product
    homebrew-tap, math-quest) (`spec-0001` §1, `decision-0044`; shape + registry-membership
    only — not verified against the referent's actual home corpus, same treatment as
    `brief-§…`) — **or** a **retired id** in the invariant-set's Identifiers registry (mapping to
-   a successor). A referent may carry a **`@version` pin** (`spec-0001` §1, `decision-0045`);
-   resolve it on **shape + the bare `id`/`<repo>/<id>`'s membership only** (v0, no-fetch) — the
-   pin-vs-upstream-current *sync* comparison is **not** this check's (it is grove#34 /
-   `adr-0006`'s). *FAIL → name the dangling reference.*
+   a successor). A referent may carry a **`@version` pin** (`spec-0001` §1 — shape only;
+   semantics methodology-defined, `grove/adr-0010`); resolve it on **shape + the bare
+   `id`/`<repo>/<id>`'s membership only** (v0, no-fetch) — the pin-vs-upstream-current *sync*
+   comparison is **not** this check's (it is the operational chain's, grove `adr-0006`). *FAIL → name the dangling reference.*
 5. **Directional flow (load-bearing — `inv-directional-flow`/`inv-graph-maintenance`).** No `gated`/`approved` (or legacy
    `ratified`) artifact `depends_on` a `draft` artifact. A decision's **`changes:`** relation
-   (`spec-0001` §3, `decision-0045` item 7) is a **forward-pointer of the `superseded_by` class,
+   (`spec-0001` §1 — shape) is a **forward-pointer of the `superseded_by` class,
    not a `depends_on`-class edge** — do **not** walk it as a flow edge; a spec both depending on
    its authorizing decision and named in that decision's `changes:` is a benign pair, not a cycle.
    *FAIL → name the edge.*
@@ -85,22 +85,13 @@ scope: trellis-product
     `intent_locus: true` (`inv-intent-locus`, `floor-intent-gate`). *FAIL → name the offending
     gene.*
 
-## Check — version cross-check (base contract, `spec-0001` §3 check 8, `decision-0045`)
+## Check — version cross-check (retired)
 
-*Placed here, not renumbered into the base checks 1–7, to avoid shifting the `spec-0002` typed
-checks 8–11 above — it is a base-contract check (`spec-0001` §3), applied only when a
-significant-change `decision` carries a `changes:` field.*
-
-12. **Version cross-check (partial).** **Scope: behavioral / counter-versioned artifacts only**
-    (the ordered `vN` form — `decision-0045` item 6; a content-hash has no ordering and cross-repo
-    tags are the sync check's, both out of scope). Where a significant-change `decision` carries
-    `changes: [X@vN]`, reconcile against `X`'s counter **record**, **not** `declared == current`:
-    an append-only decision's `@vN` legitimately sits behind `X`'s current counter after a later
-    bump. *FAIL → a **declared change that never landed**: `X`'s current counter is behind `vN`.* A
-    bump in `X` with no accounting `changes:` decision is **not** a FAIL (`decision-0045`'s
-    open question — "must every significant change flow from a decision?" — is unsettled). Bounded
-    intra-repo frontmatter-vs-record audit; **distinct** from the pin-vs-current *sync* check
-    (check 4), which is grove#34 / `adr-0006`'s.
+12. *(Retired 2026-07-12, `grove/adr-0010` — the version cross-check is methodology semantics,
+    re-homed to the operating model: `.grove/versioning.md` §"The `changes:` relation and its
+    cross-check" defines it; the operating model's `corpus-reviewer` owns it. Number retained so
+    external references to "rubric check 12" resolve to this pointer rather than shifting; the
+    `spec-0002` typed checks 8–11 above are unaffected.)*
 
 ## Honesty clause (math-quest)
 
