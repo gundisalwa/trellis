@@ -4,6 +4,7 @@ type: decision
 status: approved  # ratified by PR #144 merge (2026-07-11); this commit is the post-merge bump
 depends_on: [decision-0037, decision-0044, decision-0014, spec-0001]
 owner: agent
+superseded_in_part_by: [grove/adr-0010-versioning-is-operational]  # 2026-07-12 — Consequences 1–3 only (the execution HOME: grammar in spec-0001, cross-check in trellis's corpus-reviewer); the decision content (kinds, forms, counter, pins) stands as the origin record — semantics now evolve in the grove operating model
 date: 2026-07-11
 ---
 
@@ -187,18 +188,32 @@ human-cut release (tag), and agent-judged behavioral significance
 None executed by this decision — a follow-on `contract-author` pass amends
 `spec-0001` once this is `approved`:
 
+> *[Superseded in part 2026-07-12 by `grove/adr-0010-versioning-is-operational`
+> — scope: Consequences 1–3 (per-clause markers below). The decision content
+> above stands as the origin record; Consequence 4 stands untouched.]*
+
 1. **`spec-0001` §1/§2 amendment** — the versioned kind's frontmatter gains
    a version marker; the `depends_on` grammar gains the `repo/id@version`
    pin form (extending `decision-0044`). The generated/vendored kind's
    content-hash and design-system's git tags stay as-is.
+   *[Superseded 2026-07-12 by `grove/adr-0010` — the grammar written into
+   `spec-0001` is reduced to shape-only clauses; the semantics' single home
+   is the installed `.grove/versioning.md` companion.]*
 2. **`changes:` / `affects:` forward-pointer relation** on significant-change
    decisions (for the partial cross-check), typed distinct from
    `depends_on`. Exact form settled in the amendment.
+   *[Superseded 2026-07-12 by `grove/adr-0010` — the relation's shape (edge
+   class) stays in `spec-0001` §1; its reconciliation semantics live in the
+   companion.]*
 3. **`corpus-reviewer` gains the partial version cross-check** — where a
    significant-change decision declares it changes a behavioral artifact,
    reconcile its declared version against the record; a mismatch is a
    finding. A *bounded* audit (this is the frontmatter-vs-record check,
    distinct from the consumer-vs-upstream *sync* check, which is grove#34).
+   *[Superseded 2026-07-12 by `grove/adr-0010` — the cross-check is owned by
+   the operating model's `corpus-reviewer` (grove#51), defined in the
+   companion; trellis's spec-0001 §3 check 8 / rubric check 12 are retired
+   to pointers.]*
 4. **The concrete mapping is unchanged** — specs revise-in-place
    (`adr-0004`), decisions append-only; no repo restates it.
 
