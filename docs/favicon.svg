@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- trellis mark — identical path data to kodhama/design-system's icons/trellis.svg.
+     Colors are baked literals (favicons render outside the page's CSS cascade,
+     so custom properties aren't reachable) mirroring docs/index.html's :root.
+     data-season is dormant on this page (never set) — this ships the evergreen
+     accent to match. Re-bake if that changes. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+  <title>trellis</title>
+  <style>
+    .post { stroke: #1f9d68; }
+    .lath { stroke: color-mix(in srgb, #1f9d68 58%, #ffffff); }
+    @media (prefers-color-scheme: dark) {
+      .post { stroke: #4ccb90; }
+      .lath { stroke: color-mix(in srgb, #4ccb90 58%, #131c18); }
+    }
+  </style>
+  <path class="post" d="M4 21V10.2M4 7.8V5M12 21V16.2M12 13.8V3M20 21V10.2M20 7.8V5" stroke-width="1.7" stroke-linecap="butt"/>
+  <path class="post" d="M4 21L4 21M12 21L12 21M20 21L20 21M4 5L4 5M12 3L12 3M20 5L20 5" stroke-width="1.7" stroke-linecap="round"/>
+  <path class="lath" d="M2 9H10.8M13.2 9H22M2 15H2.8M5.2 15H18.8M21.2 15H22" stroke-width="1.7" stroke-linecap="butt"/>
+  <path class="lath" d="M2 9L2 9M22 9L22 9M2 15L2 15M22 15L22 15" stroke-width="1.7" stroke-linecap="round"/>
+</svg>
