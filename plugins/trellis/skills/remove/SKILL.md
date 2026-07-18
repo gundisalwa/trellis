@@ -1,6 +1,6 @@
 ---
 name: remove
-description: Remove Trellis from this project — delete the .trellis/ overlay and strip the managed block from CLAUDE.md, touching nothing else. Use when the user asks to remove, uninstall, undo, or take out Trellis from their repo.
+description: Remove Trellis from this project — delete the .trellis/ overlay, strip the managed block from CLAUDE.md, and strip any .trellis/ lint-ignore entry setup added, touching nothing else. Use when the user asks to remove, uninstall, undo, or take out Trellis from their repo.
 ---
 
 # Remove Trellis from this project
@@ -28,10 +28,28 @@ every other line of the user's `CLAUDE.md` must stay exactly as it was. If, afte
 contains only whitespace (it held nothing but the Trellis block, i.e. Trellis created the file), delete
 it; otherwise leave it in place.
 
-## 3. Confirm
+## 3. Strip any `.trellis/` ignore entry setup added (`decision-0049`)
 
-Tell the user exactly what you removed (`.trellis/` and the `CLAUDE.md` block). If neither was present,
-say so plainly — **do not invent changes**.
+`/trellis:setup` may have offered to add `.trellis/` to the project's linters/formatters (setup's
+step 7). Reverse that too — augment-never-clobber, the same as the `CLAUDE.md` block above:
+
+- **Detect the same tools setup did** — ESLint (`.eslintrc*` / `eslint.config.*` / `eslintConfig` in
+  `package.json`), Prettier (`.prettierrc*` / `.prettierignore`), Biome (`biome.json`), markdownlint
+  (`.markdownlint*` / `.markdownlintignore`) — and look for a `.trellis/` entry in each one's ignore.
+- **Remove only the `.trellis/` entry, and only that line** — touch no other ignore pattern. If an
+  ignore file that setup *created* now holds nothing but that entry (it exists only because of
+  Trellis), delete the file; otherwise leave it, minus the one line — the same rule as the `CLAUDE.md`
+  block.
+- **Only what Trellis added.** You cannot always be certain the user did not add `.trellis/`
+  themselves. If it is ambiguous — the entry sits among the user's own patterns, or the file is
+  clearly theirs — **surface it and ask** before removing; never strip a line you are not sure
+  Trellis put there.
+- If no `.trellis/` ignore entry is found, do nothing here and say so — **do not invent changes**.
+
+## 4. Confirm
+
+Tell the user exactly what you removed (`.trellis/`, the `CLAUDE.md` block, and any `.trellis/`
+lint-ignore entry). If none was present, say so plainly — **do not invent changes**.
 
 ## Reversing an M2 morph
 
