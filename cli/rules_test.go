@@ -56,6 +56,39 @@ func TestCatalogSlugOrder(t *testing.T) {
 	}
 }
 
+// TestSelfImprovementCarriesEntropyLean guards decision-0052: the catalog's
+// inv-self-improvement entry renders the dispositional face the set already owns —
+// the directive carries the pattern-introduction notice (point 1), the entry gains
+// the entropy-lean signature clause (point 2) and the *(structure)* honored/violated
+// pair (point 3), and the rendered rule's ✗ line extends in the same breath while
+// staying one ✗ bullet, the readout format unchanged (point 4).
+func TestSelfImprovementCarriesEntropyLean(t *testing.T) {
+	d := invariantDirectives()["inv-self-improvement"]
+	for _, want := range []string{
+		"And notice the friction you are about to create",
+		"migrate it, or name the exemption and ask — never resolve it silently in prose",
+	} {
+		if !strings.Contains(d, want) {
+			t.Errorf("inv-self-improvement directive missing the decision-0052 point-1 extension %q: %q", want, d)
+		}
+	}
+	f := invariantPrimaryFailure()["inv-self-improvement"]
+	if want := "re-runs it, forever — or a new convention lands and the old stock stays loose beside it, exempted by prose nobody approved"; !strings.Contains(f, want) {
+		t.Errorf("inv-self-improvement primary failure missing the decision-0052 point-4 ✗ extension: %q", f)
+	}
+	if frag := ruleFragment("inv-self-improvement"); strings.Count(frag, "✗") != 1 {
+		t.Errorf("decision-0052 point 4: the readout format is unchanged — still exactly one ✗ bullet, got: %q", frag)
+	}
+	// The catalog wraps prose fields at ~100 cols, so match wrap-insensitively.
+	catalog := strings.Join(strings.Fields(invariantsRef), " ")
+	if !strings.Contains(catalog, "the entropy lean as proactive notice") {
+		t.Error("catalog missing the decision-0052 point-2 signature clause (the entropy lean as proactive notice)")
+	}
+	if !strings.Contains(catalog, "migrate or exempt?") || !strings.Contains(catalog, "two conventions in one tree") {
+		t.Error("catalog missing the decision-0052 point-3 *(structure)* honored/violated pair")
+	}
+}
+
 // TestInvariantDirectivesCoverCatalog guards decision-0034: every invariant carries an
 // imperative, host-agent-facing directive for the block — and it must not leak the
 // Trellis-internal codes a host agent can't resolve.

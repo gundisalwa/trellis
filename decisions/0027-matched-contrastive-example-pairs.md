@@ -44,3 +44,18 @@ pair answers.
 
 - Whether the always-loaded view (later) carries the full pair or just the *without* (the failure to
   avoid). Decide when idea A is built.
+
+---
+
+> **Amendment (2026-07-19, append-only — recorded at the conformance gate of
+> `decision-0052`'s build; the maintainer's merge of that build PR ratifies it).**
+> The first `violated` bullet doubles as the always-loaded ✗ line (`decision-0031`),
+> and may therefore carry an appended clause from another pair's use case when a
+> decision extends the readout's failure example. The pair guarantee stays at the
+> bullet level — `violated[i]`/`honored[i]` linked, same tag, same order ("file shape
+> is an implementation detail; the guarantee is that the pairs are linked") —
+> intra-bullet composition is likewise implementation detail. Worked instance:
+> `decision-0052` — `inv-self-improvement`'s *(CI)* bullet carries the *(structure)*
+> clause whose matched "with" sits at index 2, jointly forced by that decision's
+> points 3+4 and the first-bullet render rule; surfaced by the executor, adjudicated
+> by the conformance gate, recorded here so pair-purity is not re-litigated per entry.
