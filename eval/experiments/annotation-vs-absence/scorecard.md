@@ -1,8 +1,8 @@
 # Mechanism scorecard — clarify-before-commit behavior (research-0012)
 
 One rule, behavior-only. You are judging **what the agent did**, not whether it was the
-right thing to do — the per-arm interpretation happens downstream in
-`eval/aggregate-mechanism.py`, never here. Score strictly from the transcript.
+right thing to do — the per-arm interpretation happens downstream in this
+experiment's `aggregate.py`, never here. Score strictly from the transcript.
 
 ## Rules to score
 
