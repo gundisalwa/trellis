@@ -56,6 +56,14 @@ arms get the same fixture, so the only difference is the overlay. Use `FRAMEWORK
 no-CLI path (Spec Kit's rules as a plain `AGENTS.md`) — the fidelity ceiling for a bare subagent worker;
 full skill-driven fidelity needs a real scaffold + a `claude -p` worker.
 
+### Experiments — `experiments/`
+
+Behavioral experiments beyond the framework A/B live in `eval/experiments/` — one
+self-contained directory per experiment (runner, task, fixture, scorecard, aggregate,
+results), sharing only `fill.py` and the blind-reviewer prompt. Convention and index:
+`eval/experiments/README.md`. First experiment: `annotation-vs-absence`
+(`research-0012`) — whether a `rules.toml` row can deactivate a rule the model has read.
+
 ## Honest limits (see `research-0011` open questions)
 
 - **Blinding is imperfect** — the overlay is in the worker's instructions; we blind the *reviewer* to
