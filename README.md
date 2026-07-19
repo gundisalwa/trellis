@@ -24,10 +24,10 @@ run the setup skill in any project:
 
 `/trellis:setup` asks one thing — a **posture** (`conductor` / `author-adapt`) — or reads the
 config from `.trellis/rules.toml` if the project already carries one, then copies Trellis onto
-your project as the **M1 "alongside" overlay**: a managed block of `@import`s in your `CLAUDE.md`
-plus a `.trellis/` bundle split by authority (`decision-0051`) — your `rules.toml` (which rules
-are active — edit a row, refresh, done) and hand-owned `expression.md` at the root, the generated
-files (the header, the assembled rules readout, the invariant reference) under
+your project as the **M1 "alongside" overlay**: a managed block in your `CLAUDE.md` plus a
+`.trellis/` bundle split by authority (`decision-0051`, as amended) — your `rules.toml` at the
+root (which rules are active — edit a row, refresh, done; the one consumer-owned file), the
+generated files (the header, the assembled rules readout, the invariant reference) under
 `.trellis/internal/`. Augment-never-clobber, idempotent, verified against a shipped checksum
 manifest. On explicit request it also runs the **M2 morph** — a model-driven rewrite of your own
 instructions, on a fresh git branch you review. The plugin lives in
@@ -89,7 +89,6 @@ cp "$ref"/rules.md       .trellis/internal/rules.md   # the all-rules readout, p
 cp "$ref"/trellis-<p>.md .trellis/internal/trellis.md
 cp "$ref"/version        .trellis/internal/version
 cp "$ref"/rules-<p>.toml .trellis/rules.toml          # first install only — yours after that
-cp "$ref"/expression.md  .trellis/expression.md       # first install only — hand-owned after that
 cat "$ref"/block-claude.md >> CLAUDE.md               # @import-capable files
 # no @import support (e.g. AGENTS.md)?  append block-inline-<p>.md instead
 sed -n -e 's|  invariants\.md$|  .trellis/internal/invariants.md|p' \

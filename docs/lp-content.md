@@ -131,10 +131,9 @@ Four-step flow (`01` – `04`):
 pattern — this is a file-tree illustration, not a shell session):
 
 ```
-CLAUDE.md          # + a managed block importing the header + your expression
+CLAUDE.md          # + a small managed block importing the header
 .trellis/
   rules.toml       # which rules are active, how strictly — yours to edit
-  expression.md    # your project's own expression — hand-owned, never rewritten
   internal/        # generated, refreshed verbatim:
     trellis.md     #   the header your agents read
     rules.md       #   the active rules, assembled from your rules.toml — always loaded

@@ -2,8 +2,8 @@
 
 The `trellis` command is **release tooling, not an end-user installer**: `trellis payload`
 renders the complete pre-built M1 bundle — every posture variant of the header and managed
-blocks, the per-rule fragments and their assembled readout, the `rules.toml` posture seeds and
-the expression seed (`decision-0051`), a content-derived version stamp, and a `shasum`-compatible
+blocks, the per-rule fragments and their assembled readout, the `rules.toml` posture seeds
+(`decision-0051`, as amended), a content-derived version stamp, and a `shasum`-compatible
 checksum manifest — into the vendored payload home, `plugins/trellis/reference/` (`kodhama-0007`
 rule 1: render once, at release; `#117`).
 

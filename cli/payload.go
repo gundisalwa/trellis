@@ -21,22 +21,21 @@ import (
 	"strings"
 )
 
-// payloadFiles renders the complete pre-rendered M1 payload (decision-0051 shape):
-// the verbatim catalog, the per-rule fragments plus their header/footer
+// payloadFiles renders the complete pre-rendered M1 payload (decision-0051 shape,
+// as amended 2026-07-19: no expression seed — the consumer root is rules.toml
+// alone): the verbatim catalog, the per-rule fragments plus their header/footer
 // (rules/<slug>.md — the assembly source setup concatenates in catalog order), the
 // assembled all-active readout (rules.md — the common case's copy source and the
 // concatenation oracle), both posture variants of the header / inline block /
-// rules.toml seed, the single hand-owned expression seed, the constant CLAUDE.md
-// block, a content-derived version stamp, and the checksums manifest. The rules.toml
-// seeds and the expression seed are manifest-covered like any payload file; only the
-// *installed* consumer-root copies (.trellis/rules.toml, .trellis/expression.md)
-// sit outside verification, because the consumer owns them from the moment they are
-// seeded (decision-0051 rule 1).
+// rules.toml seed, the constant CLAUDE.md block, a content-derived version stamp,
+// and the checksums manifest. The rules.toml seeds are manifest-covered like any
+// payload file; only the *installed* consumer-root copy (.trellis/rules.toml) sits
+// outside verification, because the consumer owns it from the moment it is seeded
+// (decision-0051 rule 1).
 func payloadFiles() map[string]string {
 	files := map[string]string{
 		"invariants.md":        invariantsRef, // the catalog, verbatim (decision-0028 single source)
 		"block-claude.md":      renderClaudeBlock(),
-		"expression.md":        renderExpressionSeed(),
 		"rules.md":             renderRulesReadout(),
 		"block-inline-tail.md": renderInlineBlockTail(), // posture-independent — one tail, not two
 	}

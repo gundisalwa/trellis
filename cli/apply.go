@@ -68,8 +68,8 @@ const invariantsTrigger = "If a rule seems ambiguous, or in tension with this pr
 // sentinel the setup skill's overwrite guard keys on (SKILL.md, the #112 backstop)
 // — keep the prefix stable.
 const (
-	rulesHeaderFragment = "## The rules — do these\n\nEach is a rule to follow, then the ✗ failure it prevents:\n\n"
-	rulesFooterFragment = "\n(Generated from your `rules.toml` — edit its rows (and your prose in `expression.md`), then refresh the overlay (`/trellis:setup`, or the manual copy path) to re-assemble these.)\n"
+	rulesHeaderFragment = "## The rules — do these\n\nThis list is assembled from the active rows of `.trellis/rules.toml` — each rule ends with its row's slug; edit the rows, then refresh the overlay, to change the set. Each is a rule to follow, then the ✗ failure it prevents:\n\n"
+	rulesFooterFragment = "\n(Generated from your `rules.toml` — edit its rows, then refresh the overlay (`/trellis:setup`, or the manual copy path) to re-assemble these.)\n"
 )
 
 // The inline managed block, split so the inline channel honors rules.toml rows the
@@ -103,17 +103,14 @@ func renderInlineBlock(p Profile) string {
 }
 
 // renderClaudeBlock is the minimal CLAUDE.md footprint: a human-readable line plus
-// native @imports of the generated header and the project's hand-owned expression.
-// Both imports live here because @import paths resolve relative to the importing
-// file (decision-0051 rule 1): the header sits in .trellis/internal/ and could not
-// reach ../expression.md without traversal, so the block — whose paths resolve from
-// the project root — carries both, rules first, then the expression (kodhama-0007
-// rule 4 via #119's ordering).
+// one native @import of the generated header. expression.md is retired from the
+// bundle (decision-0051 amendment, 2026-07-19): a project's governance prose
+// belongs in its own instructions file — which every harness already loads — so
+// trellis reserves no home for it and the block imports nothing but the header.
 func renderClaudeBlock() string {
 	return trellisBegin + "\n" +
 		"This project follows **Trellis** — working rules you are expected to follow while you work here. They are imported below:\n" +
 		"@.trellis/internal/trellis.md\n" +
-		"@.trellis/expression.md\n" +
 		trellisEnd
 }
 
@@ -121,32 +118,11 @@ func renderClaudeBlock() string {
 // .trellis/internal/trellis.md): the intro + the governance behavior, then it pulls
 // in its sibling rules.md — the assembled readout — and points at the invariant
 // reference. It imports only the sibling (paths resolve relative to the importing
-// file); the project's hand-owned expression is imported by the managed block, not
-// here (decision-0051 rule 1).
+// file; decision-0051 rule 1).
 func renderHeader(p Profile) string {
 	return governanceHeader(p) + "\n" +
 		"@rules.md\n\n" +
 		"---\n" + invariantsTrigger + "\n"
-}
-
-// renderExpressionSeed is the seed content for `.trellis/expression.md`, the
-// bundle's hand-owned prose file (kodhama-0007 rule 4's ownership half). Since
-// decision-0051 rule 5 it carries no machine-read content at all — the config moved
-// to .trellis/rules.toml and the legacy `profile:` frontmatter key retired — so one
-// posture-independent seed replaces the per-posture skeletons. Seeded when absent,
-// never rewritten; the installed file is excluded from checksum verification
-// because the project owns it from the moment it is seeded.
-func renderExpressionSeed() string {
-	return "# Trellis expression\n\n" +
-		"<!-- This file is yours — hand-owned prose, seeded once and never rewritten\n" +
-		"(kodhama-0007 rule 4; decision-0051). It is excluded from checksum\n" +
-		"verification, and machinery never parses it: the machine-read config lives\n" +
-		"in .trellis/rules.toml (its rows say which rules are active; its old home,\n" +
-		"a `profile:` frontmatter key here, is retired). The word \"profile\" is\n" +
-		"reserved for Trellis's expression-profile artifact — the rich per-instance\n" +
-		"readout (decision-0016) — not this file, and not the retired key. Record\n" +
-		"below how this project expresses the invariants: dials, mappings, gate\n" +
-		"tables. Agents and humans read the body. -->\n"
 }
 
 // catalogSlugOrder parses the bundled catalog for the assessable slugs in document
@@ -164,15 +140,21 @@ func catalogSlugOrder() []string {
 }
 
 // ruleFragment renders one rule's payload fragment (decision-0051 rule 4): the
-// imperative directive (decision-0034 — no internal codes/slugs) plus its primary
-// ✗ failure for grounding (decision-0031) — exactly the bytes the assembled readout
-// carries for that rule, newline-terminated so concatenation is seamless.
+// imperative directive plus its primary ✗ failure for grounding (decision-0031) —
+// exactly the bytes the assembled readout carries for that rule,
+// newline-terminated so concatenation is seamless. The directive line ends with
+// the rule's catalog slug in backticks (rows-as-truth legibility, maintainer
+// addendum to decision-0051): the slug is what lets a reader match a rules.md
+// bullet ↔ its rules.toml row ↔ its invariants.md entry — otherwise it exists only
+// in the payload filename, which an installed overlay never shows. This narrows
+// decision-0034's no-internal-codes rule deliberately: a slug that resolves in two
+// consumer-visible files is a cross-reference, not an unresolvable internal code.
 func ruleFragment(slug string) string {
 	d := invariantDirectives()[slug]
 	if d == "" {
 		return ""
 	}
-	s := fmt.Sprintf("- %s\n", d)
+	s := fmt.Sprintf("- %s `%s`\n", d, slug)
 	if f := invariantPrimaryFailure()[slug]; f != "" {
 		s += fmt.Sprintf("    ✗ %s\n", f)
 	}
@@ -226,6 +208,10 @@ func renderRulesToml(p Profile) string {
 		}
 	}
 	var b strings.Builder
+	b.WriteString("# The rows below select which rules are assembled into .trellis/internal/rules.md\n")
+	b.WriteString("# (each rule there ends with its row's slug). Edit, then run /trellis:setup (or\n")
+	b.WriteString("# the manual re-assembly path in the repo README) to apply — an edit here has\n")
+	b.WriteString("# no effect until that refresh re-assembles the readout.\n\n")
 	fmt.Fprintf(&b, "seeded_from = %q  # provenance only — the rows below win if they diverge\n", p.Short)
 	fmt.Fprintf(&b, "strictness  = %q  # firm (a·conductor) | adaptive (b·author-adapt)\n", strictness)
 	b.WriteString("\n[rules]  # one row per assessable catalog slug (signature-catalog-v1)\n")

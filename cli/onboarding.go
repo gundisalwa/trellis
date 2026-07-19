@@ -5,8 +5,8 @@ package main
 // and respected* from the project, not chosen by a preset.
 //
 // Since #120 (decision-0043) these feed the release-time render only: the posture
-// question is asked by the plugin setup skill (or answered by the hand-owned
-// expression.md frontmatter), never by this binary.
+// question is asked by the plugin setup skill (or answered by the rows of the
+// consumer-owned .trellis/rules.toml, decision-0051), never by this binary.
 
 // Profile is a posture that seeds an expression profile. Name is the full label;
 // Short is the one-word form.

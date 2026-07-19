@@ -12,9 +12,10 @@ Trellis added, and preserve everything else byte-for-byte.
 ## 1. Delete the bundle
 
 Delete the entire `.trellis/` directory, if it exists — the generated `internal/` half and the
-consumer-owned root (`rules.toml`, `expression.md`) alike, and any legacy flat-layout files from an
-overlay installed before `decision-0051`. If `expression.md` carries a hand-written body the user
-may want to keep, say so before deleting — it is theirs, and this is the one step that destroys it.
+consumer-owned `rules.toml` alike, plus any legacy files from an overlay installed before
+`decision-0051` or its amendment (the flat-layout generated files, and a leftover
+`expression.md`). If a legacy `expression.md` carries a hand-written body the user may want to
+keep, say so before deleting — it is theirs, and this is the one step that destroys it.
 
 ## 2. Strip the import from `CLAUDE.md`
 
