@@ -199,3 +199,24 @@ decision this supersedes in part); grove's ADRs and the sibling context are `inf
 (`decision-0047`). Left at `draft`: the author does not grade its own decision — gating
 and the `approved` flip are the maintainer's intent act (`decision-0046`), ideally after
 an independent pass (`inv-independent-judgment`).
+
+---
+
+> **Amendment (2026-07-19, append-only — maintainer's same-day correction during the
+> landing review of this decision's build, PR #164; ratified in-conversation).**
+> **`expression.md` is retired from the bundle.** Post-split it held no machine role and
+> fit neither category the split creates — "a weird mix of both or neither next to the
+> `rules.toml`, which from a UX perspective is pretty confusing" (maintainer) — defeating
+> the legibility this decision exists for. Rule 1's consumer root shrinks to
+> **`rules.toml` alone**; rule 5's expression-seed provisions lapse. A project's
+> governance prose belongs in its **own instructions file** (which every harness already
+> loads) — trellis reserves no home for it. Setup no longer seeds the file; the managed
+> block no longer imports it; the `#112` rescue home becomes the project's instructions
+> file. **Existing hand-authored expression bodies are never deleted silently**: the
+> migration step preserves any `expression.md` with real content and *offers* to move it
+> into the project's instructions file (grove's split-migration note and math-quest's
+> field-mapping declaration survive their refreshes). The named `kodhama-0007` rule-4
+> divergence deepens — one hand-owned declaration file → **none**; the hand-owned surface
+> is the per-axis config files — folded into the parked stewards amendment. The
+> family-wide all-invariants stance is likewise stewards material, not per-repo
+> expression content (same correction, earlier in the review).

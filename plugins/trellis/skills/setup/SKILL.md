@@ -24,11 +24,14 @@ privileged writer (`kodhama-0007` rule 6), so this skill copies directly.
 (The one exception to "no model-driven work" is the **M2 morph** at the end of this file — and its
 scope is the project's *own* files, never bundle content.)
 
-## The overlay's two halves — placement by authority (`decision-0051` rule 1)
+## The overlay's two halves — placement by authority (`decision-0051` rule 1, as amended)
 
-- **`.trellis/` root — consumer-authoritative.** `rules.toml` (the machine-read config: which rules
-  are active, how strictly) and `expression.md` (hand-owned prose). Seeded **once**; a refresh
-  never clobbers either; both are excluded from manifest verification — the consumer owns them.
+- **`.trellis/` root — consumer-authoritative.** **`rules.toml` alone** (the machine-read config:
+  which rules are active, how strictly). Seeded **once**; a refresh never clobbers it; excluded
+  from manifest verification — the consumer owns it. There is **no** `expression.md`: it is
+  retired from the bundle (`decision-0051` amendment) — a project's governance prose belongs in
+  its **own instructions file**, which every harness already loads; trellis reserves no home for
+  it.
 - **`.trellis/internal/` — trellis-authoritative.** `trellis.md`, `rules.md` (the assembled
   readout), `invariants.md`, `version`. Copied/assembled verbatim on **every** refresh; hand-edits
   are overwritten; manifest-verified byte-for-byte.
@@ -40,12 +43,11 @@ In `${CLAUDE_PLUGIN_ROOT}/reference/`, where `<p>` is the posture key (`a` or `b
 | payload file | goes to | notes |
 |---|---|---|
 | `invariants.md` | `.trellis/internal/invariants.md` | full catalog; posture-independent |
-| `trellis-<p>.md` | `.trellis/internal/trellis.md` | the header agents read; the strictness line is the only per-posture difference. It imports its sibling `rules.md`; the expression import rides the managed block (imports resolve relative to the importing file) |
+| `trellis-<p>.md` | `.trellis/internal/trellis.md` | the header agents read; the strictness line is the only per-posture difference. It imports its sibling `rules.md` (imports resolve relative to the importing file) |
 | `rules/_header.md` · `rules/<slug>.md` (one per rule) · `rules/_footer.md` | assembled → `.trellis/internal/rules.md` | the fragments: each rule as a directive plus the ✗ failure it prevents. Concatenated in catalog order (step 4) |
 | `rules.md` | `.trellis/internal/rules.md` when **every** row is active | the pre-concatenated all-active assembly — byte-identical to the step-4 concatenation in the default case; also the verify oracle |
 | `rules-<p>.toml` | `.trellis/rules.toml` — **first run only** | the posture seed: explicit rows, all active, `seeded_from` + `strictness` pre-filled. Consumer-owned from the moment it is seeded — editing rows *is* the configuration act; a refresh reads rows and asks nothing |
-| `expression.md` | `.trellis/expression.md` — **first run only** | the hand-owned prose seed. No machine-read content (the legacy `profile:` frontmatter key is retired, `decision-0051` rule 5) |
-| `block-claude.md` | the managed block in `CLAUDE.md` | import style: `@.trellis/internal/trellis.md` + `@.trellis/expression.md` |
+| `block-claude.md` | the managed block in `CLAUDE.md` | import style: one import, `@.trellis/internal/trellis.md` |
 | `block-inline-<p>-head.md` · `block-inline-tail.md` | the managed block in a no-`@import` instructions file, sandwiching the assembled readout | inline style: the block is head + `.trellis/internal/rules.md` + tail (step 7), so it honors the rows like the import style does. The tail is posture-independent |
 | `block-inline-<p>.md` | the same block when **every** row is active | the pre-built all-active sandwich — byte-identical to head + `rules.md` + tail |
 | `version` | `.trellis/internal/version` | the payload's render stamp (`payload@…`) — the staleness hook compares the two files (`decision-0043`, path per `decision-0051`) |
@@ -66,11 +68,10 @@ its `[rules]` rows select which fragments the readout carries. `seeded_from` is 
   so any of these means a hand-edit went wrong; offer to fix the file. If no human is available
   (an autonomous run), **stop and fail loudly**, naming the file and what is wrong. Never assume
   a default, and never silently drop or invent a row.
-- **It does not exist, but `.trellis/expression.md` has a legacy `profile:` frontmatter key**
+- **It does not exist, but a legacy `.trellis/expression.md` has a `profile:` frontmatter key**
   (`a` or `b` — an overlay from before `decision-0051`): **migrate.** Seed the config from that
-  posture — `cp "${CLAUDE_PLUGIN_ROOT}/reference/rules-<p>.toml" .trellis/rules.toml` — then
-  **offer** to strip the now-retired frontmatter from `expression.md` (it is their file — never
-  edit it without a yes; if declined, note that the key is dead: nothing reads it anymore).
+  posture — `cp "${CLAUDE_PLUGIN_ROOT}/reference/rules-<p>.toml" .trellis/rules.toml`. The
+  legacy file itself is handled in step 6 (preserved, never silently deleted).
 - **Neither exists** (first run): ask the user to pick a posture, then seed.
 
 Ask exactly this choice (the payload carries these two variants and no others; `seed` and `custom`
@@ -81,19 +82,17 @@ stay parked per `decision-0033`/`decision-0051` rule 7 — do not offer them):
 - **B · author-adapt** — same rules, follow by default and adapt out loud (**default** if the user
   is unsure).
 
-Then seed both consumer-owned files by copying — a copy, not a composition (the seeds are payload
-content like every other bundle file, so they have no second home in this skill's prose and
-nothing is left to fill in):
+Then seed the one consumer-owned file by copying — a copy, not a composition (the seed is payload
+content like every other bundle file, so it has no second home in this skill's prose and nothing
+is left to fill in):
 
 ```sh
 mkdir -p .trellis
 cp "${CLAUDE_PLUGIN_ROOT}/reference/rules-<p>.toml" .trellis/rules.toml
-cp "${CLAUDE_PLUGIN_ROOT}/reference/expression.md"  .trellis/expression.md   # only if absent
 ```
 
-From that moment both files are the project's own: they may edit rows and write the expression
-body freely, and no later run of this skill rewrites either (seed-once, never-clobber). On any
-refresh, seed `expression.md` only if it is absent.
+From that moment the file is the project's own: they may edit rows freely, and no later run of
+this skill rewrites it (seed-once, never-clobber).
 
 ## 2. Guard hand-authored content before overwriting (the #112 backstop)
 
@@ -106,11 +105,12 @@ overwriting**:
 - If an existing `.trellis/internal/rules.md` — or a legacy flat `.trellis/profile.md` — has
   anything after its closing "(Generated from your …" line, or any generated file differs from
   every payload variant in a way that looks hand-authored rather than merely stale, **stop and
-  show the user the content**. Offer to move it into the body of `.trellis/expression.md` (its
-  hand-owned home) before continuing.
+  show the user the content**. Offer to move it into the project's **own instructions file**,
+  outside the managed block (the amendment's home for a project's governance prose — trellis
+  reserves none), before continuing.
 - Never silently overwrite it. The ownership rule holds at directory granularity now
-  (`decision-0051` rule 6): everything under `internal/` is 100% generated; `rules.toml` and
-  `expression.md` are 100% consumer-owned.
+  (`decision-0051` rule 6): everything under `internal/` is 100% generated; `rules.toml` is 100%
+  consumer-owned.
 - `rules.toml` needs no rescue: its rows are the consumer's and are **never clobbered** — the
   guard's target stays the generated files.
 
@@ -186,11 +186,11 @@ The payload's content-derived render stamp (`payload@…`) **is** the install st
 installed plugin's `reference/version` — file to file, no git, no binary — and nudges a refresh
 when they differ. An unstamped overlay is invisible to that check, so never skip this step.
 
-## 6. Migrate a flat-layout overlay (pre-`decision-0051`)
+## 6. Migrate an earlier overlay (pre-`decision-0051`, or pre-amendment)
 
-Overlays installed before the authority split keep the generated files directly in `.trellis/`.
-After steps 3–5 have written the new layout, **delete the old-path copies** so the two layouts
-never sit side by side:
+**Flat layout.** Overlays installed before the authority split keep the generated files directly
+in `.trellis/`. After steps 3–5 have written the new layout, **delete the old-path copies** so
+the two layouts never sit side by side:
 
 ```sh
 rm -f .trellis/trellis.md .trellis/profile.md .trellis/invariants.md .trellis/version
@@ -199,6 +199,19 @@ rm -f .trellis/trellis.md .trellis/profile.md .trellis/invariants.md .trellis/ve
 (Step 2 already rescued anything hand-authored in them; their live content is under `internal/`
 now — `profile.md`'s readout lives on as `rules.md`, renamed by `decision-0051` rule 5. The
 legacy `profile:` frontmatter key was migrated in step 1.) Report every deleted file in step 10.
+
+**A leftover `.trellis/expression.md`** (seeded before the `decision-0051` amendment retired it
+from the bundle) is **preserved — never silently deleted**. Its disposition is the user's:
+
+- **It carries a hand-written body** (anything beyond the seed stub's comment and heading):
+  **surface the content** and *offer* to move it into the project's **own instructions file**,
+  outside the managed block — the amendment's home for governance prose — or to leave the file in
+  place untouched. Either answer is fine (a left-in-place file harms nothing; nothing reads it);
+  **write or delete nothing without a yes** (`floor-intent-gate`).
+- **It is only the seed stub** (no hand-written content): you may *offer* to delete it as part of
+  the migration; if declined, leave it.
+
+Report the disposition — moved, left in place, or deleted — in step 10.
 
 ## 7. Patch the instructions file (augment, never clobber)
 
@@ -258,10 +271,10 @@ sed -n \
   "${CLAUDE_PLUGIN_ROOT}/reference/checksums" | shasum -a 256 -c -
 ```
 
-All three lines must print `OK`. (`.trellis/rules.toml` and `.trellis/expression.md` are
-deliberately outside install-time verification: they are consumer-owned from the moment they are
-seeded — the payload's `rules-<p>.toml` and `expression.md` seeds are manifest-covered like any
-payload file, but the installed copies are the project's to change, `decision-0051` rule 1.)
+All three lines must print `OK`. (`.trellis/rules.toml` is deliberately outside install-time
+verification: it is consumer-owned from the moment it is seeded — the payload's `rules-<p>.toml`
+seeds are manifest-covered like any payload file, but the installed copy is the project's to
+change, `decision-0051` rule 1.)
 
 **(b) Every shipped fragment matches the manifest, and the assembled readout is exactly their
 ordered concatenation** (`decision-0051` rule 4):
@@ -344,23 +357,25 @@ impose) to keep `.trellis/` out of their tooling:
 - **Report exactly what you touched** — each ignore file and the line added — in step 10.
 
 (Target the whole `.trellis/` directory, matching the namespace boundary — `decision-0049`'s scope
-is unchanged by the split. `rules.toml` and `expression.md` are the consumer's own files and need
-no checksum protection — a formatter over them is harmless — but the load-bearing ignore target is
-`internal/`, and ignoring the whole directory is simpler and costs nothing.)
+is unchanged by the split. `rules.toml` is the consumer's own file and needs no checksum
+protection — a formatter over it is harmless — but the load-bearing ignore target is `internal/`,
+and ignoring the whole directory is simpler and costs nothing.)
 
 ## 10. Confirm
 
 Tell the user:
 
 - **Where the config came from**: read from `.trellis/rules.toml`'s rows, migrated from a legacy
-  `profile:` frontmatter key (and whether the key was stripped or declined), or asked and seeded.
+  `profile:` frontmatter key, or asked and seeded.
 - **Floor-held overrides, loudly** (`decision-0051` rule 3): if `floor-transparency` or
   `floor-intent-gate` was set `active = false`, state plainly that it was **included anyway** —
   the floors are not rows a consumer can turn off; the row was ignored, not honored.
 - **Which rules the readout carries**, naming any excluded by inactive rows.
 - **Exactly what was written**: `.trellis/internal/{invariants,trellis,rules}.md`, the
-  `.trellis/internal/version` stamp, `rules.toml` / `expression.md` seeded or left untouched.
-- **Any flat-layout files deleted** by the step-6 migration.
+  `.trellis/internal/version` stamp, `rules.toml` seeded or left untouched.
+- **Any flat-layout files deleted** by the step-6 migration, and **the disposition of a leftover
+  legacy `expression.md`** (content moved into the instructions file, left in place, or deleted
+  with consent).
 - Which instructions file was patched and in which style; **any lint/format ignore entry added
   (which file, which line), or that the offer was declined or no tooling was found**; and the
   result of each verification check.

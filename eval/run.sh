@@ -73,7 +73,6 @@ run_arm() {  # $1 arm (baseline|trellis)  $2 idx
     cp "$ref/trellis-a.md"  "$dir/.trellis/internal/trellis.md"
     cp "$ref/version"       "$dir/.trellis/internal/version"
     cp "$ref/rules-a.toml"  "$dir/.trellis/rules.toml"
-    cp "$ref/expression.md" "$dir/.trellis/expression.md"
     { [ -s "$dir/AGENTS.md" ] && printf '\n'; cat "$ref/block-inline-a.md"; printf '\n'; } >> "$dir/AGENTS.md"
   fi
   local base="$OUTDIR/$FRAMEWORK/$(basename "$TASK" .md)/$arm-$i"

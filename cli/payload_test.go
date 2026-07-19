@@ -68,8 +68,9 @@ var assessableSlugs = []string{
 // TestPayloadFileSet: the generator emits exactly the decision-0051 file set — the
 // verbatim catalog, the per-rule fragments plus their header/footer, the assembled
 // all-active readout, both posture variants of the header / inline block / rules.toml
-// seed, the single hand-owned expression seed, the constant CLAUDE.md block, the
-// version stamp, and the manifest.
+// seed, the constant CLAUDE.md block, the version stamp, and the manifest — and no
+// expression seed (retired from the bundle, decision-0051 amendment: the exact-match
+// list is the guard that it stays gone).
 func TestPayloadFileSet(t *testing.T) {
 	want := []string{
 		"block-claude.md",
@@ -79,7 +80,6 @@ func TestPayloadFileSet(t *testing.T) {
 		"block-inline-b.md",
 		"block-inline-tail.md",
 		"checksums",
-		"expression.md",
 		"invariants.md",
 		"rules-a.toml",
 		"rules-b.toml",
@@ -147,24 +147,21 @@ func TestPayloadVariantsAreTheRenderedPostures(t *testing.T) {
 	}
 }
 
-// TestPayloadBlockCarriesAuthoritySplitImports: decision-0051 rule 1 — the managed
-// CLAUDE.md block imports the trellis-authoritative header
-// (.trellis/internal/trellis.md) and the consumer's hand-owned expression
-// (.trellis/expression.md), rules before expression (kodhama-0007 rule 4 via #119's
-// ordering). Both imports live in the block because @import paths resolve relative
-// to the importing file: internal/trellis.md could not reach ../expression.md
-// without traversal. The inline blocks stay import-free — they exist precisely for
-// files without @import support.
-func TestPayloadBlockCarriesAuthoritySplitImports(t *testing.T) {
+// TestPayloadBlockCarriesSingleInternalImport: decision-0051 rule 1 as amended
+// (2026-07-19, append-only foot of the record) — expression.md is retired from the
+// bundle, so the managed CLAUDE.md block imports exactly one thing: the
+// trellis-authoritative header at .trellis/internal/trellis.md. A project's
+// governance prose belongs in its own instructions file; trellis reserves no home
+// for it, and the block imports none. The inline blocks stay import-free — they
+// exist precisely for files without @import support.
+func TestPayloadBlockCarriesSingleInternalImport(t *testing.T) {
 	files := payloadFiles()
 	block := files["block-claude.md"]
-	i := strings.Index(block, "@.trellis/internal/trellis.md")
-	j := strings.Index(block, "@.trellis/expression.md")
-	if i < 0 || j < 0 {
-		t.Fatalf("block-claude.md must import both @.trellis/internal/trellis.md and @.trellis/expression.md (decision-0051 rule 1): %q", block)
+	if !strings.Contains(block, "@.trellis/internal/trellis.md") {
+		t.Fatalf("block-claude.md must import @.trellis/internal/trellis.md (decision-0051 rule 1): %q", block)
 	}
-	if j < i {
-		t.Errorf("block-claude.md must import the rules header before the project's expression: %q", block)
+	if strings.Contains(block, "expression") {
+		t.Errorf("block-claude.md must not reference expression.md — retired from the bundle (decision-0051 amendment): %q", block)
 	}
 	if strings.Contains(block, "@.trellis/trellis.md\n") {
 		t.Errorf("block-claude.md still imports the retired flat-layout path .trellis/trellis.md: %q", block)
@@ -211,9 +208,9 @@ func TestPayloadInlineBlockIsHeadReadoutTail(t *testing.T) {
 
 // TestPayloadHeaderImportsSiblingRules: decision-0051 rule 1 — the header installed
 // at .trellis/internal/trellis.md imports only its sibling rules.md (resolved
-// relative to the importing file), never ../-traversal and never the expression
-// (that import rides the managed block). Its invariants trigger points at the new
-// internal/ home of the reference.
+// relative to the importing file), never ../-traversal and never an expression
+// import (expression.md is retired from the bundle — decision-0051 amendment). Its
+// invariants trigger points at the internal/ home of the reference.
 func TestPayloadHeaderImportsSiblingRules(t *testing.T) {
 	files := payloadFiles()
 	for _, name := range []string{"trellis-a.md", "trellis-b.md"} {
@@ -241,38 +238,18 @@ func TestPayloadHeaderImportsSiblingRules(t *testing.T) {
 	}
 }
 
-// TestPayloadCarriesExpressionSeed: decision-0051 rule 5 — expression.md becomes pure
-// hand-owned prose: the seed carries no YAML frontmatter and no machine-read
-// profile: key (the config moved to rules.toml), declares its ownership rule, and
-// cross-links the reserved meaning of "profile" (the expression-profile artifact,
-// decision-0016). One seed, not per-posture: with the frontmatter gone the seed has
-// no posture content left.
-func TestPayloadCarriesExpressionSeed(t *testing.T) {
-	files := payloadFiles()
-	content := files["expression.md"]
-	if strings.HasPrefix(content, "---") {
-		t.Errorf("expression.md seed must not open with YAML frontmatter (the profile: key retired, decision-0051 rule 5): %q", content)
-	}
-	if strings.Contains(content, "profile: a") || strings.Contains(content, "profile: b") {
-		t.Errorf("expression.md seed must not carry a machine-read profile: key: %q", content)
-	}
-	for _, want := range []string{"hand-owned", "rules.toml", "expression-profile"} {
-		if !strings.Contains(content, want) {
-			t.Errorf("expression.md seed missing %q — it must declare its ownership rule, point at the config's new home, and cross-link the reserved word (decision-0051 rule 5)", want)
-		}
-	}
-	for _, stray := range []string{"<p>", "<project>"} {
-		if strings.Contains(content, stray) {
-			t.Errorf("expression.md seed carries an unfilled placeholder %q — seeds are copied verbatim, never filled", stray)
-		}
-	}
-}
-
 // TestPayloadRuleFragmentsCoverCatalog: decision-0051 rule 4 — one pre-rendered
 // fragment per assessable catalog slug, each the rule's imperative directive plus
 // the ✗ failure it prevents, and the two non-rule fragments (_header/_footer) that
 // make the assembled readout pure concatenation with no byte authored at install
-// time.
+// time. Rows-as-truth legibility (rule 2's intent, maintainer addendum): each rule's
+// first line ends with its catalog slug in backticks, so a reader can match a
+// rules.md bullet ↔ its rules.toml row ↔ its invariants.md entry — the slug
+// otherwise exists only in the payload filename, which an installed overlay never
+// shows. The _header states the rules.toml dependency at the top end; the _footer's
+// "(Generated from your `rules.toml`" sentinel states it at the bottom (its stable
+// prefix is what the #112 overwrite guard keys on), and points at no retired
+// expression.md home.
 func TestPayloadRuleFragmentsCoverCatalog(t *testing.T) {
 	files := payloadFiles()
 	for _, slug := range assessableSlugs {
@@ -285,6 +262,10 @@ func TestPayloadRuleFragmentsCoverCatalog(t *testing.T) {
 		if !strings.HasPrefix(content, "- ") {
 			t.Errorf("%s must open with its imperative directive as a list item: %q", name, content)
 		}
+		firstLine := strings.SplitN(content, "\n", 2)[0]
+		if !strings.HasSuffix(firstLine, " `"+slug+"`") {
+			t.Errorf("%s: the rule's first line must end with its catalog slug in backticks (row ↔ rule ↔ entry matchability): %q", name, firstLine)
+		}
 		if !strings.Contains(content, "✗") {
 			t.Errorf("%s must carry the ✗ failure line under its rule: %q", name, content)
 		}
@@ -292,11 +273,18 @@ func TestPayloadRuleFragmentsCoverCatalog(t *testing.T) {
 			t.Errorf("%s must end with a newline so concatenation is seamless: %q", name, content)
 		}
 	}
-	if !strings.Contains(files["rules/_header.md"], "## The rules — do these") {
-		t.Errorf("rules/_header.md must carry the readout heading: %q", files["rules/_header.md"])
+	header := files["rules/_header.md"]
+	if !strings.Contains(header, "## The rules — do these") {
+		t.Errorf("rules/_header.md must carry the readout heading: %q", header)
+	}
+	if !strings.Contains(header, "`.trellis/rules.toml`") {
+		t.Errorf("rules/_header.md must state the list is assembled from the active rows of .trellis/rules.toml (dependency stated at both ends): %q", header)
 	}
 	if !strings.Contains(files["rules/_footer.md"], "(Generated from your `rules.toml`") {
 		t.Errorf("rules/_footer.md must carry the closing \"Generated from your rules.toml\" line (decision-0051 rule 5): %q", files["rules/_footer.md"])
+	}
+	if strings.Contains(files["rules/_footer.md"], "expression.md") {
+		t.Errorf("rules/_footer.md must not point prose at expression.md — retired from the bundle (decision-0051 amendment): %q", files["rules/_footer.md"])
 	}
 }
 
@@ -329,7 +317,10 @@ func TestPayloadRulesReadoutIsOrderedConcatenation(t *testing.T) {
 // explicit rows, one per assessable catalog slug, all active (posture-as-seed,
 // rows-as-truth: seeded_from is provenance only, strictness the one instance-level
 // key), and the floor rows are marked floor-held (a consumer cannot turn them off;
-// assembly includes them regardless).
+// assembly includes them regardless). Rows-as-truth legibility (maintainer
+// addendum): the seed opens with a comment stating what the rows control — which
+// rules are assembled into .trellis/internal/rules.md — and that an edit has no
+// effect until a refresh re-assembles.
 func TestPayloadRulesTomlSeeds(t *testing.T) {
 	files := payloadFiles()
 	for _, tc := range []struct {
@@ -341,6 +332,15 @@ func TestPayloadRulesTomlSeeds(t *testing.T) {
 		content := files[tc.name]
 		if content == "" {
 			t.Fatalf("payload missing %s", tc.name)
+		}
+		if !strings.HasPrefix(content, "#") {
+			t.Errorf("%s must open with the what-rows-control comment: %q", tc.name, content)
+		}
+		if !strings.Contains(content, ".trellis/internal/rules.md") {
+			t.Errorf("%s's top comment must name what the rows are assembled into (.trellis/internal/rules.md): %q", tc.name, content)
+		}
+		if !strings.Contains(content, "no effect until") {
+			t.Errorf("%s's top comment must state an edit has no effect until refresh: %q", tc.name, content)
 		}
 		if !strings.Contains(content, tc.seededFrom) {
 			t.Errorf("%s missing %q (provenance-only seed key, decision-0051 rule 2): %q", tc.name, tc.seededFrom, content)

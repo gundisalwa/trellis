@@ -25,13 +25,14 @@ It asks for a **posture** (conductor / author-adapt — or reads the config from
 `.trellis/rules.toml` if the project already carries one, asking nothing) and copies Trellis onto
 your project as an **overlay**, split by who owns what (`decision-0051`):
 
-- **`.trellis/` root — yours.** `rules.toml` (the machine-read config: one row per rule, `active =
-  true|false`, plus a `strictness` key) and `expression.md` (hand-owned prose: how your project
-  expresses the invariants — dials, mappings, gate tables). Both are seeded once from the payload
-  and **never rewritten**; editing a row in `rules.toml` *is* the configuration act, and the next
-  refresh assembles exactly the rules your rows select. The two floors (`floor-transparency`,
-  `floor-intent-gate`) are **floor-held**: their rows exist, but setup includes them regardless
-  and says so out loud if you try to turn one off.
+- **`.trellis/` root — yours.** `rules.toml` alone (the machine-read config: one row per rule,
+  `active = true|false`, plus a `strictness` key), seeded once from the payload and **never
+  rewritten**; editing a row *is* the configuration act, and the next refresh assembles exactly
+  the rules your rows select — each rule in the readout ends with its row's slug, so the two are
+  matchable. The two floors (`floor-transparency`, `floor-intent-gate`) are **floor-held**: their
+  rows exist, but setup includes them regardless and says so out loud if you try to turn one off.
+  (There is no `expression.md`: it retired with the `decision-0051` amendment — your governance
+  prose belongs in your own instructions file, which every harness already loads.)
 - **`.trellis/internal/` — trellis's.** The generated files (`trellis.md`, `rules.md` — the
   assembled active-rules readout, `invariants.md`, the `version` stamp), rewritten verbatim on
   every refresh and verified byte-for-byte against the shipped checksum manifest.
@@ -39,8 +40,8 @@ your project as an **overlay**, split by who owns what (`decision-0051`):
 All content is pre-rendered at release; the readout is **assembled** from per-rule payload
 fragments by mechanical concatenation, in catalog order (`kodhama-0007`: the skill copies and
 concatenates, it never composes). One managed block in your `CLAUDE.md` imports
-`.trellis/internal/trellis.md` and your `expression.md`, so both stay always-loaded.
-Augment-never-clobber; nothing else is touched, and it's idempotent.
+`.trellis/internal/trellis.md`, so the rules stay always-loaded. Augment-never-clobber; nothing
+else is touched, and it's idempotent.
 
 ## Migrating an older install
 
@@ -48,12 +49,15 @@ Augment-never-clobber; nothing else is touched, and it's idempotent.
 
 - **Flat-layout overlays** (generated files directly in `.trellis/`, from before `decision-0051`):
   a refresh writes the new layout, deletes the old-path copies, and seeds `rules.toml` from the
-  legacy `profile:` frontmatter key in `expression.md` (offering to strip the retired key — the
-  file is yours, so it never edits without a yes).
+  legacy `profile:` frontmatter key in `expression.md`.
+- **A leftover `expression.md`** (seeded before the amendment retired it): **never silently
+  deleted** — a refresh preserves any hand-written body and *offers* to move it into your own
+  instructions file (outside the managed block), or to leave the file in place; a pure seed stub
+  may be offered for deletion.
 - **Hand-authored content in the generated readout** (the clobber target of
   [#112](https://github.com/kodhama/trellis/issues/112) — a refresh rewrites generated files
   whole): setup detects anything after the readout's closing "(Generated from your …" line and
-  offers to move it into `.trellis/expression.md`, its hand-owned home, before overwriting.
+  offers to move it into your own instructions file before overwriting.
 
 ## What it bundles
 
@@ -66,8 +70,8 @@ Augment-never-clobber; nothing else is touched, and it's idempotent.
 - **`reference/`** — the pre-rendered payload (`kodhama-0007`): `invariants.md` (the full signature
   catalog: every invariant with its *why* and a with/without example), the per-rule fragments in
   `rules/` plus their pre-assembled all-active readout (`rules.md`), the `rules-<p>.toml` posture
-  seeds and the `expression.md` prose seed, every posture variant of the header and managed blocks,
-  and the checksum manifest the setup skill verifies against.
+  seeds, every posture variant of the header and managed blocks, and the checksum manifest the
+  setup skill verifies against.
 - **`hooks/`** — a `SessionStart` hook that stays quiet until the installed plugin's payload differs
   from the overlay in your project (`decision-0039` rule 1, mechanics per `decision-0043`), then
   nudges you once: *"the overlay may be stale — run `/trellis:setup`."* Binary-free and network-free:

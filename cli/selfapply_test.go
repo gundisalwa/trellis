@@ -96,18 +96,17 @@ func TestRepoDeclaresRulesConfig(t *testing.T) {
 	}
 }
 
-// TestRepoExpressionIsPureProse: decision-0051 rule 5 — the profile: frontmatter key
-// retired with the machine-read config's move to rules.toml, so the repo's own
-// hand-owned .trellis/expression.md must carry no YAML frontmatter at all. Only that
-// structural fact is asserted: the body is hand-owned and no test may pin it (the
-// ownership rule — 100% generated or 100% hand-owned, never mixed).
-func TestRepoExpressionIsPureProse(t *testing.T) {
-	b, err := os.ReadFile(filepath.Join("..", ".trellis", "expression.md"))
-	if err != nil {
-		t.Fatalf("repo overlay has no .trellis/expression.md — the hand-owned declaration file (kodhama-0007 rule 4): %v", err)
-	}
-	content := string(b)
-	if strings.HasPrefix(content, "---") {
-		t.Errorf(".trellis/expression.md must not open with YAML frontmatter — the machine-read profile: key retired (decision-0051 rule 5); strip the frontmatter, leave the body. Got: %q", content[:min(len(content), 60)])
+// TestRepoOverlayCarriesNoExpressionFile: decision-0051 amendment (2026-07-19,
+// append-only foot of the record) — expression.md is retired from the bundle; the
+// consumer root is rules.toml alone, and a project's governance prose belongs in
+// its own instructions file. The repo's own file was deleted under the amendment
+// (its body was a pointer to CLAUDE.md §Operating method, already present there —
+// the maintainer ratified the deletion), so self-application parity
+// (decision-0035) means the file stays gone, same idiom as the flat-layout
+// absence checks in TestRepoOverlayIsCurrent. (Replaces the retired
+// TestRepoExpressionIsPureProse.)
+func TestRepoOverlayCarriesNoExpressionFile(t *testing.T) {
+	if _, err := os.Stat(filepath.Join("..", ".trellis", "expression.md")); !os.IsNotExist(err) {
+		t.Error(".trellis/expression.md still exists — expression.md retired from the bundle (decision-0051 amendment); governance prose belongs in the project's own instructions file")
 	}
 }
