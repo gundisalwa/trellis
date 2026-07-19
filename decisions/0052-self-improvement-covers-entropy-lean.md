@@ -41,16 +41,16 @@ date: 2026-07-19
      (the annotation layer) while `invariants-v1` — the annotated layer — states the
      graph identity four independent times ("directional-graph maintenance"; "The
      **dependency graph** … is kept consistent and minimal"; "the four operations of
-     keeping the graph true"; "graph-maintenance keeps the graph *true* (referential
+     keeping the graph true …"; "graph-maintenance keeps the graph *true* (referential
      integrity)"). A catalog-only re-scope would fork annotation from annotated — this
      invariant's own violated case — and no decision has ever edited a `what`
      (identity-level changes went through the set: `decision-0018`, `decision-0021`).
 - **The right home, from the set's own text.** `invariants-v1`'s
   `inv-self-improvement` has *two faces*, and only one is currently rendered in the
   shipped rule. Its **checkable floor SI-1** is the incident nearly verbatim: "the
-  improvement signals **a change or a work session throws off** are **surfaced through
+  improvement signals a change or a work session throws off are **surfaced through
   the project's chosen channel** — asked (`inv-clarify-before-commit`) or inferred
-  (Assess), **never assumed** — never silently dropped." Its **dispositional face**:
+  (Assess), **never assumed** — never silently dropped …" Its **dispositional face**:
   "the agent **proactively notices** a signal and proposes *both* the fix *and* a
   standing trigger… **asking not acting**." The shipped directive ("When something
   breaks or causes friction, fix the root cause…") renders only the *reactive* face —
