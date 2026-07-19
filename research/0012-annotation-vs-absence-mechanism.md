@@ -1,7 +1,7 @@
 ---
 id: research-0012
 type: research-note
-status: draft
+status: approved  # maintainer's intent act 2026-07-19, in-conversation ("ok to merge!") — this flip records it (decision-0046); pre-gate: corpus-reviewer PASS, spec-adversary APPROVE-READY (3 passes), workflow code review findings applied
 depends_on: [decision-0051, research-0011]
 owner: agent
 date: 2026-07-19
