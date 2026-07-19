@@ -29,13 +29,18 @@ not against HEAD**: this experiment tests the overlay as it existed at run time,
 not make sense in a future state of the repo (the aggregate echoes the provenance above
 the numbers for exactly that reason).
 
-`REPEATS=20` is the powered target (~80% for a ~45-point leak); `REPEATS=10` detects only
-huge gaps. Borderline → extend the same arms (results accumulate in `runs/`), don't
-re-run. The aggregate enforces two validity gates (control elicits the rule; absence
-floor stays low) — either failing voids the result regardless of what annotation shows.
+`REPEATS=20` is the powered target (~80% for a ~45-point leak; exact powers in
+`research-0012`). Borderline → extend: **a new invocation continues numbering after the
+highest existing index**, so results accumulate in `runs/` and nothing is overwritten
+(the provenance line records each batch's start index). The aggregate enforces the two
+validity gates from the contract (control ≥ 70%; absence ≤ 30% — borderline gate ⇒
+extend that arm), keys the amend branch on the leak CI's **upper bound** (equivalence),
+reports the clean row-only contrast (control − annotation), and **excludes** rather than
+counts: worker-failed runs, `n-a` verdicts, unparsed scores — each reported.
 
-**Status: designed, smoke-tested (fixture tests pass; subset/flip/aggregate verified on
-synthetic data); awaiting the human-launched run.** Results will be committed under
+**Status: designed, reviewed (corpus-reviewer PASS; spec-adversary NEEDS-REVISION →
+findings applied; workflow code review → findings applied), smoke-tested end-to-end with
+stubbed agents; awaiting the human-launched run.** Results will be committed under
 `runs/` with the aggregate output and the verdict recorded back into `research-0012`.
 
 Notes: the authority header + inlined rows exist only in this runner — eval-local

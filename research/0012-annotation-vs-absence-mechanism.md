@@ -12,7 +12,11 @@ date: 2026-07-19
 ## Question
 
 `decision-0051` ships **deactivation by absence**: a `rules.toml` row set `active = false`
-removes the rule from the assembled readout at refresh — the model never sees it. The
+removes the rule's directive from the assembled readout at refresh — it is out of the
+loaded rule set (the on-disk catalog `invariants.md` still carries the full rule and the
+toml row names it: the shipped state, ecologically faithful, is *reduced* salience, not
+zero — this contamination raises the absence floor and biases the measured leak
+*downward*, i.e. toward amendment; acknowledged here so the gate reads it). The
 maintainer's target design is **deactivation by annotation**: the readout always ships
 complete, the rows ride in context, and a header instructs the model to apply each rule
 only where its row is active — edits take effect live, no refresh. Whether that works is
@@ -20,6 +24,13 @@ an empirical question about model behavior:
 
 > Does a rule that is *present in context but marked inactive* leak into behavior at a
 > higher rate than a rule that is *absent*?
+
+Note the contrast is **compound by design**: annotation vs absence differ in rule
+presence *and* the authority header *and* the inlined rows — that is the honest
+whole-design comparison the amendment decision needs (each arm is a coherent product
+state), not an isolation of rule-text presence alone. The **clean row-only pair** is
+control vs annotation (identical context, row value flipped); the aggregate reports that
+delta as the direct row effect.
 
 If the leak is negligible, annotation wins (`inv-minimal-first`: it retires the fragment
 assembly — selection moves from write time to read time). If the leak is real, absence
@@ -46,11 +57,20 @@ Three arms per repeat, identical fixture and brief, differing only in the overla
   worker's instructions) against the experiment's single-rule `scorecard.md`,
   corroborated by a mechanical edited-files signal the runner records per run.
 - **Leak** = P(ask | annotation) − P(ask | absence).
-- **Validity gates** (either failing voids the run, whatever B shows):
-  P(ask | control) high — the task elicits the rule when it is operative; and
-  P(ask | absence) low — the trap defeats the default.
+- **Validity gates** (numbers are part of this contract; either failing voids the run,
+  whatever B shows): P(ask | control) **≥ 70%** — the task elicits the rule when it is
+  operative; P(ask | absence) **≤ 30%** — the trap defeats the default. Caveat: at a
+  true control rate of 75%, the 70% gate falsely voids ~21% of runs at n=20 — a
+  *borderline* gate means extend that arm, not conclude.
 - The authority header + inlined rows are **eval-local hypothetical product content**
   (they exist only in the runner) — the shipped payload is untouched by this experiment.
+- On the header arms the runner also rewrites, eval-locally, the shipped readout
+  preamble/footer ("assembled from the active rows…") and the toml's refresh-semantics
+  comments — absence-era text that would contradict the authority header inside one
+  context (adversary finding). The absence arm ships the payload text verbatim: it *is*
+  the shipped mechanism.
+- Runs whose worker exited nonzero are excluded from rates (counted separately), as are
+  `n-a` verdicts and unparsed scores — a crashed worker must not score as "didn't ask".
 
 ## Statistics
 
@@ -58,21 +78,26 @@ Binary outcomes; Fisher's exact test (two-sided) between `annotation` and `absen
 Wilson intervals per arm (the experiment's `aggregate.py`, dependency-free). Power at
 α = .05, ~80%:
 
-| n per arm | detectable gap (approx.) |
+| n per arm | power (exact binomial, α = .05) |
 |---|---|
-| 10 | ~15% vs ~75% (huge only) |
-| 20 | ~45 points (15% → 60%) |
-| 40 | ~30 points (15% → 45%) |
+| 10 | 15% vs 75%: **0.64** — under-powered even for huge gaps |
+| 20 | 15% vs 60% (45 pts): **0.80** |
+| 40 | 15% vs 45% (30 pts): **0.79** |
 
 **Target: `REPEATS=20` (60 worker runs + 60 reviewer runs); minimum viable first slice
 `REPEATS=10`.** Borderline result at 20 → extend the same arms, don't re-run.
 
 ## Decision rule (proposed — the human gate stays)
 
-- Leak point estimate ≤ 10 points and not significant, gates valid → evidence supports
-  annotation; draft the `decision-0051` amendment (retire assembly, live rows).
-- Leak ≥ 25 points or significant → absence stays; record the result here and close.
-- In between → extend n; do not amend on ambiguity.
+The amend branch is an **equivalence claim**, so it keys on the leak's confidence
+interval, not on failing to detect (a mere "n.s." at n=20 amends on a true 25-point leak
+~17% of the time — the adversary's computation, accepted):
+
+- **Amend** → leak point estimate ≤ +10 pts **and** the 95% CI (Newcombe) upper bound
+  < +25 pts, gates valid. With floor-level rates and a near-zero observed leak, n=20 can
+  bound this; otherwise it cannot, and the answer is extend, not amend.
+- **Stay** → CI lower bound > +10 pts, or a significant leak (Fisher, two-sided).
+- **Extend** → anything else. Never amend on ambiguity.
 - In all cases the run and the amendment are the maintainer's acts, not the harness's.
 
 ## Sources & confidence
@@ -102,3 +127,11 @@ Wilson intervals per arm (the experiment's `aggregate.py`, dependency-free). Pow
 - **One rule, one task**: this measures `inv-clarify-before-commit` on one fork. A
   positive result generalizes by assumption, not evidence; a second task deactivating
   `inv-independent-judgment` (graded, higher-pull) is the natural replication.
+- **Neighbor-rule overlap**: `inv-directional-flow` and `inv-ratifiable-artifacts` also
+  instruct ask-shaped behavior and remain active in all arms — shared across arms, so
+  the contrast survives, but they can raise the absence floor (a power cost, not a
+  validity cost).
+- **Worker environment**: a headless worker inherits the launcher's global agent config
+  (e.g. `~/.claude/CLAUDE.md`) — constant across arms (contrast survives) but it shifts
+  the absolute rates the validity gates test. Run from a clean environment if a gate
+  result looks implausible.
