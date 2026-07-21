@@ -108,11 +108,11 @@ only once the set's durability is proven across multiple instances.
 
 <!-- grove:begin (managed by grove — edit .claude/agents/, not this block) -->
 trellis is **grove-managed**: work items here run as [grove](https://github.com/kodhama/grove)
-runs. The eleven agent roles live in `.claude/agents/` with placeholders resolved for
+runs. The fourteen agent roles live in `.claude/agents/` with placeholders resolved for
 this repo (gates from `cli-ci`; lifecycle per `decision-0042`); `corpus-reviewer` is trellis's
 own pre-existing corpus checker, continued as the reference instance of grove's role
 (grove adr-0001). Telemetry (`grove-status`) is not installed — wisp is not vendored here,
-and telemetry is optional by construction. grove plugin@bf7c835
+and telemetry is optional by construction. grove plugin@4449db2
 <!-- grove:end -->
 
 <!-- trellis:begin (managed by trellis — edit .trellis/, not this block) -->

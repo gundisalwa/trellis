@@ -88,7 +88,7 @@ scope: trellis-product
 ## Check — version cross-check (retired)
 
 12. *(Retired 2026-07-12, `grove/adr-0010` — the version cross-check is methodology semantics,
-    re-homed to the operating model: `.grove/versioning.md` §"The `changes:` relation and its
+    re-homed to the operating model: `.grove/internal/versioning.md` §"The `changes:` relation and its
     cross-check" defines it; the operating model's `corpus-reviewer` owns it. Number retained so
     external references to "rubric check 12" resolve to this pointer rather than shifting; the
     `spec-0002` typed checks 8–11 above are unaffected.)*
