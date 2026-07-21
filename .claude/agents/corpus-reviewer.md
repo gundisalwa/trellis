@@ -33,13 +33,13 @@ Recognized typed artifacts: `signature-catalog`, `expression-profile` (`spec-000
 4. Every `depends_on` resolves to an existing artifact `id`, a declared external-ref prefix
    (v0 allowlist: `brief-§…`), **or** a **retired id** in the invariant-set's Identifiers
    registry (mapping to a successor). Flag dangling references. `informed_by` entries
-   resolve the same way (edge taxonomy: `.grove/relations.md`, `adr-0011`) — but **first**,
+   resolve the same way (edge taxonomy: `.grove/internal/relations.md`, `adr-0011`) — but **first**,
    before stripping and resolving, flag a `@version` pin on any `informed_by` entry as a
    **category error** (`informed_by` is non-drift; a version pin has nothing to compare
    against and would otherwise be silently swallowed by the strip-and-resolve step).
 5. **Directional flow (load-bearing):** no `gated`/`approved` (or legacy `ratified`)
    artifact `depends_on` a `draft` artifact. `informed_by` is **non-flow**
-   (`.grove/relations.md`, `adr-0011`): a draft `informed_by` referent does NOT trip this
+   (`.grove/internal/relations.md`, `adr-0011`): a draft `informed_by` referent does NOT trip this
    check. Instead, flag an `informed_by → draft` edge as a **flag** for the
    `conformance-reviewer`'s honesty judgment (a coupling relabeled as `informed_by` to
    dodge this very gate is non-conformant, `decision-0047`) — never a silent structural

@@ -5,7 +5,7 @@ status: ratified
 depends_on: [invariants-v1, decision-0005, decision-0010, decision-0011, decision-0012, decision-0037, decision-0044, decision-0045, decision-0047, grove/adr-0010-versioning-is-operational]
 informed_by: [research-0003]
 owner: gundi
-version: 1  # counter initialized 2026-07-12 with the adr-0010 de-reflection amendment — forward-only from materialization; prior states uncounted (.grove/versioning.md initialization rule)
+version: 1  # counter initialized 2026-07-12 with the adr-0010 de-reflection amendment — forward-only from materialization; prior states uncounted (.grove/internal/versioning.md initialization rule)
 rubric: rubric-artifact-contract
 ratified: 2026-06-30
 ---
@@ -22,7 +22,7 @@ ratified: 2026-06-30
 > §2's stamping note likewise; §3 check 8 (the version cross-check) retired, re-homed to the
 > grove operating model's `corpus-reviewer` (rubric check 12 likewise). WHY: versioning is
 > detection mechanics for the sync principle, not principle — its single home is the installed
-> methodology companion (`.grove/versioning.md`; origin record `decision-0045`, superseded in
+> methodology companion (`.grove/internal/versioning.md`; origin record `decision-0045`, superseded in
 > part on its execution-home consequences only). SCOPE: §1 two rows + pin block, §2 one note,
 > §3 checks 4/5 (citation repoints) + 8 (retired); rubric checks 4/5/12 in the same PR. POINTER:
 > `grove/adr-0010`, kodhama/kodhama#35. VALUE: a contract reader gets the portable shape; no
@@ -51,7 +51,7 @@ ratified: 2026-06-30
 > not coupling. WHY: `decision-0047` narrows `depends_on` to coupling-only; `grove/adr-0011`
 > supplies the `informed_by` grammar this consumer audit applies. SCOPE: frontmatter only —
 > the §1 schema (the `depends_on` row's text) is unchanged; `informed_by` is
-> methodology-defined (`.grove/relations.md`), not a new schema row. No testable clause of
+> methodology-defined (`.grove/internal/relations.md`), not a new schema row. No testable clause of
 > this contract's own behavior changed, so this is **marking-class: no `version` bump**.
 > POINTER: `decision-0047` Consequence 4, `grove/adr-0011`. CONFIDENCE: verified.*
 
@@ -87,7 +87,7 @@ Every non-code artifact opens with YAML frontmatter:
 | `depends_on` | ✓ | list of `id`s and/or declared external refs; `[]` for a root. An edge denotes **genuine coupling** — a source the artifact's correctness is or was contingent on (`decision-0047`); **provenance** (a source that only *informed* construction, without coupling) is a categorically distinct relationship, not a dependency — its grammar is the methodology's (grove), not restated here |
 | `owner` | ✓ | the accountable human (the `inv-intent-locus` role). The *role* is contract; the *field* is mappable — a methodology whose `owner` means something else declares which field/mechanism carries the accountable human (`decision-0037`) |
 | `author` | — | optional: who wrote it (human or agent), distinct from accountability |
-| `version` | — | **open field — methodology-defined**, like `type` and `status` (`grove/adr-0010`; origin record `decision-0045`): a **versioned (revise-in-place)** artifact's own version marker — present when downstreams pin it, **omitted** by append-only artifacts (which version *implicitly* via id + supersession). This contract states **shape only**; the forms, bump semantics, presence enforcement, and initialization rule live in the installed methodology companion (in a grove-managed install, `.grove/versioning.md`) — their single home, deliberately not restated here. |
+| `version` | — | **open field — methodology-defined**, like `type` and `status` (`grove/adr-0010`; origin record `decision-0045`): a **versioned (revise-in-place)** artifact's own version marker — present when downstreams pin it, **omitted** by append-only artifacts (which version *implicitly* via id + supersession). This contract states **shape only**; the forms, bump semantics, presence enforcement, and initialization rule live in the installed methodology companion (in a grove-managed install, `.grove/internal/versioning.md`) — their single home, deliberately not restated here. |
 | `changes` | — | on a **significant-change `decision`** only: the versioned artifact(s) it changes, each pinned (`id@version` or `<repo>/<id>@version`). **Shape at this layer:** a **forward-pointer relation of the `superseded_by` / `superseded_in_part_by` class — never a `depends_on`-class edge** (walked accordingly, §3 check 5); entries resolve like any `id`. Its reconciliation semantics are **methodology-defined** (`grove/adr-0010` — the operating model's `corpus-reviewer` owns the cross-check). |
 | `date` / `ratified` / `supersedes` / `superseded_by` / `superseded_in_part_by` / `rubric` | — | optional |
 
@@ -211,7 +211,7 @@ checklist from this spec, not from the producer (B3). Its checks:
    upstream version current at its ratification — a historical fact, not current-truth
    consumption.* A successor referencing its own predecessor (for diffing) is also exempt.
 8. *(Retired 2026-07-12, `grove/adr-0010` — the version cross-check is methodology semantics,
-   re-homed to the operating model: `.grove/versioning.md` §"The `changes:` relation and its
+   re-homed to the operating model: `.grove/internal/versioning.md` §"The `changes:` relation and its
    cross-check" defines it; the operating model's `corpus-reviewer` owns it. Number retained so
    external references to "§3 check 8" resolve to this pointer rather than shifting.)*
 
