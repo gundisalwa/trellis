@@ -140,6 +140,47 @@ assuming Claude Code's `SessionStart`/`additionalContext` shape generalizes:
   it can deliver model 2's actual goal (always-on, zero-vendor instructions) — that
   needs checking per harness, not assumed from "has a plugin system."
 
+**Correction/addition (2026-07-21) — OpenCode has a separate, non-plugin mechanism that
+does deliver the goal.** The maintainer flagged this directly: OpenCode's config
+(`opencode.json`/`opencode.jsonc`, project *or* global `~/.config/opencode/opencode.json`)
+has an `instructions` field — a static array, not a hook, not part of the plugin system.
+Verified against the actual resolution code
+(`packages/opencode/src/session/instruction.ts`, `anomalyco/opencode`, fetched 2026-07-21),
+not just the docs page (which two independent fetches gave inconsistent answers on — see
+below):
+
+```js
+const urls = (config.instructions ?? []).filter(
+  (item) => item.startsWith("https://") || item.startsWith("http://"),
+)
+```
+
+`instructions` accepts local paths, glob patterns (`packages/*/AGENTS.md`), and — per
+this source, not just the docs — genuine **remote `http(s)://` URLs**, fetched live with
+a 5-second timeout, all combined automatically with `AGENTS.md`. Set in the *global*
+config, this needs zero per-project file commits at all: a single line, once, per user —
+which fits the current single-user reality (Scope section above) even better than a
+hook would. One reliability caveat found in the same search: a real bug report
+(`anomalyco/opencode#4758`, "custom instruction files in `opencode.jsonc` not being
+loaded") describes exactly this field silently not firing — closed as completed
+2026-03-26, so presumed fixed, but it shows the field has had at least one real rough
+edge, not a purely theoretical mechanism.
+
+This doesn't fit cleanly into either of the two models above — it's neither vendored
+copy nor plugin-hook delivery, but a third shape: **static, harness-native config
+declaring where to always-load instructions from, with the harness itself doing the
+fetch.** Worth naming as its own category rather than stretching "model 2" to cover it.
+It's also a useful asymmetry to note against Claude Code directly: Claude Code has the
+*hook* mechanism OpenCode's plugin system lacks, but OpenCode's `instructions` field can
+do something Claude Code's own `@import` cannot — fetch a remote URL live. Neither
+harness's native mechanism is a strict superset of the other's.
+
+*(Methodological note: the two doc-page fetches earlier in this survey disagreed on
+remote-URL support — one said yes, one said no. Source code, not docs, settled it. Kept
+here as a reminder that this survey's doc-only findings — including the Claude Code
+`SessionStart`/`additionalContext` finding above — are one level less certain than this
+OpenCode finding, which is source-verified.)*
+
 This is the shape a fuller survey would take: for each harness in `research-0010`'s
 registry (once the landing-page effort makes that registry relevant again), check not
 just "does it have a plugin system" but specifically "can a plugin inject persistent,
@@ -205,12 +246,26 @@ same-session extension of the current line of work.
   that the gap is real today, not hypothetical. Note this gap is specific to *model 2*
   (plugin-native) — model 1 (vendored) has no such gap, which is part of why model 1
   stays as the fallback rather than being retired.
-- **Which other harnesses' native plugin systems support always-on instruction
-  injection?** Surveyed so far: Claude Code — yes (`SessionStart` + `additionalContext`);
-  OpenCode — no (hook surface is tool/session/file/message-scoped only). The rest of
-  `research-0010`'s registry (Codex, Copilot, Gemini CLI, Cline, Devin/Cascade, Windsurf,
-  Cursor, Continue.dev, Aider) is unsurveyed for this specific capability — deferred
-  until multi-harness support is active again (see Scope section above).
+- **Which other harnesses' native mechanisms support always-on instruction delivery
+  without vendoring?** Surveyed so far: Claude Code — yes, via plugin + `SessionStart`
+  hook (doc-sourced, not source-verified); OpenCode — its plugin system, no; its
+  `instructions` config field, yes, including remote-URL fetch (source-verified). The
+  rest of `research-0010`'s registry (Codex, Copilot, Gemini CLI, Cline, Devin/Cascade,
+  Windsurf, Cursor, Continue.dev, Aider) is unsurveyed — deferred until multi-harness
+  support is active again (see Scope section above). Worth checking each harness for
+  *both* shapes found so far (hook-based and static-config-with-remote-fetch), not just
+  one.
+- **Does Claude Code have an OpenCode-`instructions`-equivalent this survey missed** —
+  a static config field with native remote-URL fetch, checked against source rather than
+  docs? The doc-vs-source discrepancy found for OpenCode is reason enough to re-verify
+  the Claude Code `@import`/`${CLAUDE_PLUGIN_ROOT}` finding (`anthropics/claude-code#9354`)
+  against source before this note's Claude Code side is treated as equally solid as its
+  OpenCode side.
+- **Is OpenCode's `instructions` field (global-config form) actually the better near-term
+  fit** given the current single-user reality — one config line, no per-project
+  vendoring, no hook/plugin machinery at all — worth prototyping before any Claude-Code-
+  specific hook work, if OpenCode ever becomes a harness trellis targets. Not decided
+  here; the maintainer's near-term focus is stated as Claude Code only (Scope section).
 
 ## Sources & confidence
 
@@ -225,3 +280,11 @@ same-session extension of the current line of work.
 - OpenCode plugin system (npm/Bun distribution, hook surface) — **High** (official docs,
   `opencode.ai/docs/plugins/`, fetched directly 2026-07-21; corroborates the maintainer's
   own recollection rather than resting on it alone).
+- OpenCode `instructions` config field, including remote-URL fetch — **High**, source-
+  verified (`packages/opencode/src/session/instruction.ts`,
+  `anomalyco/opencode@dev`, fetched 2026-07-21) after two doc-page fetches
+  (`opencode.ai/docs/rules/` vs `opencode.ai/docs/config/`) gave contradictory answers on
+  remote-URL support — source settled it in favor of "yes."
+- `anomalyco/opencode#4758` (`instructions` field silently not loading) — **High**
+  (GitHub issue, confirmed closed/completed 2026-03-26 via `gh issue view`) — a real,
+  now-apparently-fixed reliability caveat on the mechanism above, not a live blocker.
