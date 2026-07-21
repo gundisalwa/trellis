@@ -80,6 +80,71 @@ future design has to either accept a narrower guarantee (interactive sessions on
 keep a fallback vendoring path for headless/subagent invocations — it can't cleanly
 replace vendoring end-to-end, only for one class of session.
 
+## Scope, pragmatically (maintainer, 2026-07-21)
+
+Trellis today has exactly one user — the maintainer, on Claude Code. They "wouldn't be
+shocked" to narrow support to Claude Code alone for now, dropping the other harnesses
+`research-0010` catalogued (`AGENTS.md`, `GEMINI.md`, `.clinerules`,
+`.github/copilot-instructions.md`) and reintroducing them later. The stated reason this
+is acceptable *now* but not permanently: there's a separate, not-yet-started effort (a
+landing page) aimed at eventually making trellis available to other people — multi-harness
+portability matters again once that audience exists, not before. Recorded here so a future
+session doesn't mistake single-harness scoping for a permanent decision to drop
+`research-0010`'s registry — it's a pragmatic sequencing call, reversible, tied to a
+concrete future trigger (the landing-page effort), not a retraction of the portability
+goal.
+
+## Target shape: two delivery models, not a third abstraction (maintainer, 2026-07-21)
+
+Given the above, the maintainer is "okay with just supporting two models already from the
+start":
+
+1. **Vendored, via installation** ("quite classical") — what trellis does today:
+   `.trellis/internal/*` copied into the consumer's repo at setup/refresh. Stays as the
+   portable fallback — works for any harness, including ones with no native plugin
+   system at all.
+2. **Plugin-native** — delivery through a harness's *own* plugin system, e.g. Claude
+   Code's `SessionStart` hook + `additionalContext` (this note's main finding above).
+
+**Explicitly not a third option**: a trellis-owned, generic, cross-harness plugin
+abstraction that tries to unify however each harness's plugin system works underneath.
+Reasoning given directly: "every vendor will have its own [plugin system], I guess" —
+each harness's plugin system is already its own investment to target correctly; layering
+trellis's own abstraction on top would be a second thing to maintain in sync with N
+underlying systems, not a simplification. Instead: target each harness's *actual* native
+plugin system directly, harness by harness, keeping model 1 as the universal fallback
+for anything not yet targeted natively.
+
+This reframes `decision-0051`'s vendoring apparatus as **model 1, staying**, not
+something plugin-native delivery replaces — the open work is adding model 2 for Claude
+Code specifically, not retiring model 1.
+
+## Per-harness plugin system survey (started 2026-07-21)
+
+The maintainer named a second concrete harness worth checking directly, rather than
+assuming Claude Code's `SessionStart`/`additionalContext` shape generalizes:
+
+- **Claude Code** — covered above. Plugin-native, always-on delivery is possible via a
+  `SessionStart` hook returning `additionalContext`.
+- **OpenCode** — verified via its own docs (`opencode.ai/docs/plugins/`, fetched
+  2026-07-21), confirming the maintainer's recollection: plugins are npm/Bun-based.
+  Declared in `opencode.json`'s `"plugin"` array (npm packages, installed automatically
+  via `bun install`, cached under `~/.cache/opencode/node_modules/`) or loaded locally
+  from `.opencode/plugins/`; a plugin needing external deps carries its own
+  `package.json`. **But its hook surface is tool/session/file/message-scoped** —
+  `tool.execute.before/after`, `session.created/compacted/updated`, `file.edited`,
+  `message.updated`, permission and LSP events — **with no hook for injecting a
+  persistent system prompt or always-on instructions**. The closest is
+  `experimental.session.compacting`, which only fires at compaction time, not
+  continuously. So OpenCode having *a* native plugin system does not automatically mean
+  it can deliver model 2's actual goal (always-on, zero-vendor instructions) — that
+  needs checking per harness, not assumed from "has a plugin system."
+
+This is the shape a fuller survey would take: for each harness in `research-0010`'s
+registry (once the landing-page effort makes that registry relevant again), check not
+just "does it have a plugin system" but specifically "can a plugin inject persistent,
+always-on instructions" — the two are independent questions, as OpenCode's case shows.
+
 ## Tradeoffs (not just the simplification)
 
 - **Auditability drops.** Today `.trellis/internal/rules.md` is a committed file —
@@ -103,6 +168,11 @@ replace vendoring end-to-end, only for one class of session.
   artifact (which rows are active) — nothing about plugin-native delivery removes the
   need for a consumer-owned config file; it only changes what happens to the *content*
   the config governs.
+- **"Has a plugin system" ≠ "can deliver always-on instructions."** OpenCode has a real,
+  well-developed native plugin system (npm/Bun-based) but no hook for persistent system
+  prompts — confirmed above. Targeting each harness's native plugin system (model 2) is
+  therefore a per-harness capability check, not a single pattern that transfers once
+  proven on Claude Code.
 
 ## What this would touch, if pursued
 
@@ -132,7 +202,15 @@ same-session extension of the current line of work.
 - **Does the headless/subagent gap (see counter-example above) mean this is only ever a
   partial replacement**, with vendoring/inlining kept permanently for non-interactive
   invocations? Genuinely unresolved — the eval harness is existing, concrete evidence
-  that the gap is real today, not hypothetical.
+  that the gap is real today, not hypothetical. Note this gap is specific to *model 2*
+  (plugin-native) — model 1 (vendored) has no such gap, which is part of why model 1
+  stays as the fallback rather than being retired.
+- **Which other harnesses' native plugin systems support always-on instruction
+  injection?** Surveyed so far: Claude Code — yes (`SessionStart` + `additionalContext`);
+  OpenCode — no (hook surface is tool/session/file/message-scoped only). The rest of
+  `research-0010`'s registry (Codex, Copilot, Gemini CLI, Cline, Devin/Cascade, Windsurf,
+  Cursor, Continue.dev, Aider) is unsurveyed for this specific capability — deferred
+  until multi-harness support is active again (see Scope section above).
 
 ## Sources & confidence
 
@@ -144,3 +222,6 @@ same-session extension of the current line of work.
   tested (named above as an open question).
 - The `does-trellis-help` counter-example — **High** (in-repo, read directly:
   `eval/experiments/does-trellis-help/run.sh` lines 72–85).
+- OpenCode plugin system (npm/Bun distribution, hook surface) — **High** (official docs,
+  `opencode.ai/docs/plugins/`, fetched directly 2026-07-21; corroborates the maintainer's
+  own recollection rather than resting on it alone).
