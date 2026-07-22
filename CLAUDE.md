@@ -106,13 +106,21 @@ only once the set's durability is proven across multiple instances.
 - What is the smallest enforcement that makes "downstream consumes only ratified" real
   here — convention, a check, or a gate sub-agent? (Resolve when the spine is built.)
 
-<!-- grove:begin (managed by grove — edit .claude/agents/, not this block) -->
-trellis is **grove-managed**: work items here run as [grove](https://github.com/kodhama/grove)
-runs. The fourteen agent roles live in `.claude/agents/` with placeholders resolved for
-this repo (gates from `cli-ci`; lifecycle per `decision-0042`); `corpus-reviewer` is trellis's
-own pre-existing corpus checker, continued as the reference instance of grove's role
-(grove adr-0001). Telemetry (`grove-status`) is not installed — wisp is not vendored here,
-and telemetry is optional by construction. grove plugin@4449db2
+<!-- grove:begin (managed by grove — dials live in .grove/, not this block) -->
+trellis is a **grove consumer** ([grove](https://github.com/kodhama/grove) adr-0026, the
+thin-vendor boundary): work items matching a grove workflow (W1–W6 — e.g. a bug report → the
+bug pipeline, a research ask → divergent research) run as grove runs, sequenced through
+grove's chartered agent roles, loaded from the grove plugin as `grove:<role>` subagents (all
+thirteen — never vendored into `.claude/agents/`). Anything else — conversation, trivial
+asks, out-of-scope questions — proceeds normally. This repo's dials live in `.grove/` (see
+its README). trellis keeps its own `corpus-reviewer` in `.claude/agents/` — a repo-owned role
+that coexists with the plugin's `grove:corpus-reviewer` by namespacing (adr-0026 D5; the
+corpus-reviewer lineage originated in trellis, grove adr-0001). Telemetry (`grove-status`) is
+not installed — wisp is not vendored here, and telemetry is optional by construction. Version
+skew (adr-0026 D4): at role start, if the installed grove plugin's version differs from the
+stamp below, disclose the divergence loudly in your report and continue — the stamp is the
+in-repo ratified record, never a lock; grove never enforces it.
+grove plugin@0.1.0
 <!-- grove:end -->
 
 <!-- trellis:begin (managed by trellis — edit .trellis/, not this block) -->
