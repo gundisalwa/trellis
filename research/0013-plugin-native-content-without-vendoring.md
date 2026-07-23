@@ -223,6 +223,51 @@ hook-based redesign would be a genuine fork of that apparatus, not an incrementa
 to it — sized like its own decision (or decision set) with an adversarial pass, not a
 same-session extension of the current line of work.
 
+## Codex survey update (2026-07-23 — bounded local prototype)
+
+Codex is no longer wholly unsurveyed. Current official Codex documentation and
+an isolated local experiment establish the following:
+
+- **Plugin-bundled standing context is supported in the Codex hook contract.**
+  Plugins can bundle lifecycle hooks; `SessionStart` and `SubagentStart` accept
+  `additionalContext`, and plugin hooks receive `PLUGIN_ROOT` (plus
+  `CLAUDE_PLUGIN_ROOT` compatibility). **Verified** against the current official
+  Codex hooks/plugin documentation.
+- **The current Trellis payload fits a compact hook message.** The prototype
+  composed the real `rules.md`, project `rules.toml`, and payload version into
+  6,519 characters. It returned byte-exact context for `startup`, `resume`,
+  `clear`, `compact`, and `SubagentStart`; a missing config produced a visible
+  `TRELLIS_HOOK_FAILURE` stop instruction. **Verified** by
+  `eval/experiments/codex-hook-delivery/`.
+- **Codex accepted the actual plugin packaging.** A temporary
+  `.codex-plugin/plugin.json` was installed and enabled through a temporary
+  marketplace and isolated Codex home; the installed-cache hook copy passed the
+  same contract tests. **Verified** locally with Codex CLI `0.145.0`.
+- **Live startup delivery is verified locally.** `codex debug prompt-input`
+  renders static model input but does not fire `SessionStart`, so the
+  maintainer ran one isolated, ephemeral, read-only `codex exec` probe against
+  the installed prototype. With file and tool access forbidden by the prompt,
+  it returned `TRELLIS_HOOK_CONTEXT payload@0760a802ccd1` and the requested
+  injected rule slug `inv-handover-points`. This proves end-to-end local CLI
+  startup injection. Live `resume`, `clear`, `compact`, `SubagentStart`,
+  cloud/headless, and IDE behavior remain unverified.
+- **A static bootstrap is still required for loud absence.** A hook can report
+  its own read failure, but cannot report that it was disabled, untrusted, or
+  never executed. The prototype therefore keeps a minimal `AGENTS.md`
+  instruction requiring a separate injected block and stopping if it is
+  absent. **Inferred** from the verified failure boundary; the model's
+  compliance with that bootstrap is not yet measured.
+- **Codex named agents remain a separate gap.** Current plugin documentation
+  lists skills, hooks, MCP/apps, and assets but no plugin-carried custom-agent
+  field; Codex custom agents live in `.codex/agents/*.toml` or the user-level
+  equivalent. Rule delivery can be plugin-native without proving that Grove's
+  named role fleet can be. **Verified** at the documented schema level; an
+  undocumented compatibility path was not tested.
+
+This changes the Codex row from “unsurveyed” to **contract-, packaging-, and
+local-startup-verified; broader lifecycle/surfaces unverified**. It does not
+justify replacing model 1 yet.
+
 ## Open questions
 
 - **Does `@import` genuinely resolve absolute paths outside the project?** Docs suggest
@@ -249,12 +294,14 @@ same-session extension of the current line of work.
 - **Which other harnesses' native mechanisms support always-on instruction delivery
   without vendoring?** Surveyed so far: Claude Code — yes, via plugin + `SessionStart`
   hook (doc-sourced, not source-verified); OpenCode — its plugin system, no; its
-  `instructions` config field, yes, including remote-URL fetch (source-verified). The
-  rest of `research-0010`'s registry (Codex, Copilot, Gemini CLI, Cline, Devin/Cascade,
-  Windsurf, Cursor, Continue.dev, Aider) is unsurveyed — deferred until multi-harness
-  support is active again (see Scope section above). Worth checking each harness for
-  *both* shapes found so far (hook-based and static-config-with-remote-fetch), not just
-  one.
+  `instructions` config field, yes, including remote-URL fetch (source-verified);
+  Codex — plugin hook contract, packaging, and one local live startup yes;
+  broader lifecycle and surfaces remain unverified (bounded prototype above).
+  The rest of `research-0010`'s registry
+  (Copilot, Gemini CLI, Cline, Devin/Cascade, Windsurf, Cursor, Continue.dev, Aider)
+  is unsurveyed — deferred until multi-harness support is active again (see Scope
+  section above). Worth checking each harness for both shapes found so far
+  (hook-based and static-config-with-remote-fetch), not just one.
 - **Does Claude Code have an OpenCode-`instructions`-equivalent this survey missed** —
   a static config field with native remote-URL fetch, checked against source rather than
   docs? The doc-vs-source discrepancy found for OpenCode is reason enough to re-verify
@@ -271,6 +318,9 @@ same-session extension of the current line of work.
 
 - Claude Code docs (`SessionStart` hooks, `additionalContext` behavior, plugin
   `agents`/`skills` discovery) — **High** (current official docs, via `claude-code-guide`).
+- Claude Code live hook execution — **unverified**: the empirical probe is
+  deferred until the maintainer's Claude usage limit resets; no negative result
+  should be inferred from the absence of a run.
 - `anthropics/claude-code#9354` (`${CLAUDE_PLUGIN_ROOT}` not substituted in `@import`) —
   **High** (confirmed open issue, not a workaround-documented closed one).
 - Absolute-path `@import` resolution outside the project — **Low**, not empirically
@@ -288,3 +338,10 @@ same-session extension of the current line of work.
 - `anomalyco/opencode#4758` (`instructions` field silently not loading) — **High**
   (GitHub issue, confirmed closed/completed 2026-03-26 via `gh issue view`) — a real,
   now-apparently-fixed reliability caveat on the mechanism above, not a live blocker.
+- Codex hook/plugin contract — **High** (current official docs,
+  `developers.openai.com/codex/hooks` and `/codex/plugins/build`, checked
+  2026-07-23).
+- Codex local prototype — **High** for plugin install and direct hook-contract
+  behavior; **medium-high** for maintainer-observed live startup delivery;
+  **unverified** for other live lifecycle events and surfaces
+  (`eval/experiments/codex-hook-delivery/`, Codex CLI `0.145.0`).
