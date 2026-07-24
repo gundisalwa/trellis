@@ -3,6 +3,7 @@ id: decision-0028
 type: decision
 status: ratified
 ratified: 2026-07-05
+superseded_in_part_by: [decision-0057]
 depends_on: [invariants-v1, decision-0025, decision-0026]
 owner: gundi
 date: 2026-07-05
@@ -51,3 +52,7 @@ Forward-edges raise the odds B1 fires; the guard is the floor for when it doesn'
 
 - A generic "derived-resource" manifest (source → [derivatives, guard]) instead of per-artifact prose,
   if the number of these grows. For now, prose + per-pair checks.
+
+> **Superseded in part by `decision-0057` (2026-07-23).** Point 3's
+> where-it-fires rule stands. Its physical home moves from `CLAUDE.md` to the
+> canonical shared project-instruction file, `AGENTS.md`.

@@ -110,3 +110,118 @@ func TestRepoOverlayCarriesNoExpressionFile(t *testing.T) {
 		t.Error(".trellis/expression.md still exists — expression.md retired from the bundle (decision-0051 amendment); governance prose belongs in the project's own instructions file")
 	}
 }
+
+// TestSharedProjectInstructionEntrypoints guards spec-0006 AC1–AC6 and AC8:
+// AGENTS.md is the shared project-instruction authority, CLAUDE.md is the exact
+// Claude adapter plus the existing Trellis import block, and the bounded
+// current-truth surfaces point shared-method references at AGENTS.md.
+func TestSharedProjectInstructionEntrypoints(t *testing.T) {
+	readRepoFile := func(name string) string {
+		t.Helper()
+		b, err := os.ReadFile(filepath.Join("..", name))
+		if err != nil {
+			t.Fatalf("read repo %s: %v", name, err)
+		}
+		return string(b)
+	}
+
+	agents := readRepoFile("AGENTS.md")
+	claude := readRepoFile("CLAUDE.md")
+	referenceBlock := readRepoFile("plugins/trellis/reference/block-claude.md")
+	normalizedAgents := strings.Join(strings.Fields(agents), " ")
+
+	wantClaude := "@AGENTS.md\n\n" + referenceBlock + "\n"
+	if claude != wantClaude {
+		t.Errorf("CLAUDE.md must be exactly @AGENTS.md, one blank separator, the byte-identical block-claude.md payload, and one final newline")
+	}
+	if strings.Count(claude, "@AGENTS.md") != 1 {
+		t.Errorf("CLAUDE.md must contain exactly one @AGENTS.md adapter, got %d", strings.Count(claude, "@AGENTS.md"))
+	}
+	if strings.Count(claude, trellisBegin) != 1 || strings.Count(claude, trellisEnd) != 1 {
+		t.Errorf("CLAUDE.md must contain exactly one matched Trellis managed block")
+	}
+	for _, duplicate := range []string{"# Trellis — operating method", "<!-- grove:begin", "## Operating method"} {
+		if strings.Contains(claude, duplicate) {
+			t.Errorf("CLAUDE.md duplicates shared Layer-B/Grove prose %q; it must remain an adapter only", duplicate)
+		}
+	}
+
+	for label, statement := range map[string]string{
+		"canonical authority": "`AGENTS.md` is the canonical home for shared project instructions",
+		"shared-rule edits":   "Edit new shared rules here, outside managed blocks",
+		"Claude adapter":      "`CLAUDE.md` is the Claude adapter, not a shared-rule edit surface",
+		"Claude-only rules":   "Genuinely Claude-only rules belong in `.claude/rules/`",
+		"project choices":     "Grove and Trellis project choices remain in `.grove/` and `.trellis/` configuration files",
+		"managed-block edits": "Do not hand-edit managed blocks",
+	} {
+		if !strings.Contains(normalizedAgents, statement) {
+			t.Errorf("AGENTS.md is missing the %s routing statement %q", label, statement)
+		}
+	}
+	maintainingSection := "## Maintaining project instructions"
+	if strings.Count(agents, maintainingSection) != 1 || strings.Index(agents, maintainingSection) > strings.Index(agents, "<!-- grove:begin") {
+		t.Error("AGENTS.md must contain one Maintaining project instructions section before its managed blocks")
+	}
+	for _, sharedContent := range []string{"# Trellis — operating method", "## Operating method", "<!-- grove:begin", "<!-- grove:end -->"} {
+		if !strings.Contains(agents, sharedContent) {
+			t.Errorf("AGENTS.md is missing moved Layer-B/Grove content %q", sharedContent)
+		}
+	}
+	if strings.Contains(agents, trellisBegin) || strings.Contains(agents, trellisEnd) {
+		t.Error("AGENTS.md must contain zero Trellis managed-block markers")
+	}
+	if strings.Contains(agents, "@.trellis/") {
+		t.Error("AGENTS.md must contain no @.trellis imports; Codex overlay delivery is out of scope")
+	}
+	if strings.Contains(normalizedAgents, "overlay imported below") || !strings.Contains(normalizedAgents, "Codex delivery is separate plugin") {
+		t.Error("AGENTS.md must state the Claude-only overlay boundary without claiming Codex import delivery")
+	}
+
+	boundedReferences := map[string]struct {
+		wantAGENTS  bool
+		allowClaude bool
+	}{
+		"README.md":                         {wantAGENTS: true, allowClaude: true},
+		"profiles/trellis-self.md":          {wantAGENTS: true},
+		".grove/config.toml":                {wantAGENTS: true},
+		".grove/README.md":                  {wantAGENTS: true},
+		".claude/agents/corpus-reviewer.md": {wantAGENTS: true},
+	}
+	for name, expectation := range boundedReferences {
+		content := readRepoFile(name)
+		if expectation.wantAGENTS && !strings.Contains(content, "AGENTS.md") {
+			t.Errorf("%s must name AGENTS.md as the shared project-instruction authority", name)
+		}
+		if !expectation.allowClaude && strings.Contains(content, "CLAUDE.md") {
+			t.Errorf("%s retains a stale CLAUDE.md shared-method reference", name)
+		}
+	}
+
+	readme := readRepoFile("README.md")
+	for _, adapterReference := range []string{
+		"managed block in your `CLAUDE.md`",
+		`block-claude.md >> CLAUDE.md`,
+	} {
+		if !strings.Contains(readme, adapterReference) {
+			t.Errorf("README.md must retain Claude-adapter-specific reference %q", adapterReference)
+		}
+	}
+
+	workflow := readRepoFile(".github/workflows/cli-ci.yml")
+	pullRequestStart := strings.Index(workflow, "  pull_request:\n")
+	pushStart := strings.Index(workflow, "  push:\n")
+	jobsStart := strings.Index(workflow, "\njobs:\n")
+	if pullRequestStart < 0 || pushStart <= pullRequestStart || jobsStart <= pushStart {
+		t.Fatal("cli-ci must retain distinct pull_request and push trigger sections before jobs")
+	}
+	pullRequestTrigger := workflow[pullRequestStart:pushStart]
+	pushTrigger := workflow[pushStart:jobsStart]
+	for _, path := range []string{`"AGENTS.md"`, `"CLAUDE.md"`, `".trellis/**"`} {
+		if !strings.Contains(pullRequestTrigger, path) {
+			t.Errorf("cli-ci pull-request path filter is missing %s", path)
+		}
+		if !strings.Contains(pushTrigger, path) {
+			t.Errorf("cli-ci main-push path filter is missing %s", path)
+		}
+	}
+}

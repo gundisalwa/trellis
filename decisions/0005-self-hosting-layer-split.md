@@ -3,6 +3,7 @@ id: decision-0005
 type: decision
 status: ratified
 ratified: 2026-06-29
+superseded_in_part_by: [decision-0057]
 depends_on: [decision-0001, decision-0003, invariants-v0]
 owner: gundi
 date: 2026-06-29
@@ -57,4 +58,6 @@ supervise any methodology," and our build methodology is *data fed to it* (insta
 
 ## Supersedes / superseded by
 
-— (none)
+Superseded in part by `decision-0057`: Layer B remains the build methodology,
+but its canonical shared physical entrypoint moves from `CLAUDE.md` to
+`AGENTS.md`; `CLAUDE.md` becomes the Claude adapter.

@@ -7,7 +7,7 @@ never restated here (grove adr-0008).*
 trellis is a **grove consumer** (grove adr-0026, the thin-vendor boundary): the
 agent roles are **plugin-carried** — the thirteen roles load automatically as
 `grove:<role>` subagents from the installed grove plugin (pinned in this repo's
-`CLAUDE.md` managed block, `grove plugin@<version>`), and are **never vendored**
+`AGENTS.md` managed block, `grove plugin@<version>`), and are **never vendored**
 into `.claude/agents/`. This directory holds only what the consumer owns.
 
 Effect of each dial:
@@ -49,6 +49,6 @@ distinct names. `/grove:setup` neither adds nor removes anything under
 
 The lifecycle enum, the versioning grammar, and the artifact edge taxonomy ship
 in the grove plugin — per the grove lifecycle / versioning / relations
-companions, `plugin@<stamp>` (the stamp in this repo's `CLAUDE.md`). No copy of
+companions, `plugin@<stamp>` (the stamp in this repo's `AGENTS.md`). No copy of
 the companions is installed under `.grove/` (adr-0026 D7 retired the old
 `.grove/internal/{lifecycle,versioning,relations}.md`).

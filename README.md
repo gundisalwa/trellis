@@ -180,7 +180,7 @@ Built in the open, dogfooded on itself from commit one. The honest state:
 | [`decisions/`](decisions/) | Append-only decision records. |
 | [`research/`](research/) | Framework gate-tests + the genetics / control-theory lenses behind the design. |
 | [`profiles/`](profiles/) | Per-instance expression profiles (`trellis-self` = instance #1). |
-| [`CLAUDE.md`](CLAUDE.md) | The methodology we use to build Trellis (Layer B / instance #1). |
+| [`AGENTS.md`](AGENTS.md) | The methodology we use to build Trellis (Layer B / instance #1). |
 
 ## How we work
 
@@ -188,15 +188,15 @@ Built in the open, dogfooded on itself from commit one. The honest state:
 Trellis — the invariants, catalog, payload generator, and plugin, in `core/` — **and it is itself a
 Trellis-governed project**, installing Trellis through the official path (the same mechanical copy of
 the pre-rendered payload any consumer gets) to govern its own work. So the invariants land in
-`.trellis/` via the same overlay any user gets (not hand-composed), and `CLAUDE.md` holds only the
-project's own *method* (the how). That's self-application, not self-reference — a compiler built, then
-run on itself. A CI guard keeps the committed overlay identical to what the product produces, so it
-can't drift.
+`.trellis/` via the same overlay any user gets (not hand-composed), `CLAUDE.md` retains the Claude
+import adapter, and `AGENTS.md` holds the project's own *method* (the how). That's self-application,
+not self-reference — a compiler built, then run on itself. A CI guard keeps the committed overlay
+identical to what the product produces, so it can't drift.
 
 Every non-code artifact carries frontmatter and a lifecycle (`draft → ratified`); decisions are
 append-only; **intent is human-gated and execution is independently verified** (the builder never grades
 itself); friction we hit becomes product research rather than something to route around. See
-[`CLAUDE.md`](CLAUDE.md).
+[`AGENTS.md`](AGENTS.md).
 
 ## License
 

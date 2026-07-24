@@ -2,7 +2,7 @@
 id: decision-0035
 type: decision
 status: ratified
-superseded_in_part_by: [decision-0043]
+superseded_in_part_by: [decision-0043, decision-0057]
 depends_on: [decision-0005, decision-0010, decision-0028]
 owner: gundi
 ratified: 2026-07-06
@@ -77,3 +77,9 @@ govern its own work."*
   deliberate opt-in.
 - The exact `CLAUDE.md` cut line — which method bullets are genuine Layer-B *how* vs invariant *echo* —
   is worked out in the self-application slice, not here.
+
+> **Superseded in part by `decision-0057` (2026-07-23).** The
+> Build/Govern/Method split and install-boundary self-application model stand.
+> The canonical shared Method entrypoint moves from `CLAUDE.md` to `AGENTS.md`.
+> The self-applied Trellis managed import block remains in `CLAUDE.md`, below
+> its `@AGENTS.md` adapter.

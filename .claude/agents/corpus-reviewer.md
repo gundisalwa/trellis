@@ -26,7 +26,7 @@ Recognized typed artifacts: `signature-catalog`, `expression-profile` (`spec-000
 
 1. Frontmatter present; `id` / `type` / `status` / `depends_on` / `owner` present and
    well-typed (`depends_on` a list, etc.).
-2. `status` ∈ the methodology's declared lifecycle (`spec-0001` §2, `decision-0037`,
+2. `status` ∈ the methodology's declared lifecycle (`AGENTS.md`, `spec-0001` §2, `decision-0037`,
    `decision-0042`) — for this repo the family enum: `{draft, gated, approved, superseded}`;
    historical `ratified` reads as `approved` under `decision-0037`'s declared equivalence.
 3. `id` unique across the corpus.

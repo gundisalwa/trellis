@@ -16,7 +16,7 @@ ratified: 2026-07-04
 > `expression-profile` schema (`spec-0002`), authored by hand (Assess does not exist yet, cluster 1).
 
 > **Honest discount (load-bearing, not hidden).** Trellis-self is the **reference organism** — the
-> repo is *built to* honor its own invariants (`CLAUDE.md`: "We build Trellis with Trellis"). That it
+> repo is *built to* honor its own invariants (`AGENTS.md`: "We build Trellis with Trellis"). That it
 > expresses the full genome is therefore **expected, and is not independent validation** of the
 > invariants — it is genealogically N=1 (`decision-0009`, `research-0006` §Result 5 discount). A
 > *different* project's profile (RPI, the consultant-mode work usage, Math Quest) is what would test
@@ -41,7 +41,7 @@ ratified: 2026-07-04
 | slug | active | C1 | C2 | basis | confidence | evidence |
 |---|---|---|---|---|---|---|
 | `inv-directional-flow` | true | enforced | independent-agent | honored-implicitly | verified | `research/ → decisions/ → specs/` staging; conformance run this session confirms no ratified→draft edge |
-| `inv-handover-points` | true | enforced | independent-agent | honored-implicitly | verified | one-change-per-PR; `CLAUDE.md` "Gates" (intent approval + execution verification) |
+| `inv-handover-points` | true | enforced | independent-agent | honored-implicitly | verified | one-change-per-PR; `AGENTS.md` "Gates" (intent approval + execution verification) |
 | `inv-intent-locus` | true | enforced | human | honored-implicitly | verified | `owner:` on every artifact; ratification is a recorded human act (this session) |
 | `inv-ratifiable-artifacts` | true | enforced | independent-agent | honored-implicitly | verified | `status: draft→ratified` lifecycle; `spec-0001/0002` carry `## Acceptance criteria` |
 | `inv-graph-maintenance` | true | enforced | independent-agent | honored-implicitly | verified | `depends_on` graph; `invariants-v1` supersede registry; v0 retirement resolved this session |
@@ -50,10 +50,10 @@ ratified: 2026-07-04
 | `inv-auditable-archive` | true | enforced | independent-agent | honored-implicitly | verified | `decisions/` append-only; `decision-0014` splits current-truth from change-history |
 | `inv-bounded-context` | true | default-on-but-skippable | independent-agent | honored-implicitly | verified | sub-agents scoped to declared inputs (conformance-reviewer corpus; narrow tool sets) |
 | `inv-self-improvement` | true | default-on-but-skippable | human | honored-implicitly | verified | `decision-0018` restored it after friction (the merge into `inv-graph-maintenance` lost "evolve"); the conformance check caught *this row's own absence* and it was added in the same change |
-| `inv-minimal-first` | true | expressed | human | honored-implicitly | verified | `CLAUDE.md`: "a deliberately tiny instance of the seed operating method" |
+| `inv-minimal-first` | true | expressed | human | honored-implicitly | verified | `AGENTS.md`: "a deliberately tiny instance of the seed operating method" |
 | `inv-clarify-before-commit` | true | default-on-but-skippable | human | honored-implicitly | verified | `## Open questions` in every artifact; the delivery-axis + dial-coverage frictions were surfaced, not guessed |
-| `floor-transparency` | true | enforced | human | honored-implicitly | verified | `CLAUDE.md` "Loud failure"; this session surfaced the merge conflict + catalog friction rather than papering over |
-| `floor-intent-gate` | true | enforced | human | honored-implicitly | verified | `CLAUDE.md` "Gates: Human approval at the intent layer"; this profile is ratified by the maintainer's merge — the intent gate, exercised (`decision-0022`) |
+| `floor-transparency` | true | enforced | human | honored-implicitly | verified | `AGENTS.md` "Loud failure"; this session surfaced the merge conflict + catalog friction rather than papering over |
+| `floor-intent-gate` | true | enforced | human | honored-implicitly | verified | `AGENTS.md` "Gates: Human approval at the intent layer"; this profile is ratified by the maintainer's merge — the intent gate, exercised (`decision-0022`) |
 
 *(The two dials are not rows here — they are the `C1`/`C2` columns above (the schema field names,
 `spec-0002`). Catalog excludes them by
@@ -65,7 +65,7 @@ design, `signature-catalog-v1`.)*
   repo — not because the invariants are proven in general. The evidence is strong *for this instance*;
   the N=1 caveat above governs any wider claim.
 - **The behavioral genes** (`inv-independent-judgment` intent face, `inv-clarify-before-commit`,
-  `floor-transparency`) are the hardest to evidence — I ground them in the `CLAUDE.md` rule **plus a
+  `floor-transparency`) are the hardest to evidence — I ground them in the `AGENTS.md` rule **plus a
   demonstrated instance from this very session** (surfacing frictions, and this profile authored as a
   proposal for the maintainer's gate), which is the strongest honest evidence short of a longitudinal
   audit.
