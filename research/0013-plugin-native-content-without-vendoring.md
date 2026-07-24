@@ -268,6 +268,36 @@ This changes the Codex row from “unsurveyed” to **contract-, packaging-, and
 local-startup-verified; broader lifecycle/surfaces unverified**. It does not
 justify replacing model 1 yet.
 
+## Headless/cloud provisioning boundary (2026-07-24)
+
+The missing headless/cloud install mechanism is a **family delivery
+prerequisite, not a Trellis transport implementation**. Trellis owns its
+product-side plugin package, installed overlay, host hook contract, fallback,
+and the live proof required before it claims a surface. Stewards owns the thin
+cross-product mechanism that puts the selected family plugins into ephemeral
+Claude/Codex homes before either agent starts. The proposed authoring skill,
+per-job GitHub Actions provisioner, container setup/maintenance path, trust
+boundary, and Cloud experiment now live in
+[kodhama/stewards#13](https://github.com/kodhama/stewards/issues/13).
+
+One clean-consumer probe found a concrete prerequisite behind that boundary:
+the public Stewards Claude marketplace exposes Trellis, while its native Codex
+catalog currently exposes only Grove. A fresh isolated Codex home could add the
+Stewards marketplace but could not install `trellis@kodhama`. A generated local
+Codex marketplace pointing at the production `kodhama/trellis`,
+`plugins/trellis` source then installed Trellis's manifest and hook
+successfully. **Verified** locally with Codex CLI `0.145.0`; this isolates the
+current failure to catalog/provisioning rather than Trellis packaging.
+
+Accordingly, a portable headless or Cloud promotion requires either the
+Stewards provisioner in issue 13 or an equivalent independently verified
+pre-provisioned environment. Trellis may test its hook contract inside that
+environment, but it does not own workflow discovery, multi-plugin profiles,
+Claude/Codex home creation, marketplace updates, or container bootstrap. Codex
+Cloud remains unverified even after installation: provisioning a separate CLI
+does not prove that the hosted agent loads the same plugin state or trusts its
+hook.
+
 ## Open questions
 
 - **Does `@import` genuinely resolve absolute paths outside the project?** Docs suggest
@@ -345,3 +375,6 @@ justify replacing model 1 yet.
   behavior; **medium-high** for maintainer-observed live startup delivery;
   **unverified** for other live lifecycle events and surfaces
   (`eval/experiments/codex-hook-delivery/`, Codex CLI `0.145.0`).
+- Headless/cloud provisioning boundary and proposed shared primitive —
+  **High for the observed catalog/install behavior; design proposal otherwise**
+  ([kodhama/stewards#13](https://github.com/kodhama/stewards/issues/13)).
